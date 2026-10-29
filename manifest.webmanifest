@@ -1,0 +1,37 @@
+{
+ "id": "./",
+ "name": "열두동물 한글 수비대",
+ "short_name": "한글 수비대",
+ "lang": "ko",
+ "dir": "ltr",
+ "description": "열두 동물 영웅과 함께 망가진 동화책과 사건을 읽으며 한글을 익히는 어린이 게임",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#1C6A88",
+ "theme_color": "#1C6A88",
+ "categories": [
+  "education",
+  "kids",
+  "games"
+ ],
+ "icons": [
+  {
+   "src": "icons/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icons/maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

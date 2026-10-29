@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>열두동물 한글 수비대</title>
+<meta name="description" content="열두 동물 영웅과 함께 망가진 동화책과 사건을 읽으며 한글을 익히는 어린이 게임">
+<meta name="theme-color" content="#1C6A88">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="한글 수비대">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <header class="hud">
+    <button class="box who hbtn" id="hHero"><div class="ava" id="hAva"></div><div><b id="hName"></b><span class="mini" id="hStars"></span><span class="xpm"><i id="hExp"></i></span></div></button>
+    <div class="box obj"><span class="lbl" id="hObjL"></span><span id="hObj"></span></div>
+    <div class="box parts" id="hParts"></div>
+    <div class="tools">
+      <div class="box seg" role="group" aria-label="Language"><button id="lEn">EN</button><button id="lKo">한</button></div>
+      <button class="iconbtn tdhud" id="tdHud">☀️ 0/3</button>
+      <button class="iconbtn" id="menuBtn"></button>
+    </div>
+  </header>
+  <div class="stmap" id="stageMap" aria-label="Stage map"></div>
+  <div class="extras" id="extras"></div>
+  <div class="map" id="map" aria-label="Island map" hidden>
+    <div class="tiles" id="tiles"></div>
+    <div class="ents" id="ents"></div>
+  </div>
+  <p class="tip" id="tip"></p>
+</div>
+
+<div class="ov" id="dlgOv" hidden>
+  <div class="card dlg">
+    <div class="portrait" id="dPor"></div>
+    <div><h2 class="nm" id="dName"></h2><p id="dText"></p></div>
+    <div class="btns" id="dBtns"></div>
+  </div>
+</div>
+
+<div class="ov center" id="chalOv" hidden>
+  <div class="card chal">
+    <div class="chead"><div class="portrait" id="cPor"></div><p id="cLine"></p></div>
+    <div class="ctarget"><span class="cpic" id="cPic"></span><div class="cword" id="cWord"></div><button class="spk" id="cSay" aria-label="Hear the word">🔊</button><span class="cmean" id="cMean"></span></div>
+    <div id="cHost"></div>
+    <div class="cfoot"><p class="cmsg" id="cMsg"></p><button class="btn" id="cLeave"></button></div>
+  </div>
+</div>
+
+<div class="ov center" id="batOv" hidden>
+  <div class="card bat">
+    <div class="bhead">
+      <div class="hpbox"><b id="bAllyN"></b><small id="bAllyL"></small><div class="hearts" id="bHearts"></div></div>
+      <div class="target" id="bTarget"></div>
+      <div class="hpbox foeb"><b id="bFoeN"></b><small id="bFoeL"></small><div class="hp"><i id="bFoeHp"></i></div></div>
+    </div>
+    <div class="arena" id="arena" aria-label="Battle field"></div>
+    <div class="bctl">
+      <div class="power"><span id="bPowL"></span><div class="pips" id="bPow"></div></div>
+      <div class="skills" id="bSkills"></div>
+    </div>
+    <div class="cfoot"><p class="cmsg" id="bMsg"></p><button class="btn" id="bRun"></button></div>
+  </div>
+</div>
+
+<div class="ov center" id="parOv" hidden>
+  <div class="card par">
+    <div class="pweek" id="pWeek"></div>
+    <h2 id="pGridT"></h2>
+    <div class="tablewrap"><table class="mgrid" id="pGrid"></table></div>
+    <p class="rule" id="pLegend"></p>
+    <div class="pstats" id="pStats"></div>
+    <div class="btns"><button class="btn pri" id="pClose"></button></div>
+  </div>
+</div>
+
+<div class="ov center evo" id="evoOv" hidden>
+  <div class="evobox"><div class="evosprite" id="eSprite"></div><p id="eText"></p><button class="btn pri" id="eOk" hidden></button></div>
+</div>
+
+<div class="splash" id="splashOv" hidden>
+  <img class="sp-bg" id="spBg" alt="">
+  <div class="sp-art"><img id="spImg" alt="열두동물 한글 수비대 — 뒤죽박죽 동화책을 구하라! 열두 동물 영웅과 거북이 스승이 도서관 계단에 모여 있어요.">
+    <button class="sp-hot" id="spGo" aria-label="모험 시작"></button>
+    <button class="sp-new" id="spNew" hidden></button>
+  </div>
+  <button class="btn pri sp-go sp-go2" id="spGo2">▶ 모험 시작</button>
+</div>
+<div class="ov center" id="titleOv">
+  <div class="card title">
+    <h1>열두동물 한글 수비대<small>ZODIAC HANGUL GUARDIANS</small></h1>
+    <p class="story" id="tStory"></p>
+    <div class="cast" id="tCast"></div>
+    <h2 id="tStep"></h2>
+    <div class="chars" id="chars"></div>
+    <p class="abil" id="tAbil"></p>
+    <div class="tbtns" id="tBtns"></div>
+  </div>
+</div>
+
+<div class="ov center" id="clearOv" hidden>
+  <div class="card title">
+    <div class="big">🏝️ ⛵ ⭐</div>
+    <h1 id="clTitle"></h1>
+    <p class="story" id="clText"></p>
+    <div class="reward" id="clReward"></div>
+    <div class="tbtns" id="clBtns"></div>
+  </div>
+</div>
+<div class="ov center" id="heroOv" hidden><div class="card hero" id="heroCard"></div></div>
+<div class="ov center" id="shopOv" hidden><div class="card hero" id="shopCard"></div></div>
+<div class="ov center" id="pgOv" hidden><div class="card pgc" id="pgCard"></div></div>
+<div class="ov center evo" id="lvOv" hidden>
+  <div class="lvbox"><p id="lvLabel"></p><div class="lvbig" id="lvNum"></div><div class="lvrew" id="lvRew"></div><button class="btn pri" id="lvOk"></button></div>
+</div>
+<div class="ov center" id="runOv" hidden>
+  <div class="card run">
+    <div class="rhud"><div class="hearts" id="rHearts"></div><div class="rword" id="rWord"></div><span class="rcoins" id="rCoins"></span><button class="btn" id="rQuit"></button></div>
+    <div class="rstage" id="rStage"><canvas id="runCv" aria-label="Adventure course"></canvas>
+      <div class="pad l"><button class="pbtn2" data-k="l" aria-label="Move left">◀</button><button class="pbtn2" data-k="r" aria-label="Move right">▶</button></div>
+      <div class="pad r"><button class="pbtn2 big" data-k="j" aria-label="Jump">⤒</button></div>
+    </div>
+    <div class="runfoot"><p class="cmsg" id="rMsg"></p><p class="rule" id="rTip"></p></div>
+  </div>
+</div>
+<div class="ov center" id="libOv" hidden><div class="card lib" id="libCard"></div></div>
+<div class="ov center" id="stOv" hidden><div class="card stcard" id="stCard"></div></div>
+<div class="ov center" id="duelOv" hidden>
+  <div class="card duel">
+    <div class="dhud">
+      <div class="dside my"><span class="face" id="dMeFace"></span><div class="info"><b id="dMeN"></b><small id="dMeL"></small><div class="dhp"><i id="dMeHp" style="width:100%"></i></div></div></div>
+      <div class="dtier" id="dTier"></div>
+      <div class="dside vs"><span class="face" id="dFoeFace"></span><div class="info"><b id="dFoeN"></b><small id="dFoeL"></small><div class="dhp"><i id="dFoeHp" style="width:100%"></i></div></div></div>
+    </div>
+    <div class="dstage" id="dStage"></div>
+    <div class="dq" id="dQ"></div>
+    <div class="dfoot"><p id="dMsg"></p><div class="acts"><button class="btn" id="dHelp"></button><button class="btn" id="dQuit"></button></div></div>
+  </div>
+</div>
+<div class="ov center" id="caseOv" hidden><div class="card duel" id="caseCard"></div></div>
+<div class="ov center" id="bookOv" hidden><div class="card bookc" id="bookCard"></div></div>
+<div class="ov center" id="setOv" hidden><div class="card setc" id="setCard"></div></div>
+<div class="ov center" id="tdOv" hidden><div class="card tdcard" id="tdCard"></div></div>
+<div class="ov center" id="rmOv" hidden role="dialog" aria-modal="true" aria-label="읽기 미션"><div class="card rmcard" id="rmCard"></div></div>
+<div class="toast" id="toast" role="status"></div>
+<button class="vskip" id="vSkip" hidden></button>
+
+<script src="books/b1/book.js"></script>
+<script src="audio/voices.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
