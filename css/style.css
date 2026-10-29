@@ -1623,3 +1623,13 @@ textarea,input,select{-webkit-user-select:text;user-select:text;-webkit-touch-ca
 .laybar small{color:var(--muted)}
 .laybar .btn{min-height:40px;font-size:14px}
 .laynote{flex-basis:100%;font-size:12px;color:#c0392b;word-break:break-all}
+
+.tdlist li .tdlap{flex:none;display:flex;flex-direction:row;flex-wrap:wrap;gap:5px;margin-top:6px}
+.tdg{position:relative;width:40px;height:40px;border-radius:11px;border:2px solid var(--ink);background:#fff;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.7;padding:0}
+.tdg.on{background:#E8F7EE;border-color:#2FA866;opacity:1}
+.tdg.on i{position:absolute;right:-6px;top:-6px;background:#2FA866;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;font-style:normal;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.tdg.nx{opacity:1;border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,194,61,.45);animation:pulse 1.2s ease-in-out infinite}
+.tdn{font-size:.85em;color:var(--muted);margin-left:4px}
+.tdrest{margin:6px 0 0;font-size:13px;color:#1E8B4A}
+.austat{font-size:12px;color:var(--muted);margin-left:6px}
+@media (max-width:560px){.tdlist li.lap{flex-wrap:wrap}.tdlist li.lap>div{flex-basis:calc(100% - 56px)}.tdlist li.lap>.btn{margin-left:auto}}

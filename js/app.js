@@ -3483,7 +3483,7 @@ function showSettings(){
  <div class="setrow"><b>${K("Speaking speed","말 빠르기")}</b>${seg("vr",G.vrate,[[.85,K("Slow","천천히")],[1,K("Normal","보통")],[1.12,K("A bit faster","조금 빠르게")]])}
   <small>${K("For the most natural voice: on iPad/iPhone download an 'Enhanced' or 'Premium' Korean voice (Settings › Accessibility › Spoken Content › Voices › Korean). On a computer, Microsoft Edge has 'Natural' voices. On Android, use Google's speech engine.","가장 자연스러운 목소리: 아이패드·아이폰은 설정 › 손쉬운 사용 › 콘텐츠 말하기(Spoken Content) › 음성 › 한국어에서 '향상된' 또는 '프리미엄' 음성을 내려받으세요. 컴퓨터는 Microsoft Edge의 'Natural' 음성, 안드로이드는 Google 음성 엔진이 가장 자연스러워요.")}</small></div>
  <div class="setrow"><b>${K("Pause between sentences","문장 사이 쉼")}</b>${seg("vp",G.vpause||1000,[[800,"0.8s"],[1000,"1.0s"],[1200,"1.2s"]])}<small>${K("How long the storyteller waits between sentences. Start at 1.0 s and adjust to your child.","이야기꾼이 문장 사이에 쉬는 시간이에요. 1.0초로 시작해서 아이 반응에 맞춰 조정하세요.")}</small></div>
- <div class="setrow"><b>${K("Music & sounds","배경음악·효과음")}</b>${seg("bgm",G.bgm===false?0:1,[[1,K("Music on","음악 켜기")],[0,K("Music off","음악 끄기")]])}${seg("sfxo",G.sfxOff?0:1,[[1,K("Sounds on","효과음 켜기")],[0,K("Sounds off","효과음 끄기")]])}<small>${K("Music gets quieter by itself while someone is talking. Music plays only after the music files are added.","목소리가 나오는 동안 음악은 저절로 작아져요. 음악은 음악 파일을 넣은 뒤에 나와요.")}</small></div>
+ <div class="setrow"><b>${K("Music & sounds","배경음악·효과음")}</b>${seg("bgm",G.bgm===false?0:1,[[1,K("Music on","음악 켜기")],[0,K("Music off","음악 끄기")]])}${seg("sfxo",G.sfxOff?0:1,[[1,K("Sounds on","효과음 켜기")],[0,K("Sounds off","효과음 끄기")]])}<button class="btn" id="auTest">🔊 ${K("Sound check","소리 확인")}</button><span class="austat" id="auStat"></span><small>${K("10 music tracks are built in. Music gets quieter by itself while someone is talking. If there is no sound, tap 'Sound check'.","배경음악 10곡이 들어 있어요. 목소리가 나오는 동안 음악은 저절로 작아져요. 소리가 안 나면 '소리 확인'을 눌러 보세요.")}</small></div>
  <div class="setrow"><b>${K("Compare voices","목소리 비교")}</b><div class="vcmp"><select id="setWho">${[["narrator",K("Narrator","나레이터")],["mentor",K("Master Turtle","거북이 스승")],...CHARS.map(c=>[c.id,L(c.n)])].map(([v,l])=>`<option value="${v}" ${v===setWho?"selected":""}>${escH(l)}</option>`).join("")}</select><button class="btn" data-vl="0">▶ ${K("Hello","인사")}</button><button class="btn" data-vl="1">▶ ${K("Guide","학습 안내")}</button><button class="btn" data-vl="2">▶ ${K("Cheer","격려")}</button></div>
   <small>${K(`This device has ${VO.ko.length} Korean voice(s), ${VO.ko.filter(v=>MALE.test(v.name)).length} of them male. With one voice, characters differ only by pitch and speed; truly distinct voices need real voice files.`,`이 기기의 한국어 목소리: ${VO.ko.length}개 (남성 ${VO.ko.filter(v=>MALE.test(v.name)).length}개). 목소리가 1개뿐이면 높낮이와 속도로만 구별돼요. 완전히 다른 목소리는 실제 음성 파일이 있어야 해요.`)}</small></div>
  <div class="setrow"><b>${K("Character pictures","캐릭터 그림")}</b>
@@ -3494,6 +3494,7 @@ function showSettings(){
   ${HIMG[setHero]?`<button class="btn" id="setDel">↩️ ${K("Use original art","원래 그림으로")}</button>`:""}</div>
  <div class="setrow"><b>${K("Reading help","읽기 도움")}</b>${seg("rd",rdLv(),[[1,K("Listen & repeat","듣고 따라 읽기")],[2,K("Read first","먼저 읽기")],[3,K("Read alone","혼자 읽기")]])}<small>${rdHelpText()}</small></div>
  <div class="setrow"><b>${K("Reading missions","읽기 미션")}</b>${seg("rmo",G.rmOff?0:1,[[1,K("On","켜기")],[0,K("Off","끄기")]])}<small>${K("Three times in each case and in the storybook, your child reads a sentence out loud and answers one quick picture question.","사건마다 3번, 동화책에서 3번, 아이가 문장을 소리 내어 읽고 그림 고르기 문제 1개를 풀어요.")}</small></div>
+ <div class="setrow"><b>☀️ ${K("Today's adventure","오늘의 모험")}</b>${seg("tdl",G.tdLen==="short"?0:1,[[1,K("One lap (8 games)","한 바퀴 (게임 8개)")],[0,K("Short (1 game)","짧게 (게임 1개)")]])}<small>${K("One lap: the 6 playground games, the free course and a practice battle, plus 3 reading missions and 5 words (about 25–35 minutes; it can be split up during the day). Short: one game instead of the lap (about 10–15 minutes). The story modes (storybooks, Hangul Island, cases) are not part of the lap.","한 바퀴: 놀이터 6종 + 모험 코스 + 연습 배틀, 그리고 읽기 미션 3개와 낱말 5개(약 25~35분, 하루 중에 나눠서 해도 돼요). 짧게: 게임 1개만(약 10~15분). 이야기 모드(동화책·한글 섬 모험·사건 수사대)는 한 바퀴에 넣지 않아요.")}</small></div>
  ${micSR()?`<div class="setrow"><b>🎤 ${K("Read-aloud check (test)","소리 내어 읽기 확인 (실험)")}</b>${seg("mic",micOK()?1:0,[[1,K("On","켜기")],[0,K("Off","끄기")]])}<small>${K("Uses the browser's speech recognition to check the mission sentence. It can be wrong, and the voice may be sent to the browser maker's servers (Apple/Google). If the microphone is blocked, the button hides itself.","미션 문장을 읽으면 브라우저의 음성 인식으로 비슷하게 읽었는지 확인해요. 틀리게 판단할 수 있고, 목소리가 브라우저 회사(애플·구글) 서버로 보내질 수 있어요. 마이크가 막혀 있으면 버튼이 저절로 사라져요.")}</small></div>`:""}
  <div class="setrow"><b>${K("Word level","낱말 레벨")}</b>${seg("wl",G.wl||1,[[1,"1"],[2,"2"],[3,"3"],[4,"4"],[5,"5"]])}<small>${WB_NAMES[G.wl||1]} · ${K("Rises by itself as words are learned in the playground. The level test can set it too.","놀이터에서 낱말을 익히면 저절로 올라가요. 레벨 테스트로 다시 정할 수도 있어요.")}</small></div>
  <div class="setrow"><b>${K("Battle questions","배틀 문제 수준")}</b>${seg("rl",G.rl,[[1,K("Letters","글자")],[2,K("Words","낱말")]])}<small>${K("Words: battles use real words with 받침.","낱말: 배틀에서 받침 있는 실제 낱말이 나와요.")}</small></div>
@@ -3522,6 +3523,8 @@ function showSettings(){
  $("setCard").querySelectorAll("[data-sfxo]").forEach(b=>b.onclick=()=>{G.sfxOff=b.dataset.sfxo==="0";save();if(G.sfxOff)ambStop(.3);showSettings()});
  $("setCard").querySelectorAll("[data-rd]").forEach(b=>b.onclick=()=>{G.rd=+b.dataset.rd;G.autoRead=G.rd===1;save();showSettings()});
  $("setCard").querySelectorAll("[data-rmo]").forEach(b=>b.onclick=()=>{G.rmOff=b.dataset.rmo==="0";save();showSettings()});
+ $("setCard").querySelectorAll("[data-tdl]").forEach(b=>b.onclick=()=>{G.tdLen=b.dataset.tdl==="0"?"short":"lap";save();tdHudSet();try{renderExtras()}catch(e){}if(tdDone()&&!tdFresh().paid){dayLog(D=>{D.td=1});save();queue(tdCelebrate)}showSettings()});
+ if($("auTest"))$("auTest").onclick=()=>{auWake();auBeep();setTimeout(auStatus,450)};auStatus();
  $("setCard").querySelectorAll("[data-mic]").forEach(b=>b.onclick=()=>{G.mic=b.dataset.mic==="1";if(G.mic)G.micDead=0;save();showSettings()});
  $("bkMake").onclick=bkMakeUI;$("bkLoad").onclick=bkLoadUI;
  $("setCard").querySelectorAll("[data-lay]").forEach(b=>b.onclick=()=>{G.layEdit=b.dataset.lay==="1";save();showSettings();if(G.layEdit)toast(K("Open a case's search step or the book's explore step.","사건의 '현장 조사'나 동화책 '탐색' 단계를 열어 보세요."))});if($("appUpd"))$("appUpd").onclick=appApplyUpdate;if($("appIns"))$("appIns").onclick=appInstall;
@@ -3691,38 +3694,70 @@ function micListen(target,cb){const SR=micSR();let r=null,fin=false;const end=(s
  r.onend=()=>setTimeout(()=>end(0,"end"),300);
  try{hush();r.start()}catch(e){end(null,"start")}
  setTimeout(()=>end(0,"timeout"),15000)}
-/* ---- today's adventure: one game, three reading missions (or one story), five words ---- */
-function tdFresh(){const k=dkey();if(!isObj(G.today)||G.today.d!==k)G.today={d:k,play:0,story:0,words:0,rm:0,paid:0};return G.today}
-function tdCount(){const T=isObj(G.today)&&G.today.d===dkey()?G.today:null;return T?(T.play?1:0)+(T.story?1:0)+(T.words?1:0):0}
-function tdChip(){const n=tdCount();return `<span class="tdp${n>=3?" ok":""}">${n>=3?"✓":n+"/3"}</span>`}
-function tdHudSet(){const b=$("tdHud");if(!b)return;const n=tdCount();b.textContent=n>=3?"☀️ ✓":"☀️ "+n+"/3";b.classList.toggle("ok",n>=3);b.setAttribute("aria-label",K("Today's adventure","오늘의 모험")+" "+n+"/3")}
-function tdMark(k){const T=tdFresh();if(T[k])return;T[k]=1;save();try{renderExtras()}catch(e){}tdHudSet();
- const nm={play:K("one game","놀이 한 판"),story:K("story reading","이야기 읽기"),words:K("word review","낱말 복습")}[k];
- if(tdCount()>=3){dayLog(D=>{D.td=1});save();queue(tdCelebrate)}else toast("☀️ "+K("Today's adventure: ","오늘의 모험: ")+nm+" ✓ ("+tdCount()+"/3)")}
-function tdGame(){const gs=Object.keys(PGAMES),g=gs.slice().sort((a,b)=>pgSum(a)-pgSum(b)||(G.pgLast===a)-(G.pgLast===b))[0];let lv=pgRecLv(g);
- if(rdLv()===3){const j=PGAMES[g].lv.findIndex(k=>(LADDER[k]&&LADDER[k].word)||FILL_LV[k]);if(j>=0)lv=Math.max(lv,j+1)}return {g,lv}}
+/* ---- today's adventure (v29.2): one lap of every game except the story modes (or just one game, parent setting),
+   three reading missions (or one story), five words. Everything here is a function declaration (the first renderAll runs before this block). ---- */
+function tdLap(){return ["fish","mole","course","pair","rain","battle","train","fill"]}
+function tdIsLap(){return G.tdLen!=="short"}
+function tdFresh(){const k=dkey();if(!isObj(G.today)||G.today.d!==k)G.today={d:k,play:0,story:0,words:0,rm:0,paid:0,lap:{}};if(!isObj(G.today.lap))G.today.lap={};return G.today}
+function tdLapN(T){return T&&isObj(T.lap)?tdLap().filter(g=>T.lap[g]).length:0}
+function tdTotal(){return tdIsLap()?tdLap().length+2:3}
+function tdCount(){const T=isObj(G.today)&&G.today.d===dkey()?G.today:null;return T?(tdIsLap()?tdLapN(T):(T.play?1:0))+(T.story?1:0)+(T.words?1:0):0}
+function tdDone(){return tdCount()>=tdTotal()}
+function tdChip(){const n=tdCount(),t=tdTotal();return `<span class="tdp${n>=t?" ok":""}">${n>=t?"✓":n+"/"+t}</span>`}
+function tdHudSet(){const b=$("tdHud");if(!b)return;const n=tdCount(),t=tdTotal();b.textContent=n>=t?"☀️ ✓":"☀️ "+n+"/"+t;b.classList.toggle("ok",n>=t);b.setAttribute("aria-label",K("Today's adventure","오늘의 모험")+" "+n+"/"+t)}
+function tdName(g){return g==="course"?K("Free course","모험 코스"):g==="battle"?K("Practice battle","연습 배틀"):L(PGAMES[g].n)}
+function tdIc(g){return g==="course"?"🌀":g==="battle"?"⚔️":PGAMES[g].ic}
+/* k = "play" | "story" | "words"; g = which game finished (lap mode counts each game once) */
+function tdMark(k,g){const T=tdFresh(),before=tdCount(),lapB=tdLapN(T);
+ if(k==="play"&&g&&tdLap().includes(g))T.lap[g]=1;
+ T[k]=1;save();const n=tdCount(),t=tdTotal();if(n===before)return;
+ try{renderExtras()}catch(e){}tdHudSet();
+ const nm=k==="play"?(g?tdName(g):K("one game","놀이 한 판")):{story:K("story reading","이야기 읽기"),words:K("word review","낱말 복습")}[k];
+ if(n>=t){dayLog(D=>{D.td=1});save();queue(tdCelebrate);return}
+ toast("☀️ "+K("Today's adventure: ","오늘의 모험: ")+nm+" ✓ ("+n+"/"+t+")");
+ if(tdIsLap()&&lapB<4&&tdLapN(T)>=4)setTimeout(()=>toast("🙆 "+K("Halfway through the games! A sip of water and a big stretch.","게임 절반 왔어요! 물 한 모금 마시고 기지개 쭉!")),2800)}
+function tdPgLv(g){let lv=pgRecLv(g);if(rdLv()===3){const j=PGAMES[g].lv.findIndex(k=>(LADDER[k]&&LADDER[k].word)||FILL_LV[k]);if(j>=0)lv=Math.max(lv,j+1)}return lv}
+function tdGame(){const gs=Object.keys(PGAMES),g=gs.slice().sort((a,b)=>pgSum(a)-pgSum(b)||(G.pgLast===a)-(G.pgLast===b))[0];return {g,lv:tdPgLv(g)}}
+function tdNext(){const T=tdFresh();return tdLap().find(g=>!T.lap[g])||null}
 function tdStory(){const b1=typeof BOOKS!=="undefined"&&BOOKS.find(b=>b.id==="b1");
  if(b1&&BD.b1&&!bookDone("b1"))return {kind:"book",name:"📖 〈"+(G.lang==="ko"?b1.t:(b1.te||b1.t))+"〉"};
  const cs=G.cases||{};let i=KC.findIndex((c,j)=>kzUnlocked(j)&&!cs[c.id]);
  if(i<0){let bs=9;KC.forEach((c,j)=>{if(kzUnlocked(j)&&(cs[c.id]||0)<bs){bs=cs[c.id]||0;i=j}});if(i<0)i=0}
  return {kind:"case",i,name:"🔎 "+K("Case ","사건 ")+(i+1)+" · "+L(KC[i].t)}}
-function tdOpen(){const T=tdFresh(),R=tdGame(),P=PGAMES[R.g],st=tdStory(),n=tdCount();
- const row=(k,ic,title,sub,done)=>`<li class="${done?"done":""}"><span class="ic" aria-hidden="true">${ic}</span><div><b>${title}</b><small>${sub}</small></div><button class="btn${done?"":" pri"}" data-td="${k}">${done?"✓ "+K("Again","다시"):K("Go","시작")}</button></li>`;
+/* a game started from the card comes back to the card when it closes */
+var TDR=null;
+function tdStart(g){$("tdOv").hidden=true;TDR=g;if(g==="course")startRun();else if(g==="battle")practiceBattle();else pgPlay(g,tdPgLv(g),{td:true})}
+function tdBack(g){const open=id=>{const e=$(id);return !!e&&!e.hidden};
+ if(["duelOv","runOv","pgOv","caseOv","bookOv","rmOv"].some(open)){if(g)TDR=g;return}
+ /* a level-up screen came up first: open the card after it is closed (never two screens at once) */
+ if(open("lvOv")||open("evoOv")){queue(()=>tdBack());return}
+ /* all done: the queued celebration shows by itself; never cover it with the card */
+ if(tdDone()){const w=$("tdCard").querySelector(".tdwin");if(!tdFresh().paid||(w&&open("tdOv")))return}tdOpen()}
+function tdOpen(){const T=tdFresh(),st=tdStory(),n=tdCount(),t=tdTotal(),lap=tdIsLap();
+ const row=(k,ic,title,sub,done,extra)=>`<li class="${done?"done":""}"><span class="ic" aria-hidden="true">${ic}</span><div><b>${title}</b><small>${sub}</small>${extra||""}</div><button class="btn${done?"":" pri"}" data-td="${k}">${done?"✓ "+K("Again","다시"):K("Go","시작")}</button></li>`;
+ let playRow;
+ if(lap){const ln=tdLapN(T),nx=tdNext();
+  const dots=`<div class="tdlap">${tdLap().map(g=>`<button class="tdg${T.lap[g]?" on":""}${g===nx?" nx":""}" data-tg="${g}" aria-label="${escH(tdName(g))}${T.lap[g]?" ✓":""}"><span>${tdIc(g)}</span>${T.lap[g]?"<i>✓</i>":""}</button>`).join("")}</div>`;
+  playRow=`<li class="lap${ln>=tdLap().length?" done":""}"><span class="ic" aria-hidden="true">🎮</span><div><b>${K("One lap of the games","게임 한 바퀴")} <span class="tdn">${ln}/${tdLap().length}</span></b><small>${nx?K("Next: ","다음: ")+tdIc(nx)+" "+tdName(nx):K("Every game done!","게임을 모두 했어요!")}</small>${dots}${ln>=4&&ln<tdLap().length?`<p class="tdrest">🙆 ${K("Halfway! Rest your eyes for a moment, then carry on.","절반 왔어요! 잠깐 눈을 쉬고 이어서 해요.")}</p>`:""}</div><button class="btn${nx?" pri":""}" data-td="lap">${nx?K("Play","하기")+" ▶":"✓ "+K("Again","다시")}</button></li>`}
+ else{const R=tdGame(),P=PGAMES[R.g];playRow=row("play",P.ic,K("One game","놀이 한 판"),L(P.n)+" · "+K("level ","")+R.lv+K("","단계"),T.play)}
  $("tdCard").innerHTML=`<div class="tdhead"><h2>☀️ ${K("Today's adventure","오늘의 모험")}</h2><button class="btn" id="tdX">${K("Close","닫기")}</button></div>
-  <p class="tdsub">${K("About 10–15 minutes. Do three things and you're done for today!","10~15분이면 끝! 세 가지를 하면 오늘 모험 완료예요.")} · <b>${n}/3</b></p>
+  <p class="tdsub">${lap?K("About 25–35 minutes. You can split it up during the day.","약 25~35분. 하루 중에 나눠서 해도 괜찮아요."):K("About 10–15 minutes. Do three things and you're done for today!","10~15분이면 끝! 세 가지를 하면 오늘 모험 완료예요.")} · <b>${n}/${t}</b></p>
   <ol class="tdlist">
-   ${row("play",P.ic,K("One game","놀이 한 판"),L(P.n)+" · "+K("level ","")+R.lv+K("","단계"),T.play)}
+   ${playRow}
    ${row("story","📖",G.rmOff?K("Read one story","이야기 한 편 읽기"):K("3 reading missions","읽기 미션 3개"),st.name+(G.rmOff?"":" · "+Math.min(3,T.rm||0)+"/3"),T.story)}
    ${row("words","🔤",K("Review 5 words","낱말 5개 복습"),K("Word level ","낱말 레벨 ")+(G.wl||1),T.words)}
   </ol>
-  ${n>=3?`<p class="tddone">🎉 ${K("All done for today. Great reading!","오늘 모험 완료! 정말 잘 읽었어요.")}</p>`:""}`;
+  ${n>=t?`<p class="tddone">🎉 ${K("All done for today. Great reading!","오늘 모험 완료! 정말 잘 읽었어요.")}</p>`:""}`;
  $("tdOv").hidden=false;
- $("tdX").onclick=()=>{sfx("tap");$("tdOv").hidden=true;renderAll()};
- $("tdCard").querySelectorAll("[data-td]").forEach(b=>b.onclick=()=>{sfx("tap");$("tdOv").hidden=true;const k=b.dataset.td;
-  if(k==="play")pgPlay(R.g,R.lv);
+ $("tdX").onclick=()=>{sfx("tap");TDR=null;$("tdOv").hidden=true;renderAll()};
+ $("tdCard").querySelectorAll("[data-tg]").forEach(b=>b.onclick=()=>{sfx("tap");tdStart(b.dataset.tg)});
+ $("tdCard").querySelectorAll("[data-td]").forEach(b=>b.onclick=()=>{sfx("tap");const k=b.dataset.td;
+  if(k==="lap"){tdStart(tdNext()||tdLap()[0]);return}
+  $("tdOv").hidden=true;
+  if(k==="play"){const R=tdGame();TDR="pg";pgPlay(R.g,R.lv,{td:true})}
   else if(k==="story"){if(st.kind==="book")openBook("b1");else{openCases();caseStart(st.i)}}
-  else rmWords(()=>{if(tdCount()<3)tdOpen()})})}
-function tdCelebrate(){const T=tdFresh();if(tdCount()<3)return;const first=!T.paid;T.paid=1;save();
+  else rmWords(()=>{if(!tdDone())tdOpen()})})}
+function tdCelebrate(){const T=tdFresh();if(!tdDone())return;const first=!T.paid;T.paid=1;save();
  $("tdCard").innerHTML=`<div class="tdwin"><div class="tdsun" aria-hidden="true">☀️</div><h2>${K("Today's adventure complete!","오늘의 모험 완료!")}</h2>
   <p>${K("Great reading today. That's enough for now: rest your eyes and come back tomorrow!","오늘도 멋지게 읽었어요. 오늘은 여기까지! 눈도 쉬고, 내일 또 만나요.")}</p><button class="btn pri" id="tdX">${K("OK","좋아요")}</button></div>`;
  $("tdOv").hidden=false;$("tdX").onclick=()=>{sfx("tap");hush();$("tdOv").hidden=true;renderAll()};sfx("evo");
@@ -3788,7 +3823,10 @@ function bkLoadUI(){const box=$("bkBox");if(!box)return;let armed=null;
 /* ---- hooks into the existing game ---- */
 var _pgRec0=pgRec;pgRec=function(t,ok){let was=false;try{was=wbKnown(t)}catch(e){}_pgRec0(t,ok);
  if(!ok)dayLog(D=>{D.wrong[t]=(D.wrong[t]||0)+1});try{if(!was&&wbKnown(t)){if(!isObj(G.mdate))G.mdate={};if(!G.mdate[t])G.mdate[t]=dkey()}}catch(e){}};
-var _pgResult0=pgResult;pgResult=function(){const S=PGS;_pgResult0.apply(this,arguments);dayLog(D=>{D.games++});save();if(S)tdMark("play")};
+var _pgResult0=pgResult;pgResult=function(){const S=PGS;_pgResult0.apply(this,arguments);dayLog(D=>{D.games++});save();
+ if(S&&!S.o.stage)tdMark("play",S.g);
+ if(S&&S.o.td){const hb=$("pgHubB"),g=S.g,lv=S.lv;if(hb){hb.className="btn pri";hb.textContent="☀️ "+K("Today's adventure","오늘의 모험");hb.onclick=()=>{sfx("tap");pgStop();$("pgOv").hidden=true;TDR=null;renderAll();tdBack()}}
+  const ag=$("pgAgain");if(ag)ag.onclick=()=>{sfx("tap");pgPlay(g,lv,{td:true})};const up=$("pgUp");if(up){up.className="btn";up.onclick=()=>{sfx("tap");pgPlay(g,lv+1,{td:true})}}}};
 var _kzGo0=kzGo;kzGo=function(n){const K0=KZ;if(!K0)return;const idx=n===1?0:n===3?1:-1,M=RMS[K0.c.id];
  if(idx>=0&&M&&rmOn()){K0.rmd=K0.rmd||{};if(!K0.rmd[idx]){K0.rmd[idx]=1;rmShow(M[idx],{src:"case"},()=>{if(KZ===K0)kzGo(n)});return}}
  const ks=$("kzSay");if(ks)ks.classList.remove("nudge");_kzGo0(n);const rt=K0.rt;rdNudge("kzSay",()=>KZ===K0&&KZ.act===n&&KZ.rt===rt&&!KZ.busy)};
@@ -3912,3 +3950,35 @@ document.addEventListener("click",e=>{if(!layOn())return;const el=e.target.close
 setInterval(()=>{if(layOn())layBar();else{const b=$("layBar");if(b)b.remove()}},700);
 (()=>{if(!isObj(G.lay))G.lay={};G.layEdit=G.layEdit===true;layApply();
  window.addEventListener("resize",()=>{if(KZ)setTimeout(kzSpotsFit,60)})})();
+
+
+/* ===== v29.2: sound wakes up on iPad/iPhone too; today's adventure lap (course + practice battle hooks); sound check in settings ===== */
+/* iOS counts a touch as a user gesture only when the finger lifts (touchend / click), not on pointerdown / touchstart
+   (WebKit bug 149367). The old code woke the sound only on pointerdown, so on iPad the music and sound effects could
+   stay locked. Wake it on every tap's end too, and start a 1-sample silent sound once (needed on older iOS). */
+function auWake(){const c=auBus();if(!c)return;
+ try{if(c.state!=="running"){const pr=c.resume();if(pr&&pr.catch)pr.catch(()=>{})}}catch(e){}
+ if(!AU.unlk){try{const b=c.createBuffer(1,1,22050),s=c.createBufferSource();s.buffer=b;s.connect(c.destination);s.start(0);AU.unlk=1}catch(e){}}
+ if(!AU.go){AU.go=true;try{auPreload()}catch(e){}}
+ if(G.bgm!==false)musicTick()}
+["touchend","click","keydown"].forEach(t=>document.addEventListener(t,auWake,true));
+/* coming back to the app (home screen, another app, locked screen): the system may have paused the sound */
+document.addEventListener("visibilitychange",()=>{if(document.hidden||!AU.go||!AC||AC.state==="running")return;try{const pr=AC.resume();if(pr&&pr.catch)pr.catch(()=>{})}catch(e){}});
+function auBeep(){const c=auBus();if(!c)return;try{const o=c.createOscillator(),g=c.createGain(),t=c.currentTime;o.type="triangle";o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(880,t+.12);
+ g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.3,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.38);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.42)}catch(e){}}
+function auStatus(){const el=$("auStat");if(!el)return;const has=!!(window.AudioContext||window.webkitAudioContext),st=AC?AC.state:"";
+ el.textContent=!has?K("This browser has no sound engine.","이 브라우저는 소리 기능이 없어요.")
+  :st==="running"?"✓ "+K("Sound is on","소리 켜짐")+(G.bgm===false?K(" · music off"," · 음악 꺼 둠"):AU.cur?K(" · music playing"," · 음악 재생 중"):"")
+  :K("The device is holding the sound. Tap the screen once more, and check the volume and silent mode.","기기가 소리를 막고 있어요. 화면을 한 번 더 누르고, 볼륨과 무음 모드를 확인해 주세요.")}
+/* free course and practice battle count toward today's game lap (story stages do not); games started from the card return to it */
+var _clearRun0=clearRun;clearRun=function(){const fresh=!!RUN&&!RUN.done,stage=!!STAGE;_clearRun0();if(fresh&&!stage){dayLog(D=>{D.games++});save();tdMark("play","course");tdRunBtn()}};
+var _failRun0=failRun;failRun=function(){const fresh=!!RUN&&!RUN.done,stage=!!STAGE;_failRun0();if(fresh&&!stage){dayLog(D=>{D.games++});save();tdMark("play","course");tdRunBtn()}};
+function tdRunBtn(){if(TDR!=="course")return;const b=document.querySelector("#rStage .rres .tbtns .btn");if(b)b.textContent="☀️ "+K("Today's adventure","오늘의 모험")}
+var _closeRun0=closeRun;closeRun=function(){_closeRun0();if(TDR==="course"){TDR=null;setTimeout(()=>tdBack("course"),250)}};
+var _duWin0=duWin;duWin=function(){const D=DU,fresh=!!D&&!D.done,stage=!!STAGE&&STAGE.kind==="battle";_duWin0();
+ if(fresh&&D.practice&&!stage){dayLog(x=>{x.games++});save();tdMark("play","battle")}
+ if(TDR==="battle"){const b=$("dDone");if(b)b.textContent="☀️ "+K("Today's adventure","오늘의 모험")+" →"}};
+var _duLose0=duLose;duLose=function(){const D=DU,fresh=!!D&&!D.done,stage=!!STAGE&&STAGE.kind==="battle";_duLose0();if(fresh&&D.practice&&!stage){dayLog(x=>{x.games++});save();tdMark("play","battle")}};
+var _duClose0=duClose;duClose=function(){_duClose0();if(TDR==="battle"){TDR=null;setTimeout(()=>tdBack("battle"),250)}};
+/* a playground game started from the card: its back arrow returns to the card instead of the playground menu */
+var _pgPlay0=pgPlay;pgPlay=function(g,lv,o){_pgPlay0(g,lv,o);if(o&&o.td){const b=$("pgBack");if(b)b.onclick=()=>{sfx("tap");pgStop();$("pgOv").hidden=true;TDR=null;renderAll();tdBack()}}};

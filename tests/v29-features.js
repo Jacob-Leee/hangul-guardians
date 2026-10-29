@@ -1,4 +1,4 @@
-// v29 feature test: reading-help defaults, settings rows, missions inside a case, today's adventure end to end,
+// v29 feature test (today's adventure in 'short' mode; the lap is tests/today-lap.js): reading-help defaults, settings rows, missions inside a case, today's adventure end to end,
 // weekly parent summary, backup code round trip + restore, read-aloud check with a fake recogniser, level-2 nudge, level-1 narration.
 // node tests/v29-features.js [phone]     (screenshots in tests/out/)
 const {chromium}=require('playwright');const fs=require('fs');const path=require('path');
@@ -14,8 +14,10 @@ const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(
  await p.goto('file://'+path.resolve(__dirname,'..','index.html'));await p.waitForTimeout(500);
  await p.addScriptTag({content:HELP('kz-auto.js')});await p.addScriptTag({content:HELP('pg-auto.js')});
  // 1. defaults for a fresh save
- let st=await p.evaluate(()=>({rd:G.rd,auto:G.autoRead,today:G.today&&G.today.d,days:typeof G.days,mic:G.mic,rmOff:G.rmOff}));
- ok('fresh save → reading help 3, auto read off',st.rd===3&&st.auto===false,st);
+ let st=await p.evaluate(()=>({rd:G.rd,auto:G.autoRead,today:G.today&&G.today.d,days:typeof G.days,mic:G.mic,rmOff:G.rmOff,lap:tdIsLap(),hud:$("tdHud").textContent}));
+ ok('fresh save → reading help 3, auto read off, today = one lap (0/10)',st.rd===3&&st.auto===false&&st.lap===true&&st.hud==='☀️ 0/10',st);
+ // the rest of this test checks the short 3-step flow (the lap has its own test: today-lap.js)
+ await p.evaluate(()=>{G.tdLen="short";save();tdHudSet()});
  await p.evaluate(()=>document.querySelector('#spGo').click());await p.waitForTimeout(300);
  await p.evaluate(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await p.waitForTimeout(900);
  st=await p.evaluate(()=>({hud:$("tdHud").textContent,first:document.querySelector('#extras .xbtn').dataset.x,chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent}));

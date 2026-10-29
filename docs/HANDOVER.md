@@ -1,6 +1,6 @@
 # 열두동물 한글 수비대 — 인수인계 문서
 
-작성: 2026-10-30 · 기준 버전: v29.1 (Claude 아티팩트 버전과 내용 동일, 파일만 나눔) · 앱 주소: https://jacob-leee.github.io/hangul-guardians/ (GitHub `Jacob-Leee/hangul-guardians`, main 브랜치 루트를 GitHub Pages로 배포)
+작성: 2026-10-30 · 기준 버전: v29.2 (Claude 아티팩트 버전과 내용 동일, 파일만 나눔) · 앱 주소: https://jacob-leee.github.io/hangul-guardians/ (GitHub `Jacob-Leee/hangul-guardians`, main 브랜치 루트를 GitHub Pages로 배포)
 
 ## 1. 한 줄 요약
 
@@ -43,7 +43,8 @@ tools/                  make_app.py + sw_template.js(앱 만들기), make_voices
 js/                     app.js (게임 전체) — v28부터 모험 코스 업그레이드도 app.js 끝에 합쳐져 있음
 tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀이터 6종), case-autoplay.js (사건 12개),
                         chaos-sim.js (전체 모드 무작위 시뮬레이터), v29-features.js (읽기 도움·미션·오늘의 모험·부모 요약·백업·마이크),
-                        app-offline.js (설치·오프라인·업데이트, 로컬 서버 필요), spot-overlap.js (반짝이 가림·🛠 위치 고치기)
+                        app-offline.js (설치·오프라인·업데이트, 로컬 서버 필요), spot-overlap.js (반짝이 가림·🛠 위치 고치기),
+                        today-lap.js (오늘의 모험 한 바퀴)
                         + helpers/ (페이지 안에서 정답을 눌러 주는 도우미)
 ```
 
@@ -62,7 +63,7 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 | 달리기 코스 | 캔버스 횡스크롤. 쉬움 모드는 자동 달리기 + 탭 점프 | `/* adventure course */` |
 | 🎪 한글 놀이터 | 미니게임 6종 + 특별 활동(따라 읽기 극장, 십이지 퍼즐). 아래 4-1 참고 | `/* ===== 한글 놀이터 ... */`, `pgHub`, `pgPlay` |
 | 상점 | 코인으로 아이템 구입 | `/* shop */` |
-| ☀️ 오늘의 모험 | 첫 화면 맨 위 버튼 + 상단 ☀️ n/3. 하루 10–15분 코스(놀이 1판 + 읽기 미션 3개 + 낱말 5개). 아래 4-5 | `tdOpen`, `tdMark` |
+| ☀️ 오늘의 모험 | 첫 화면 맨 위 버튼 + 상단 ☀️ n/10. 기본은 '한 바퀴': 놀이터 6종 + 모험 코스 + 연습 배틀 + 읽기 미션 3개 + 낱말 5개(약 25–35분). 설정에서 '짧게'(게임 1개, n/3, 10–15분). 아래 4-5 | `tdOpen`, `tdMark`, `tdStart`, `tdBack` |
 | 📜 읽기 미션 | 사건·동화책 중간에 아이가 소리 내어 읽는 문장 + 그림 고르기 1문항. 아래 4-5 | `rmShow`, `RMS` |
 | 설정 | 난이도, 목소리, 말 빠르기, 문장 사이 쉼, 음악, **읽기 도움 1–3단계, 읽기 미션, 🎤 읽기 확인(실험)**, 낱말 레벨, 배틀 문제 수준, 캐릭터 그림 교체, **글자 실력표 + 이번 주 요약(부모님용)**, **진행 백업 코드**, 📲 앱 상태 | `showSettings`, `showPartner`, `renderWeek` |
 
@@ -164,12 +165,13 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 
 | 항목 | 내용 | 코드 |
 |---|---|---|
-| 목록 | `AASSET.bgm` (case, tension, reveal, solved, title, explore), `AASSET.amb` (forest, river, sea, indoor, village), `AASSET.sfx` (clue, notclue, note, select, correct, retry, stamp, hero, run, restore). 비어 있으면 음악은 없고 효과음은 합성음 | `AASSET` |
+| 목록 | `AASSET.bgm` 10곡: title, explore, play, book, duel, course, case, tension, reveal, solved (`assets/audio/bgm/*.mp3`, v28). `AASSET.amb` (forest, river, sea, indoor, village)와 `AASSET.sfx` (clue, notclue, note, select, correct, retry, stamp, hero, run, restore)는 비워 둠 → 환경음 없음, 효과음은 합성음(만들지 않기로 함) | `AASSET` |
 | 재생 | WebAudio. 반복 음악은 파일 앞뒤 무음을 잘라 이어 붙임(`auTrim`). 바꿀 때 1초 교차 | `bgmPlay`, `bgmStop`, `ambPlay`, `sfxPlay` |
 | 자동 낮춤 | 목소리(기기 음성·녹음 음성)가 나오는 동안 음악 25%, 환경음 50% | `auBus` 안의 0.12초 점검 |
 | 사건 흐름 | 의뢰·조사 case → 증언 tension → 거짓말 발견 후 case → 범인 공개 reveal 1번 → 해결 solved 1번 → 무음. 장소별 환경음 `KAMB` | `kzTalk`, `kzSolve`, `kzReport` |
 | 게임 전체 | `sfx("ok"/"bad"/"tap")`는 파일이 있으면 correct/retry/select 파일로 바뀜 | `sfx` |
-| 설정 | 음악 켜기/끄기(`G.bgm`), 효과음 켜기/끄기(`G.sfxOff`) | `showSettings` |
+| 설정 | 음악 켜기/끄기(`G.bgm`), 효과음 켜기/끄기(`G.sfxOff`), 🔊 소리 확인(짧은 소리 + 상태 표시: 소리 켜짐 / 기기가 소리를 막음) | `showSettings`, `auBeep`, `auStatus` |
+| 소리 깨우기 (v29.2) | iOS는 손가락을 **뗄 때**(touchend·click)만 사용자 동작으로 쳐서 소리를 허용합니다(닿는 순간인 pointerdown·touchstart는 안 됨, WebKit 버그 149367). 예전 코드는 pointerdown에서만 깨워서 아이패드에서 음악·효과음이 잠긴 채일 수 있었음 → touchend·click·keydown에서도 `auWake`(resume + 1샘플 무음 재생). 앱으로 돌아오면(`visibilitychange`) 다시 깨움. `navigator.audioSession.type="playback"`(Safari 17+)으로 무음 모드에서도 음악이 나오게 요청 | `auWake` |
 
 ### 화면에 안 나오는 옛 코드 (정리 대상)
 - 타일맵 섬(`#map`, `MAP`, `renderTiles`, `renderEnts`, 퀘스트 `QUESTS`), 실시간 배틀 `battle(m)`, 펫/파트너(`PT`, `partnerSVG`, `evolve`)는 **어디서도 화면에 나오지 않는 옛 코드**입니다. 지워도 되지만, 지운 뒤 반드시 테스트하세요(일부 변수를 다른 곳에서 참조할 수 있음).
@@ -190,11 +192,15 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
   - 한 미션 = `{a, b, q, ans:[글,이모지], o:[[글,이모지],[글,이모지]]}`. `a`는 1·2단계용 한 문장(20음절 이하), `b`는 3단계용 두 문장(52음절 이하). 정답 낱말이 a와 b 모두에 들어 있어야 합니다.
   - 흐름: 소리 내어 읽기 → "다 읽었어요" → 그림 고르기. 낱말을 누르면 그 낱말만 읽어 주고 '도움'으로 기록합니다.
   - '건너뛰기'가 있고, 건너뛴 수는 부모 요약에 보입니다. 끼우는 곳은 `kzGo`·`kzReport`·`bookEnter`·`goStep`(script 단계)·`bFinish`를 감싼 함수입니다. 설정에서 끌 수 있습니다(`G.rmOff`).
-- **오늘의 모험** (`G.today`):
-  - 놀이 1판: 가장 덜 한 게임. 3단계면 낱말 단계부터 시작합니다.
+- **오늘의 모험** (`G.today`, v29.2부터 기본 '한 바퀴', 설정 `G.tdLen`이 `"short"`이면 예전 3단계):
+  - 게임 한 바퀴(`tdLap`): 🎣 낚시 → 🔨 두더지 → 🌀 모험 코스 → 🃏 짝꿍 → 🌧️ 소나기 → ⚔️ 연습 배틀 → 🚂 기차 → 🧩 빈칸. 이야기 모드(동화책·한글 섬 모험·사건 수사대)는 넣지 않음(보호자 요청). 카드의 '하기 ▶'는 아직 안 한 다음 게임, 아이콘을 누르면 그 게임. 같은 게임을 다시 해도 한 번만 셈(`G.today.lap`).
+  - 카드에서 시작한 게임은 끝나면 카드로 돌아옴(`TDR`, `tdBack`): 놀이터 결과의 '놀이터' 버튼이 '☀️ 오늘의 모험'으로 바뀌고 ← 도 카드로, 코스·배틀은 결과 버튼 이름이 바뀌고 `closeRun`·`duClose`를 감싼 함수가 카드를 엶. 배틀 '다시 도전'처럼 곧바로 다시 열리면 카드를 띄우지 않음.
+  - 게임 4개를 하면 "절반 왔어요! 물 한 모금 마시고 기지개 쭉" 안내. 모두 끝났으면 카드 대신 축하 화면이 먼저 나옴. 레벨 업 화면이 먼저 떠 있으면 그 화면을 닫은 뒤 카드가 열림(화면 두 개가 겹치지 않게).
+  - 셈하는 곳: 놀이터 결과(`pgResult`, 섬 스테이지 판은 제외), 자유 코스 끝(`clearRun`·`failRun`, 스테이지 제외), 연습 배틀 끝(`duWin`·`duLose`, 스테이지 배틀 제외).
+  - 짧게 모드의 놀이 1판: 가장 덜 한 게임. 3단계면 낱말 단계부터 시작합니다.
   - 읽기 미션 3개: 1권을 아직 안 끝냈으면 1권, 끝냈으면 다음 사건.
   - 낱말 5개 복습: `rmWords`. 낱말 레벨 단어를 읽고 그림을 고르며, 결과는 `pgRec`로 간격 반복에 들어갑니다.
-  - 셋을 다 하면 축하 화면이 뜨고, 보상은 하루 한 번만 주며 "오늘은 여기까지" 안내를 합니다. 미션을 꺼 두면 2번은 '이야기 한 편 끝내기'가 됩니다.
+  - 모두 하면(한 바퀴 10개 / 짧게 3개) 축하 화면이 뜨고, 보상은 하루 한 번만 주며 "오늘은 여기까지" 안내를 합니다. 미션을 꺼 두면 읽기 칸은 '이야기 한 편 끝내기'가 됩니다.
 - **하루 기록 `G.days[YYYY-MM-DD]`** (35일 보관):
   - `min`: 최근 90초 안에 터치가 있을 때만 15초씩 셉니다.
   - `rm`, `solo`(도움 없이 읽음), `qn`/`qok`(내용 확인, 첫 시도 정답), `skip`, `help`(🔊·낱말 누르기·도움 버튼), `games`, `words`, `mic`, `wrong{글자·낱말: 틀린 횟수}`, `td`(오늘의 모험 완료).
@@ -325,7 +331,7 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 - 2단계 난이도는 자동으로 올리지 않기.
 - 아이가 직접 읽는 것이 기본(읽기 도움 3단계). 긴 글을 저절로 읽어 주지 않기. 소리는 아이가 🔊를 누를 때만.
 - 읽기 미션의 '건너뛰기'를 없애지 않기. 억지로 막는 대신 부모 요약에 보여 준다.
-- 기본 흐름은 하루 10–15분 '오늘의 모험'. 다 하면 쉬라고 안내한다.
+- 기본 흐름은 '오늘의 모험'. 기본은 '한 바퀴'(약 25–35분, 2026-10-30 보호자 요청), 설정에서 '짧게'(10–15분). 하루 중에 나눠서 해도 되고, 다 하면 쉬라고 안내한다.
 - 진행 기록은 기기 밖으로 보내지 않기(로그인·서버를 만들기 전까지).
 - 펫(파트너) 기능은 사용자 요청으로 제거함. 다시 넣지 않기.
 
@@ -349,6 +355,11 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 | 낮음 | 로그인·결제·앱스토어 (미착수). 웹 앱 설치·오프라인·글꼴 포함은 v29에 완료 |
 | 낮음 | 음성 엔진이 없는 기기에서는 대사마다 글자 수만큼(한 글자 약 0.4초) 기다립니다. 사건 증인 3명이면 30초 넘게 걸릴 수 있음 → 건너뛰기 버튼으로 넘길 수 있음 |
 | 낮음 | 가로로 눕힌 휴대폰(높이 375–390px)에서는 화면이 위아래로 스크롤됨. 놀이터 시작 버튼은 자동으로 보이게 했지만 사건 수사대 질문 등은 아래로 내려야 보임 |
+
+### v29.2: 오늘의 모험 '한 바퀴' + 아이패드 소리 깨우기
+- 보호자 요청: "오늘의 모험을 더 넣어도 된다, 스토리 모드를 뺀 전체 게임을 한 바퀴" → 기본을 게임 8개 한 바퀴 + 읽기 미션 3개 + 낱말 5개로(4-5). 설정에서 짧게로 되돌릴 수 있음.
+- 보호자 보고: "배경음악이 빠진 것 같다." 크롬(컴퓨터)에서는 7개 화면 모두 음악이 나옴을 확인. 아이패드는 손가락을 뗄 때만 소리를 허용하는데 예전 코드는 닿는 순간에만 깨워서 잠길 수 있었음 → `auWake`로 고침(4-4). 아이패드 실기기 확인은 점검표 B1·B6. 설정의 "음악은 음악 파일을 넣은 뒤에 나와요"(v28 전 문구)도 고침.
+- 테스트: `tests/today-lap.js`(카드에서 8개 게임 → 카드 복귀, 중복 없음, 절반 안내, 축하 1번, 짧게 전환, 소리 확인).
 
 ### v29.1: 반짝이 가림 고침 + 그림 위치 고치기 + 사건 3 배경
 - 사용자 보고: "배경이 캐릭터 이미지들과 맞지 않고 겹쳐서 찾기 힘든 부분이 있다." 5가지 화면 크기 × 사건 12개 + 1권을 재 보니, 넓은 화면에서 반짝이가 잘린 그림 밖에 있거나 영웅 밑에 깔린 곳이 있었음 → `kzSpotsFit`, `kzHeroAvoid`로 고치고 `tests/spot-overlap.js`로 모든 크기에서 0건 확인.
@@ -433,6 +444,7 @@ node tests/case-autoplay.js              # 사건 12개 (node tests/case-autopla
 node tests/chaos-sim.js 7 14 mix slow    # 무작위 시뮬레이션: 시드 7, 14라운드, 화면 크기 섞기, 느린 음성 (약 10분)
 node tests/v29-features.js               # 읽기 도움·미션·오늘의 모험·부모 요약·백업 코드·마이크(가짜 인식기)
 node tests/spot-overlap.js               # 화면 5가지 × 사건 12개 + 1권: 반짝이가 가려지거나 그림 밖에 있는지, 🛠 위치 고치기
+node tests/today-lap.js                  # 오늘의 모험 한 바퀴: 카드에서 게임 8개 → 카드 복귀, 축하, 짧게 전환, 소리 확인
 python -m http.server 8000 &  node tests/app-offline.js   # 설치 가능·오프라인·코드 자동 갱신·업데이트 안내
 ```
 1권 테스트는 도서관 → 프롤로그 → 6단계 → 내 결말까지, 놀이터 테스트는 게임마다 결과 화면까지 자동으로 진행하고 `tests/out/`에 화면을 저장합니다. 실패하면 종료 코드 1. 놀이터 테스트는 6–8분 걸립니다.
@@ -448,5 +460,5 @@ python -m http.server 8000 &  node tests/app-offline.js   # 설치 가능·오�
 - 음성 기다리기: `narrate()`는 새 음성이 시작되면 앞 음성의 완료 콜백을 부르지 않습니다. 그래서 "음성이 끝나면 다음 단계"로 짠 흐름은 도움말·🔊·다른 대사가 끼어들면 멈출 수 있습니다. 동화책은 `bSpeak()`(끼어들면 끝난 것으로 처리)를 쓰고, 사건 수사대는 `kzSay()`(최대 대기 시간)나 감시 타이머를 쓰세요. 화면이 사라진 뒤에 도는 `setTimeout`은 요소·상태가 아직 있는지 먼저 확인하세요 (예: `if(DU!==D0)return`).
 - 화면 글자를 바꾸면 그 줄의 녹음 파일 연결이 끊깁니다(열쇠가 대사 글자). 바꾼 줄은 대본 CSV도 같이 고치고 다시 녹음하세요.
 - 영어/한국어 문구는 `K(en, ko)` 또는 `UI.en / UI.ko`에 함께 있습니다.
-- v29 블록은 원래 함수를 **감싸는** 방식입니다: `kzGo`, `kzReport`, `caseStart`, `bookEnter`, `goStep`, `bFinish`, `readPage`, `pgRec`, `pgResult`, `showPartner` (원본은 `_kzGo0` 같은 이름으로 보관). 이 함수들을 고칠 때는 원본 정의를 고치면 감싼 쪽에도 그대로 적용됩니다. 처음 `renderAll()`이 v29 블록보다 먼저 실행되므로 `renderExtras`에서 부르는 `tdChip`/`tdHudSet`은 `function` 선언과 `var`만 씁니다(const를 쓰면 시작할 때 오류).
+- v29 블록은 원래 함수를 **감싸는** 방식입니다: `kzGo`, `kzReport`, `caseStart`, `bookEnter`, `goStep`, `bFinish`, `readPage`, `pgRec`, `pgResult`, `showPartner`, v29.1의 `kzFit`·`kzSearch`, v29.2의 `pgPlay`·`clearRun`·`failRun`·`closeRun`·`duWin`·`duLose`·`duClose` (원본은 `_kzGo0` 같은 이름으로 보관). 이 함수들을 고칠 때는 원본 정의를 고치면 감싼 쪽에도 그대로 적용됩니다. 처음 `renderAll()`이 v29 블록보다 먼저 실행되므로 `renderExtras`에서 부르는 `tdChip`/`tdHudSet`은 `function` 선언과 `var`만 씁니다(const를 쓰면 시작할 때 오류).
 - 앱에 들어가는 파일을 바꾸거나 더하면 `python tools/make_app.py`를 다시 실행하세요(4-6).
