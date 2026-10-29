@@ -1,0 +1,74 @@
+/* 〈시골 쥐와 도시 쥐〉 — book 2 data (draft). Not in the game yet: BOOKS marks a book ready as soon as BD.b2 exists,
+   so this is added only when the 9 required pictures in books/b2/ have arrived:
+     spread, page1, page2, page3, country_stand, country_scared, city_stand, city_scared, cat_prowl  (.webp)
+   The other poses and the cover reuse those pictures until the optional ones exist; then only the file name changes:
+     walk/happy (country) -> country_walk / country_happy, walk/proud (city) -> city_walk / city_proud,
+     pounce (cat) -> cat_pounce, cover -> cover.webp.
+   Positions (at/records) assume the spread layout in the rendering brief: country house left 0–35%,
+   road and bridge 35–60%, city dining room (cut-away) 60–100%. Layout picture: b2_layout_guide.png.
+   To load it in the project folder see docs/HANDOVER.md → "새 책 추가 체크리스트" (BD.b2 → BOOKDATA.b2; VOX/RMS lines go to app.js). */
+VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.22,r:1.06,g:"f",gap:450};
+BD.b2={dir:"books/b2/",cover:"page1.webp",bg:"spread.webp",
+ actors:{
+  country:{n:"시골 쥐",voice:"sb_country",h:30,poses:{stand:["country_stand.webp",1],walk:["country_stand.webp",1],scared:["country_scared.webp",.92],happy:["country_stand.webp",1]}},
+  city:{n:"도시 쥐",voice:"sb_city",h:30,poses:{stand:["city_stand.webp",1],proud:["city_stand.webp",1],scared:["city_scared.webp",.92],walk:["city_stand.webp",1]}},
+  cat:{n:"고양이",voice:"narrator",h:46,poses:{stand:["cat_prowl.webp",1],prowl:["cat_prowl.webp",1],pounce:["cat_prowl.webp",1]}}},
+ at:{home:[23,88],field:[33,92],path:[41,90],bridge:[49,88],road2:[57,91],catIn:[66,88],table1:[73,70],table2:[81,70],
+     hole:[91,88],hole2:[87,89],cityHome:[79,90],catHome:[30,87]},
+ broken:{country:["table1","stand"],city:["table2","proud"],cat:["catHome","prowl"]},
+ endState:{country:["home","happy"],city:["cityHome","stand"],cat:["catIn","stand"]},
+ claim:{who:"country",t:"시골 집에 고양이가 나왔어! 나는 도시에서 살래!"},
+ sentence:{tokens:["커다란","고양이가","시골","집에","나타났어요."],bad:2,fix:"도시"},
+ records:[
+  {k:"table",ic:"🍰",place:"도시 집 식탁",at:[77,58],t:"도시 쥐가 식탁에서 '맛있는 게 가득하지?' 하고 뽐냈어요. 그때 식탁 밑에서 '야옹' 소리가 났어요.",clue:["뽐냈어요","야옹"]},
+  {k:"hole",ic:"🕳️",place:"쥐구멍",at:[91,74],t:"쥐구멍 안에서 시골 쥐가 덜덜 떨며 말했어요. '나는 조용한 우리 집이 좋아.'",clue:["덜덜 떨며","우리 집이 좋아"]},
+  {k:"path",ic:"🌾",place:"시골길",at:[42,74],t:"시골 쥐가 짐을 싸서 시골 집으로 걸어갔어요. 작은 발자국이 시골 집 쪽으로 찍혀 있어요.",clue:["시골 집으로 걸어갔어요"]}],
+ prologue:[
+  {pov:{bg:"@lib",mentor:true,deco:["📚","✨","📖"]},text:"열두 이야기 도서관의 두 번째 책장에는 〈시골 쥐와 도시 쥐〉가 꽂혀 있어요. 거북이 스승님이 아끼는 책이에요."},
+  {pov:{bg:"@lib",vil:true},who:"v_fat",text:"그런데 맛있는 냄새를 따라온 뚱냥이 책을 펼쳤어요. \"냠냠, 도시 잔치가 최고다냥! 시골 집은 무서운 곳으로 바꿔야지!\" 뚱냥은 문장을 몰래 바꿔 버렸어요."},
+  {scene:[{state:"broken"},{gloom:true},{mark:["country","?"]},{cam:[45,100,1],cms:0},{cam:["cat",1.45],cms:2600}],text:"그러자 이야기가 뒤죽박죽이 되었어요. 커다란 고양이가 조용한 시골 집 앞에 나타났어요."},
+  {scene:[{claim:true},{cam:["country",1.6],cms:1600}],who:"country",text:"시골 쥐는 도시 집 식탁에서 말했어요. \"시골 집에 고양이가 나왔어! 나는 도시에서 살래!\" 이대로 두면 아무도 '걱정 없이 먹는 밥이 제일 맛있다'는 걸 배울 수 없어요."},
+  {pov:{bg:"@lib",mentor:true,team:true},who:"mentor",text:"거북이 스승님이 말했어요. \"책 속 기록을 찾아 읽으렴. 기록과 다른 문장을 고치면 이야기가 돌아온단다.\" 이제 수비대가 책 속으로 들어갈 차례예요!"}],
+ enterLine:"\"시골 쥐와 도시 쥐의 이야기를 되찾자!\"",
+ enter:[{say:"\"시골 집에 고양이가 나왔어! 나는 도시에서 살래!\"",who:"country"},{say:"정말 그럴까요? 반짝이는 기록을 찾아 읽어 봐요."}],
+ steps:[
+  {type:"explore",name:"탐색",ask:"그림 속에 숨은 기록을 찾아봐!",hint:"반짝이는 두루마리를 눌러 보렴. 식탁, 쥐구멍, 시골길에 있단다."},
+  {type:"choose",name:"추리",qs:[
+    {ask:"식탁에서 '맛있는 게 가득하지?' 하고 뽐낸 쥐는 누구일까?",opts:[["city","도시 쥐","proud"],["country","시골 쥐"]],a:"city",ev:["table"],evAsk:"어느 기록에서 알았니? 기록을 하나 골라 봐.",hint:"식탁 기록을 다시 읽어 보렴. 누가 뽐냈다고 적혀 있니?",evHint:"그 기록에는 뽐냈다는 말이 없단다. 다른 기록을 읽어 보렴.",cl:["뽐냈어요"]},
+    {ask:"짐을 싸서 시골 집으로 돌아간 쥐는 누구일까?",opts:[["city","도시 쥐"],["country","시골 쥐","walk"]],a:"country",ev:["path","hole"],evAsk:"어느 기록에서 알았니? 기록을 하나 골라 봐.",hint:"시골길 기록을 읽어 보렴. 누가 걸어갔다고 적혀 있니?",evHint:"그 기록에는 집으로 돌아간 이야기가 없단다. 다른 기록을 읽어 보렴.",cl:["시골 집으로 걸어갔어요","우리 집이 좋아"]}],
+   after:[{claim:"x"},{say:"시골 쥐의 말은 기록과 달랐어요."},{say:"이제 책 속 문장을 고쳐 볼까요?"}]},
+  {type:"fix",name:"수정",alts:["바닷가","숲속"],ask1:"기록과 다른 낱말은 어디일까? 콕 눌러 봐!",ask2:"어떤 낱말로 고칠까?",hint1:"기록에는 '야옹' 소리가 어디에서 났다고 적혀 있었니? 책 속 문장과 비교해 보렴.",hint2:"식탁 기록을 다시 읽어 보렴. 그 식탁은 누구의 집에 있었지?",cl:["야옹","도시 쥐가 식탁에서"]},
+  {type:"script",name:"변화",intro:"문장이 바로잡혔어요! 이야기가 바뀌는 걸 봐요.",script:[
+    {claim:false},{mark:["country",null]},{cam:[70,70,1.1]},
+    {move:"cat",to:"catIn",pose:"prowl",ms:2600},
+    {say:"\"야옹!\" 커다란 고양이가 도시 집 식탁으로 다가왔어요."},
+    {pose:["cat","pounce"]},{fx:"burst",at:[70,70]},
+    {move:"city",to:"hole",pose:"scared",ms:900,par:true},
+    {move:"country",to:"hole2",pose:"scared",ms:1000},
+    {say:"두 쥐는 쥐구멍으로 후다닥 숨었어요."},
+    {say:"\"나는 조용한 우리 집이 좋아.\"",who:"country"},
+    {cam:null},{move:"country",to:"home",pose:"walk",end:"happy",ms:3800}],next:"다음: 책장 순서 맞추기"},
+  {type:"order",name:"순서",ask:"일어난 순서대로 책장을 놓아 봐!",hint:"도시에 가기 전에 무슨 일이 있었을까? 초대를 받아야 놀러 갈 수 있겠지?",
+   pages:[{img:"page1.webp",t:"시골 쥐가 도시 쥐를 시골 집에 초대했어요.",cl:["초대했어요"]},{img:"page2.webp",t:"도시 집 식탁에 커다란 고양이가 나타났어요.",cl:["나타났어요"]},{img:"page3.webp",t:"시골 쥐는 시골 집으로 돌아갔어요.",cl:["돌아갔어요"]}]},
+  {type:"story",name:"완성",pages:"restored"}],
+ restored:[
+  {pov:{img:"page1.webp",kb:"in"},text:"시골 쥐가 도시 쥐를 시골 집에 초대했어요. 밥상에는 보리와 콩이 조금 놓여 있었어요."},
+  {scene:[{gloom:false},{state:{country:["home","stand"],city:["field","proud"],cat:["catIn","stand"]}},{cam:["city",1.5],cms:0}],who:"city",text:"도시 쥐가 말했어요. \"이것밖에 없어? 도시에는 맛있는 음식이 가득해. 같이 가 보자!\""},
+  {pov:{img:"page2.webp",kb:"pan"},text:"도시의 큰 집 식탁에는 치즈와 케이크가 가득했어요. 그때 커다란 고양이가 나타났어요!"},
+  {scene:[{state:{country:["table1","stand"],city:["table2","stand"],cat:["catIn","prowl"]}},{cam:[78,72,1.25],cms:0},{pose:["cat","pounce"]},{move:"city",to:"hole",pose:"scared",ms:900,par:true},{move:"country",to:"hole2",pose:"scared",ms:1000}],text:"두 쥐는 쥐구멍으로 후다닥 숨었어요. 시골 쥐는 덜덜 떨었어요."},
+  {pov:{img:"page3.webp",kb:"in"},who:"country",text:"시골 쥐는 짐을 쌌어요. \"맛있는 음식도 좋지만, 나는 걱정 없이 먹는 우리 집 밥이 더 좋아.\""},
+  {scene:[{state:"end"},{cam:["country",1.4],cms:0}],text:"시골 쥐는 시골 집으로 돌아가 보리밥을 맛있게 먹었어요. 이야기가 다시 제자리로 돌아왔어요."}],
+ ending:{title:"보너스: 도시 쥐가 시골에 놀러 온다면?",ask:"도시 쥐가 시골에 놀러 온다면? 둘은 무엇을 할까?",lead:"도시 쥐는 시골에서…",lead2:"마지막에는…",ask2:"마지막에는 어떻게 되었을까?",
+  start:{country:["home","stand"],city:["path","walk"],cat:["catIn","stand"]},tpl:"도시 쥐는 시골에서 {A}. 마지막에 {B}.",
+  A:[{t:"보리밭에서 숨바꼭질을 했어요",e:"🌾",s:[{move:"city",to:"field",pose:"walk",end:"proud",ms:1400},{move:"country",to:"field",pose:"walk",end:"happy",ms:900}]},
+     {t:"시냇물에서 물놀이를 했어요",e:"💧",s:[{move:"city",to:"bridge",pose:"walk",end:"stand",ms:1000},{move:"country",to:"path",pose:"walk",end:"happy",ms:1400},{prop:["💧",46,84]}]},
+     {t:"밤하늘의 별을 구경했어요",e:"⭐",s:[{move:"city",to:"field",pose:"walk",end:"stand",ms:1200},{prop:["⭐",26,30]},{prop:["✨",38,24]}]}],
+  B:[{t:"둘이 보리밥을 나눠 먹었어요",e:"🍚",s:[{move:"city",to:"home",pose:"walk",end:"stand",ms:1600},{prop:["🍚",27,84]},{fx:"confetti"}]},
+     {t:"도시 쥐도 시골이 좋아졌어요",e:"💛",s:[{pose:["city","proud"]},{prop:["💛",36,70]},{fx:"confetti"}]},
+     {t:"다음에는 함께 도시에 놀러 가기로 했어요",e:"🤝",s:[{move:"country",to:"road2",pose:"walk",end:"happy",ms:2000,par:true},{move:"city",to:"road2",pose:"walk",end:"stand",ms:2000},{fx:"confetti"}]}]},
+ fin:["이야기를 되찾았어요!","{vil} 배를 두드리며 도망쳤어요.","\"잘했구나. 이 책을 도서관에 꽂아 두자.\""]};
+RMS.b2=[
+ {a:"뚱냥이 동화책의 문장을 바꿨어요.",b:"맛있는 냄새를 따라온 뚱냥이 책을 펼쳤어요. 그리고 〈시골 쥐와 도시 쥐〉의 문장을 바꿔 버렸어요.",q:"누가 문장을 바꿨나요?",ans:["뚱냥","🐱"],o:[["회색냥","🐈"],["시골 쥐","🐭"]]},
+ {a:"고양이는 도시 집에 나타났어요.",b:"기록에는 도시 집 식탁 밑에서 '야옹' 소리가 났다고 적혀 있어요. 그래서 책 속 문장을 바르게 고쳤어요.",q:"고양이는 어디에 나타났나요?",ans:["도시 집","🏙️"],o:[["시골 집","🏡"],["바닷가","🏖️"]]},
+ {a:"시골 쥐는 시골 집으로 돌아갔어요.",b:"시골 쥐는 짐을 싸서 시골 집으로 돌아갔어요. 걱정 없이 먹는 보리밥이 제일 맛있었어요.",q:"시골 쥐는 어디로 돌아갔나요?",ans:["시골 집","🏡"],o:[["도시 집","🏙️"],["학교","🏫"]]}];
+RMS.b2.forEach((m,i)=>{m.id="b2_"+i});

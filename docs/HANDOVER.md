@@ -1,6 +1,6 @@
 # 열두동물 한글 수비대 — 인수인계 문서
 
-작성: 2026-10-30 · 기준 버전: v29 (Claude 아티팩트 버전과 내용 동일, 파일만 나눔) · 앱 주소: https://jacob-leee.github.io/hangul-guardians/ (GitHub `Jacob-Leee/hangul-guardians`, main 브랜치 루트를 GitHub Pages로 배포)
+작성: 2026-10-30 · 기준 버전: v29.1 (Claude 아티팩트 버전과 내용 동일, 파일만 나눔) · 앱 주소: https://jacob-leee.github.io/hangul-guardians/ (GitHub `Jacob-Leee/hangul-guardians`, main 브랜치 루트를 GitHub Pages로 배포)
 
 ## 1. 한 줄 요약
 
@@ -36,13 +36,15 @@ assets/fonts/           Jua·Gowun Dodum(한글) + Fredoka(영문 4굵기) woff2
                         npc(사건 친구 5명 × 표정·얼굴, 흑묘 전신, 너구리 상점 주인 — 아티팩트에도 같은 경로로 따로 올림)
 audio/voices.js         녹음 음성 목록 (지금은 비어 있음)
 docs/                   이 문서, IPAD_CHECKLIST.md(실기기 점검표), 더빙 대본(dubbing_characters = 녹음할 캐릭터 대사 157줄,
-                        dubbing_letters = 학습 소리 49개, 전체 대본 dubbing_b1 / dubbing_cases)
+                        dubbing_letters = 학습 소리 49개, 전체 대본 dubbing_b1 / dubbing_cases),
+                        drafts/(2권 초안 b2.js와 무대 배치 그림 — 아직 게임에 안 불러옴)
 tools/                  make_app.py + sw_template.js(앱 만들기), make_voices.py(OpenAI로 음성 생성),
                         make_voice_manifest.py(음성 연결), compose_music.py(배경음악 만들기)
 js/                     app.js (게임 전체) — v28부터 모험 코스 업그레이드도 app.js 끝에 합쳐져 있음
 tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀이터 6종), case-autoplay.js (사건 12개),
                         chaos-sim.js (전체 모드 무작위 시뮬레이터), v29-features.js (읽기 도움·미션·오늘의 모험·부모 요약·백업·마이크),
-                        app-offline.js (설치·오프라인·업데이트, 로컬 서버 필요) + helpers/ (페이지 안에서 정답을 눌러 주는 도우미)
+                        app-offline.js (설치·오프라인·업데이트, 로컬 서버 필요), spot-overlap.js (반짝이 가림·🛠 위치 고치기)
+                        + helpers/ (페이지 안에서 정답을 눌러 주는 도우미)
 ```
 
 스크립트 순서가 중요합니다: `books/*/book.js` → `audio/voices.js` → `js/app.js`.
@@ -149,6 +151,12 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 - 쉬움 모드: 글을 자동으로 읽어 줌. 쉬움 모드를 끄면 아이가 먼저 읽고 🔊로 들음.
 - **그림·음악 자리** `KASSET`: v27부터 친구 5명(기본·걱정·기쁨·얼굴 동그라미)과 흑묘 전신이 `assets/img/npc/`에서 들어옵니다(`KASSET` 바로 아래 한 줄이 경로를 채움). 친구 아이디는 `squirrel` `beaver` `spider` `mole`(고슴도치) `gull`. 오른쪽에 선 친구는 영웅 쪽을 보도록 CSS로 좌우를 뒤집고(`.kz-npc .kzimg`), 거미·갈매기는 `.np-spider` `.np-gull`로 크기를 줄였습니다. 흑묘 전신 파일은 왼쪽을 보게 미리 뒤집어 저장했고 `DA.vb.black`으로도 쓰여 무기 배틀에도 나옵니다. 배경·단서·음악은 아직 비어 있어서 코드로 그린 장면과 임시 그림을 씁니다. 파일을 아티팩트(또는 폴더)에 넣고 `KASSET.bg.k1 = "case/k1.webp"`, `KASSET.npc.squirrel_worried = "npc/squirrel_worried.webp"`, `KASSET.npc.v_black`, `KASSET.det.rat`, `KASSET.office`, `KASSET.bgm.case|reveal|solved`처럼 적으면 바로 바뀝니다. 만들 그림과 프롬프트는 Claude 문서 "사건 수사대 그림·음악 프롬프트"에 있습니다.
 - 그린 장면의 `.brk`는 망가진 동안만, `.fix`는 해결 뒤에만 보입니다(장면에 `fixed` 클래스).
+- **반짝이가 가려지지 않게 (v29.1)** — 코드는 `js/app.js`의 `/* ===== v29.1` 블록:
+  - `kzSpotsFit`: 넓은 화면은 3:2 그림의 위·아래가 잘리므로, 반짝이를 보이는 부분 안으로 당깁니다(원래 좌표는 그대로).
+  - `kzHeroAvoid`: 현장 조사에서 영웅이 반짝이를 가리면 오른쪽 구석으로 비켜서고(`kz-side`), 그래도 가리면 잠시 화면 밖으로 나갑니다(`kz-away`). 영웅이 미끄러지는 동안에도 판단이 흔들리지 않게 화면 좌표가 아닌 배치 상자(`offsetLeft`)로 잽니다.
+  - 코드로 그린 배경은 채도·대비를 조금 낮추고 인물에 그림자를 넣어 배경과 구분했습니다.
+- **🛠 그림 위치 고치기 (설정, 부모용)**: 켜고 사건 '현장 조사'나 동화책 '탐색'을 열면 반짝이·두루마리를 끌어 옮길 수 있습니다. 편집 중에는 눌러도 단서로 치지 않습니다. 위치는 `G.lay[사건·책 id][단서 k] = [x%, y%]`로 이 기기에만 저장되고(`layApply`가 `KC[].spots`/`BD[].records`에 덮어씀), '배치 코드 복사'가 그 JSON을 복사합니다. 받은 코드의 숫자를 `KC`의 `spots` 좌표나 책의 `records[].at`에 옮겨 적으면 모든 기기에 반영됩니다.
+- **사건 3 배경**: 1권과 같은 숲속 달리기 코스라서, 1권 spread의 결승선 쪽 절반을 3:2로 잘라 `assets/img/scene/case03_race.webp`로 씁니다(`KASSET.bg.k3`). 반짝이도 그 그림의 결승선·바위에 맞췄습니다.
 - 단서 그림 `KASSET.item.k1_a`(사건 id + 단서 k), 기술 소품 `KASSET.item.k1_box` · `k1_key`, 해결 후 변화 `KASSET.fix.k1 = {src, x, y, w}`(장면 기준 %). 현장 조사의 단서 표시는 반짝임만 보이고, 눌러야 물건이 나타납니다(그림만 보고 단서를 고르지 못하게).
 - 에셋 제작 기준과 1차 프롬프트: Claude 문서 "열두동물 한글 수비대 에셋 제작 가이드". 받은 파일 위치: `assets/img/npc/`, `assets/img/case/`, `assets/img/item/`, `audio/bgm/`, `audio/amb/`, `audio/sfx/`.
 
@@ -283,6 +291,8 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 - [ ] 원작을 외우지 않아도 **게임 속 기록만 읽고 풀 수 있게** (핵심 원칙)
 - [ ] 옛이야기는 새 문장으로 다시 쓰기 (출판사 책 문장 복사 금지)
 - [ ] `tests/book1-playthrough.js`를 복사해 새 책 테스트 만들기
+- [ ] 그림이 덜 왔을 때: 없는 자세는 `poses`에 있는 그림의 파일 이름을 그대로 적고(예: `walk:["country_stand.webp",1]`), 표지는 이야기 그림을 써도 됩니다(표지는 가운데만 잘려 보임). `choose`의 보기 그림도 `poses`를 쓰므로 자세 이름을 지우지 말고 파일만 바꾸세요.
+- [ ] 2권 초안 `docs/drafts/b2.js`는 한 파일 빌드용 형식입니다. `books/b2/book.js`로 옮길 때 `BD.b2=` → `BOOKDATA.b2=`로 바꾸고, `VOX.sb_country`·`VOX.sb_city`(목소리)와 `RMS.b2`(읽기 미션)는 app.js가 먼저 있어야 하므로 app.js의 `VOX`·`RMS` 정의 쪽으로 옮기세요.
 
 ## 6. 목소리
 
@@ -326,11 +336,11 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 
 | 우선 | 내용 |
 |---|---|
-| 높음 | 사건 수사대 배경 12장(`case01_rat.png`…`case12_pig.png`) + 배경음악 4곡 + 환경음 5개 받아 `KASSET`/`AASSET`에 연결하고 반짝임 위치를 그림에 맞추기. 친구·흑묘 그림은 v27에 연결됨 |
+| 높음 | 사건 수사대 배경 11장(`case01_rat.png`, `case02_ox.png`, `case04`…`case12_pig.png`)을 받아 `KASSET.bg`에 연결하고 반짝임 위치를 그림에 맞추기. 사건 3은 1권 그림으로 대체(v29.1). 배경음악은 v28의 10곡으로 충분하고, 환경음·효과음·단서 그림·해결 후 편집본은 만들지 않기로 함(사용자와 정리, 2026-10-30) |
 | 높음 | 아이패드 실기기 점검 `docs/IPAD_CHECKLIST.md` (설치·오프라인·소리·마이크·백업). 자동 테스트는 크롬 엔진이라 Safari 고유 동작은 확인 못 함 |
 | 높음 | 더빙 파일 받아서 연결 + 설정에 "AI 생성 음성" 표기. 녹음 범위는 `docs/dubbing_characters.md`(157줄) |
 | 중간 | 2–12권에도 읽기 미션 3개씩(`RMS.b2`…) — 책을 만들 때 같이 |
-| 높음 | 2–12권 데이터·그림 (사용자가 그림 제작 중) |
+| 높음 | 2권 〈시골 쥐와 도시 쥐〉: 데이터·읽기 미션은 초안 완료(`docs/drafts/b2.js`, 아직 안 불러옴). 꼭 필요한 그림 9장(spread, page1–3, country_stand/scared, city_stand/scared, cat_prowl)이 오면 `books/b2/book.js`로 옮겨 넣기(아래 '새 책 추가 체크리스트'). 3–12권은 미착수 |
 | 중간 | 영웅 능력 설명 일부가 옛 배틀 기준이라 지금 효과 없음 (예: 대장 호랑이 "타입 기술 +50%", 번개 쥐 "첫 방패 구슬") → 동화책·무기 배틀에 맞게 다시 정하기 |
 | 중간 | 흑묘 전신 그림 없음 (머리 그림만) · 액션 카드는 옛 잘라낸 그림 |
 | 중간 | 화면에 안 나오는 옛 코드 정리 (4장 참고) |
@@ -339,6 +349,12 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 | 낮음 | 로그인·결제·앱스토어 (미착수). 웹 앱 설치·오프라인·글꼴 포함은 v29에 완료 |
 | 낮음 | 음성 엔진이 없는 기기에서는 대사마다 글자 수만큼(한 글자 약 0.4초) 기다립니다. 사건 증인 3명이면 30초 넘게 걸릴 수 있음 → 건너뛰기 버튼으로 넘길 수 있음 |
 | 낮음 | 가로로 눕힌 휴대폰(높이 375–390px)에서는 화면이 위아래로 스크롤됨. 놀이터 시작 버튼은 자동으로 보이게 했지만 사건 수사대 질문 등은 아래로 내려야 보임 |
+
+### v29.1: 반짝이 가림 고침 + 그림 위치 고치기 + 사건 3 배경
+- 사용자 보고: "배경이 캐릭터 이미지들과 맞지 않고 겹쳐서 찾기 힘든 부분이 있다." 5가지 화면 크기 × 사건 12개 + 1권을 재 보니, 넓은 화면에서 반짝이가 잘린 그림 밖에 있거나 영웅 밑에 깔린 곳이 있었음 → `kzSpotsFit`, `kzHeroAvoid`로 고치고 `tests/spot-overlap.js`로 모든 크기에서 0건 확인.
+- 그림이 바뀌어도 부모가 직접 위치를 고칠 수 있게 설정에 🛠 그림 위치 고치기(4-3 참고).
+- 사용자가 올린 그림 중 대신 쓸 수 있는 것을 찾아, 1권 결승선 그림을 사건 3 배경으로 씀. 나머지 그림은 모두 이미 쓰이고 있고, 음악은 v28의 10곡으로 충분.
+- 2권 초안은 꼭 필요한 그림 9장만으로 끝까지 돌아가게 줄임: 걷기·기쁨·뽐내기 자세는 기본 자세, 덮치기는 살금살금, 표지는 이야기 그림 1을 대신 씀(`poses`에 같은 파일 이름). 선택 그림이 오면 파일 이름만 바꾸면 됨.
 
 ### v29: 아이가 직접 읽기 + 설치형 웹 앱
 - 아빠 확인: 아이는 받침 있는 글도 잘 읽음 → 기본을 '혼자 읽기'로. 긴 글 자동 읽기를 끄고 🔊는 필요할 때만.
@@ -416,6 +432,7 @@ node tests/playground-autoplay.js        # 놀이터 6종 × 1·5단계
 node tests/case-autoplay.js              # 사건 12개 (node tests/case-autoplay.js 3 → 3개만)
 node tests/chaos-sim.js 7 14 mix slow    # 무작위 시뮬레이션: 시드 7, 14라운드, 화면 크기 섞기, 느린 음성 (약 10분)
 node tests/v29-features.js               # 읽기 도움·미션·오늘의 모험·부모 요약·백업 코드·마이크(가짜 인식기)
+node tests/spot-overlap.js               # 화면 5가지 × 사건 12개 + 1권: 반짝이가 가려지거나 그림 밖에 있는지, 🛠 위치 고치기
 python -m http.server 8000 &  node tests/app-offline.js   # 설치 가능·오프라인·코드 자동 갱신·업데이트 안내
 ```
 1권 테스트는 도서관 → 프롤로그 → 6단계 → 내 결말까지, 놀이터 테스트는 게임마다 결과 화면까지 자동으로 진행하고 `tests/out/`에 화면을 저장합니다. 실패하면 종료 코드 1. 놀이터 테스트는 6–8분 걸립니다.

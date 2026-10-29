@@ -1612,3 +1612,14 @@ textarea,input,select{-webkit-user-select:text;user-select:text;-webkit-touch-ca
 .appbar .btn{min-height:44px;font-size:15px;white-space:nowrap}
 .appbar .x{background:none;border:0;font-size:22px;cursor:pointer;color:var(--muted);min-width:40px;min-height:40px}
 .app{padding-top:max(12px,env(safe-area-inset-top,0px))}
+
+.kzact.kz-L.kz-side{left:auto;right:2%}
+.kzact.kz-L.kz-away{opacity:0;transform:translateX(-70%)}
+.kzact .kzimg{filter:drop-shadow(0 8px 6px rgba(0,0,0,.28))}
+.kzscene>svg{filter:saturate(.88) contrast(.94)}
+.kzspot.layed,.bhot.layed{outline:3px solid #ff5a5a;outline-offset:2px;cursor:grab;touch-action:none}
+.kzspot.layed::before{content:attr(data-lab);position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;background:#ff5a5a;color:#fff;font-size:12px;padding:1px 6px;border-radius:8px;margin-top:4px;z-index:5;pointer-events:none}
+.laybar{position:fixed;left:50%;bottom:max(10px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:95;background:#fff;border:3px solid #ff5a5a;border-radius:14px;padding:8px 10px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;max-width:calc(100vw - 20px);box-shadow:0 6px 18px rgba(0,0,0,.3);font-size:14px;color:var(--ink)}
+.laybar small{color:var(--muted)}
+.laybar .btn{min-height:40px;font-size:14px}
+.laynote{flex-basis:100%;font-size:12px;color:#c0392b;word-break:break-all}

@@ -34,4 +34,4 @@
 ## 실행·테스트 (개발용)
 
 - **로컬 실행:** `python -m http.server`를 실행한 뒤 http://localhost:8000 에서 엽니다. `index.html`을 파일로 바로 열어도 되지만, 이 경우 배경음악과 오프라인 기능은 동작하지 않습니다.
-- **테스트:** `node tests/book1-playthrough.js`, `node tests/case-autoplay.js`, `node tests/playground-autoplay.js`, `node tests/v29-features.js`, `node tests/chaos-sim.js`, `node tests/app-offline.js`(로컬 서버 필요). 모두 Playwright가 필요합니다.
+- **테스트:** `node tests/book1-playthrough.js`, `node tests/case-autoplay.js`, `node tests/playground-autoplay.js`, `node tests/v29-features.js`, `node tests/spot-overlap.js`, `node tests/chaos-sim.js`, `node tests/app-offline.js`(로컬 서버 필요). 모두 Playwright가 필요합니다.

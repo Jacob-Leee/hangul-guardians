@@ -1889,10 +1889,10 @@ const KC=[
 {id:"k3",h:"tiger",vil:"tiger",cl:"mole",sc:"race",t:{ko:"가짜 우승자",en:"The Fake Winner"},
  brief:["어제 숲속 달리기 대회가 열렸어요.","고슴도치는 열심히 달려서 일 등으로 결승선에 들어왔어요.","그런데 오늘 호랑이냥이 금메달을 목에 걸고 \"내가 일 등이다냥!\" 하고 우겨요.","고슴도치는 너무 속상해서 눈물이 났어요."],
  q:{ask:"어제 달리기 대회에서 일 등은 누구였을까?",a:["고슴도치","🦔"],o:[["호랑이냥","🐯"],["다람쥐","🐿️"]],clue:"일 등으로",note:"호랑이냥이 고슴도치의 금메달을 가져갔어요."},
- spots:[{k:"a",ic:"📸",x:28,y:72,n:"결승선 사진",t:"결승선 사진이 있어요. 고슴도치가 맨 앞에서 결승선을 지나고 있어요."},
-  {k:"b",ic:"📋",x:56,y:62,n:"기록판",t:"기록판에 '일 등 고슴도치, 이 등 다람쥐'라고 쓰여 있어요."},
-  {k:"c",ic:"🧡",x:74,y:82,n:"줄무늬 털",t:"시상대 위에 주황색 줄무늬 털이 떨어져 있어요."},
-  {k:"d",ic:"🥤",x:44,y:86,decoy:1,t:"누가 마시다 남긴 물병이에요. 단서는 아니에요."}],
+ spots:[{k:"a",ic:"📸",x:55,y:70,n:"결승선 사진",t:"결승선 사진이 있어요. 고슴도치가 맨 앞에서 결승선을 지나고 있어요."},
+  {k:"b",ic:"📋",x:41,y:78,n:"기록판",t:"기록판에 '일 등 고슴도치, 이 등 다람쥐'라고 쓰여 있어요."},
+  {k:"c",ic:"🧡",x:72,y:80,n:"줄무늬 털",t:"결승선 옆 바위에 주황색 줄무늬 털이 끼어 있어요."},
+  {k:"d",ic:"🥤",x:86,y:86,decoy:1,t:"누가 마시다 남긴 물병이에요. 단서는 아니에요."}],
  talk:[{w:"squirrel",t:"\"나는 고슴도치 바로 뒤에서 달렸어. 정말 아깝게 졌지.\""},
   {w:"v",t:"\"나는 어제 제일 먼저 결승선에 들어왔다냥!\"",lie:1,proof:["a","b"]},
   {w:"gull",t:"\"밤에 줄무늬 고양이가 시상대에서 금메달을 가져갔어.\""}],
@@ -2193,6 +2193,8 @@ function kzScene(sc){const S={
 const KASSET={bg:{},npc:{},det:{},item:{},fix:{},office:"",bgm:{}};
 /* friends: base · worried · happy · face (round avatar). Files: assets/img/npc/<id>[_worried|_happy|_face].webp */
 (()=>{const P="assets/img/npc/";["squirrel","beaver","spider","mole","gull"].forEach(n=>["","_worried","_happy","_face"].forEach(m=>{KASSET.npc[n+m]=P+n+m+".webp"}));KASSET.npc.v_black=P+"v_black.webp";KASSET.npc.shop=P+"raccoon.webp"})();
+/* painted backgrounds that already exist: case 3 runs on the same forest race track as book 1 */
+KASSET.bg.k3="assets/img/scene/case03_race.webp";
 if(KASSET.npc.v_black)DA.vb.black=KASSET.npc.v_black;
 const KACTS=[["brief","📁","의뢰"],["search","🔍","조사"],["talk","💬","증언"],["skill","✨","기술"],["deduce","🧠","추리"],["solve","✅","해결"]];
 let KZ=null,KBGM=null;
@@ -3496,6 +3498,7 @@ function showSettings(){
  <div class="setrow"><b>${K("Word level","낱말 레벨")}</b>${seg("wl",G.wl||1,[[1,"1"],[2,"2"],[3,"3"],[4,"4"],[5,"5"]])}<small>${WB_NAMES[G.wl||1]} · ${K("Rises by itself as words are learned in the playground. The level test can set it too.","놀이터에서 낱말을 익히면 저절로 올라가요. 레벨 테스트로 다시 정할 수도 있어요.")}</small></div>
  <div class="setrow"><b>${K("Battle questions","배틀 문제 수준")}</b>${seg("rl",G.rl,[[1,K("Letters","글자")],[2,K("Words","낱말")]])}<small>${K("Words: battles use real words with 받침.","낱말: 배틀에서 받침 있는 실제 낱말이 나와요.")}</small></div>
  <div class="setrow"><b>${K("Letter report","글자 실력표")}</b><button class="btn" id="setRep">📊 ${K("Open","열기")}</button><small>${K("For parents: which letters your child has mastered and which need practice.","부모님용: 아이가 익힌 글자와 연습이 더 필요한 글자를 한눈에 봐요.")}</small></div>
+ <div class="setrow"><b>🛠 ${K("Move picture spots (parents)","그림 위치 고치기 (부모용)")}</b>${seg("lay",G.layEdit?1:0,[[1,K("On","켜기")],[0,K("Off","끄기")]])}<small>${K("When a sparkle or scroll is not on its object (for example after a new picture), turn this on, open the case's search step or the book's explore step and drag it. Saved on this device; 'Copy layout code' gives the code to send to the developer.","반짝이나 두루마리가 그림 속 물건과 어긋나 있으면(새 그림을 넣은 뒤 등) 켜고, 사건의 '현장 조사'나 동화책의 '탐색' 단계에서 끌어서 옮기세요. 이 기기에 저장되고, '배치 코드 복사'로 개발 담당에게 보낼 수 있어요.")}</small></div>
  <div class="setrow"><b>${K("Progress backup","진행 백업")}</b><button class="btn" id="bkMake">📋 ${K("Make a backup code","백업 코드 만들기")}</button><button class="btn" id="bkLoad">📥 ${K("Restore from a code","코드로 불러오기")}</button><small>${K("Progress is saved only on this device and in this browser (the home-screen app keeps its own copy). Keep a backup code in your notes before changing devices or clearing the browser.","진행 기록은 이 기기, 이 브라우저에만 저장돼요 (홈 화면 앱은 따로 저장돼요). 기기를 바꾸거나 브라우저 기록을 지우기 전에 백업 코드를 메모장에 보관하세요.")}</small><div class="bkbox" id="bkBox"></div></div>
  <div class="setrow"><b>📲 ${K("App","앱")}</b><small id="appSt">${appStatusText()}</small>${APP.waiting?`<button class="btn pri" id="appUpd">✨ ${K("Update now","지금 업데이트")}</button>`:""}${APP.prompt&&!appStandalone()?`<button class="btn" id="appIns">📲 ${K("Install","설치")}</button>`:""}</div>
  <div class="tbtns"><button class="btn" id="setHeroB">${K("Change hero","영웅 바꾸기")}</button><button class="btn pri" id="setOk">${K("Done","완료")}</button></div>`;
@@ -3520,7 +3523,8 @@ function showSettings(){
  $("setCard").querySelectorAll("[data-rd]").forEach(b=>b.onclick=()=>{G.rd=+b.dataset.rd;G.autoRead=G.rd===1;save();showSettings()});
  $("setCard").querySelectorAll("[data-rmo]").forEach(b=>b.onclick=()=>{G.rmOff=b.dataset.rmo==="0";save();showSettings()});
  $("setCard").querySelectorAll("[data-mic]").forEach(b=>b.onclick=()=>{G.mic=b.dataset.mic==="1";if(G.mic)G.micDead=0;save();showSettings()});
- $("bkMake").onclick=bkMakeUI;$("bkLoad").onclick=bkLoadUI;if($("appUpd"))$("appUpd").onclick=appApplyUpdate;if($("appIns"))$("appIns").onclick=appInstall;
+ $("bkMake").onclick=bkMakeUI;$("bkLoad").onclick=bkLoadUI;
+ $("setCard").querySelectorAll("[data-lay]").forEach(b=>b.onclick=()=>{G.layEdit=b.dataset.lay==="1";save();showSettings();if(G.layEdit)toast(K("Open a case's search step or the book's explore step.","사건의 '현장 조사'나 동화책 '탐색' 단계를 열어 보세요."))});if($("appUpd"))$("appUpd").onclick=appApplyUpdate;if($("appIns"))$("appIns").onclick=appInstall;
 }
 $("menuBtn").onclick=()=>{if(overlayOpen())return;showSettings()};
 document.body.classList.toggle("easy",!!G.easy);
@@ -3851,3 +3855,60 @@ function appStatusText(){if(!appMode())return K("This copy runs inside claude.ai
  try{if(navigator.storage&&navigator.storage.persist&&appStandalone())navigator.storage.persisted().then(p=>{if(!p)return navigator.storage.persist()}).catch(()=>{})}catch(e){}
  if(!appStandalone()&&!G.appHint)setTimeout(()=>{if(!overlayOpen()&&$("splashOv").hidden)appInstallHint();else queue(appInstallHint)},6000);
 })();
+
+
+/* ===== v29.1: clue spots always visible (kept inside the visible picture, never under the hero) + parent tool to move spots ===== */
+var LAY={drag:null};
+/* keep every sparkle inside the part of the picture this screen shows (wide screens crop the top and bottom) */
+function kzSpotsFit(){if(!KZ)return;const st=$("kzStage"),w=$("kzWorld"),sp=$("kzSpots");if(!st||!w||!sp)return;
+ const W=st.clientWidth,H=st.clientHeight,ww=w.offsetWidth,wh=w.offsetHeight,L=parseFloat(w.style.left)||0,T=parseFloat(w.style.top)||0;if(!ww||!wh)return;
+ const vx0=-L/ww*100,vx1=(W-L)/ww*100,vy0=-T/wh*100,vy1=(H-T)/wh*100;
+ sp.querySelectorAll(".kzspot").forEach(b=>{const s=KZ.c.spots.find(x=>x.k===b.dataset.k);if(!s)return;const r=b.offsetWidth/2+6,mx=r/ww*100,my=r/wh*100;
+  const x=Math.min(Math.max(s.x,vx0+mx),vx1-mx),y=Math.min(Math.max(s.y,vy0+my),vy1-my);b.style.left=x.toFixed(2)+"%";b.style.top=y.toFixed(2)+"%"});
+ kzHeroAvoid()}
+/* during the search the hero steps aside: left corner, else right corner, else out of the picture.
+   The hero is measured from its layout box (offsetLeft/Top), not getBoundingClientRect: while it is still sliding out
+   (a .9s transform transition) the on-screen box is shifted, which made a re-check think the spot was free and bring it back. */
+function kzHeroAvoid(){const a=$("kzAL"),box=$("kzActors");if(!a||!box||!KZ)return;
+ if(KZ.act!==1){a.classList.remove("kz-side","kz-away");return}
+ const im=a.querySelector(".kzimg");if(im&&!im.complete)im.addEventListener("load",()=>setTimeout(kzHeroAvoid,30),{once:true});
+ const B=box.getBoundingClientRect(),spots=[...document.querySelectorAll("#kzSpots .kzspot")].map(b=>b.getBoundingClientRect());
+ const at=side=>{a.classList.toggle("kz-side",side);const x=B.left+a.offsetLeft+(im?im.offsetLeft:0),y=B.top+a.offsetTop+(im?im.offsetTop:0);
+  return {l:x,t:y,r:x+(im?im.offsetWidth:a.offsetWidth),b:y+(im?im.offsetHeight:a.offsetHeight)}};
+ const hit=r=>r.r>r.l&&spots.some(q=>Math.min(r.r,q.right)-Math.max(r.l,q.left)>6&&Math.min(r.b,q.bottom)-Math.max(r.t,q.top)>6);
+ const mode=!hit(at(false))?"":!hit(at(true))?"side":"away";
+ a.classList.toggle("kz-side",mode==="side");a.classList.toggle("kz-away",mode==="away")}
+var _kzFit0=kzFit;kzFit=function(){_kzFit0();kzSpotsFit()};
+var _kzSearch0=kzSearch;kzSearch=function(){_kzSearch0();layDecorate();requestAnimationFrame(kzSpotsFit);setTimeout(kzSpotsFit,120);setTimeout(kzHeroAvoid,950)};
+/* ---- 🛠 parent tool: drag sparkles / scrolls onto the right object in the picture; saved on this device, copyable as a code ---- */
+function layApply(){if(!isObj(G.lay))G.lay={};
+ KC.forEach(c=>c.spots.forEach(s=>{if(s._x0==null){s._x0=s.x;s._y0=s.y}const v=(G.lay[c.id]||{})[s.k];if(Array.isArray(v)){s.x=+v[0];s.y=+v[1]}else{s.x=s._x0;s.y=s._y0}}));
+ if(typeof BD!=="undefined")for(const id in BD){(BD[id].records||[]).forEach(r=>{if(!r._at0)r._at0=r.at.slice();const v=(G.lay[id]||{})[r.k];r.at=Array.isArray(v)?[+v[0],+v[1]]:r._at0.slice()})}}
+function layOn(){return !!G.layEdit}
+function layScene(){if(KZ&&KZ.act===1&&!$("caseOv").hidden)return {id:KZ.c.id,kind:"case"};if(typeof BK!=="undefined"&&BK&&!$("bookOv").hidden&&BK.D.steps[BK.si]&&BK.D.steps[BK.si].type==="explore")return {id:BK.B.id,kind:"book"};return null}
+function layBar(){let b=$("layBar");const sc=layScene();if(!layOn()||!sc){if(b)b.remove();return}
+ if(!b){b=document.createElement("div");b.id="layBar";b.className="laybar";document.body.appendChild(b)}
+ b.innerHTML=`<b>🛠 ${K("Move the sparkles","위치 고치기")}</b><small>${K("Drag each sparkle onto its object in the picture.","반짝이를 끌어서 그림 속 물건 위에 놓아요.")}</small><button class="btn" data-l="copy">📋 ${K("Copy layout code","배치 코드 복사")}</button><button class="btn" data-l="reset">↩️ ${K("Reset this scene","이 장면 원래대로")}</button><button class="btn pri" data-l="end">${K("Done","끝내기")}</button><span class="laynote" id="layNote"></span>`;
+ b.querySelector('[data-l="copy"]').onclick=layCopy;
+ b.querySelector('[data-l="reset"]').onclick=()=>{const s=layScene();if(!s)return;delete G.lay[s.id];save();layApply();layRefresh()};
+ b.querySelector('[data-l="end"]').onclick=()=>{G.layEdit=false;save();layRefresh()}}
+function layRefresh(){document.querySelectorAll(".kzspot,.bhot").forEach(e=>e.classList.toggle("layed",layOn()));
+ if(KZ&&KZ.act===1){const sp=$("kzSpots");if(sp)KZ.c.spots.forEach(s=>{const b=sp.querySelector(`[data-k="${s.k}"]`);if(b){b.style.left=s.x+"%";b.style.top=s.y+"%"}});kzSpotsFit()}
+ if(typeof BK!=="undefined"&&BK)document.querySelectorAll("#bHots .bhot").forEach(h=>{const r=BK.D.records.find(x=>x.k===h.dataset.h);if(r){h.style.left=r.at[0]+"%";h.style.top=r.at[1]+"%"}});
+ layDecorate();layBar()}
+function layDecorate(){if(!layOn())return;document.querySelectorAll("#kzSpots .kzspot").forEach(b=>{const s=KZ&&KZ.c.spots.find(x=>x.k===b.dataset.k);b.classList.add("layed");b.dataset.lab=s?(s.decoy?K("decoy","가짜"):s.n):b.dataset.k});
+ document.querySelectorAll("#bHots .bhot").forEach(h=>h.classList.add("layed"))}
+async function layCopy(){const code=JSON.stringify(G.lay||{});let ok=false;try{await navigator.clipboard.writeText(code);ok=true}catch(e){}
+ const n=$("layNote");if(n)n.textContent=ok?K("Copied. Send it to the developer.","복사했어요. 개발 담당에게 보내 주세요."):code}
+/* dragging: one pointer handler for both case sparkles and book scrolls; a tap is not counted as finding a clue while editing */
+document.addEventListener("pointerdown",e=>{if(!layOn())return;const el=e.target.closest&&e.target.closest(".kzspot,.bhot");const sc=layScene();if(!el||!sc)return;
+ e.preventDefault();e.stopPropagation();const world=el.classList.contains("kzspot")?$("kzWorld"):$("bWorld");LAY.drag={el,world,sc,k:el.dataset.k||el.dataset.h,moved:false};try{el.setPointerCapture(e.pointerId)}catch(x){}},true);
+document.addEventListener("pointermove",e=>{const d=LAY.drag;if(!d)return;const r=d.world.getBoundingClientRect();if(!r.width)return;
+ const x=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100)),y=Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100));d.el.style.left=x.toFixed(1)+"%";d.el.style.top=y.toFixed(1)+"%";d.x=x;d.y=y;d.moved=true},true);
+document.addEventListener("pointerup",e=>{const d=LAY.drag;if(!d)return;LAY.drag=null;e.stopPropagation();if(!d.moved)return;
+ if(!isObj(G.lay))G.lay={};const o=G.lay[d.sc.id]||(G.lay[d.sc.id]={});o[d.k]=[+d.x.toFixed(1),+d.y.toFixed(1)];save();layApply();
+ const n=$("layNote");if(n)n.textContent=`${d.k}: ${o[d.k][0]}, ${o[d.k][1]}`;if(d.sc.kind==="case")kzSpotsFit()},true);
+document.addEventListener("click",e=>{if(!layOn())return;const el=e.target.closest&&e.target.closest(".kzspot,.bhot");if(el&&layScene()){e.preventDefault();e.stopPropagation()}},true);
+setInterval(()=>{if(layOn())layBar();else{const b=$("layBar");if(b)b.remove()}},700);
+(()=>{if(!isObj(G.lay))G.lay={};G.layEdit=G.layEdit===true;layApply();
+ window.addEventListener("resize",()=>{if(KZ)setTimeout(kzSpotsFit,60)})})();
