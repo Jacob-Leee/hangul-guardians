@@ -359,7 +359,7 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 ### v29.2: 오늘의 모험 '한 바퀴' + 아이패드 소리 깨우기
 - 보호자 요청: "오늘의 모험을 더 넣어도 된다, 스토리 모드를 뺀 전체 게임을 한 바퀴" → 기본을 게임 8개 한 바퀴 + 읽기 미션 3개 + 낱말 5개로(4-5). 설정에서 짧게로 되돌릴 수 있음.
 - 보호자 보고: "배경음악이 빠진 것 같다." 크롬(컴퓨터)에서는 7개 화면 모두 음악이 나옴을 확인. 아이패드는 손가락을 뗄 때만 소리를 허용하는데 예전 코드는 닿는 순간에만 깨워서 잠길 수 있었음 → `auWake`로 고침(4-4). 아이패드 실기기 확인은 점검표 B1·B6. 설정의 "음악은 음악 파일을 넣은 뒤에 나와요"(v28 전 문구)도 고침.
-- 테스트: `tests/today-lap.js`(카드에서 8개 게임 → 카드 복귀, 중복 없음, 절반 안내, 축하 1번, 짧게 전환, 소리 확인).
+- 테스트: `tests/today-lap.js`(카드에서 8개 게임 → 카드 복귀, 중복 없음, 절반 안내, 축하 1번, 짧게 전환, 소리 확인). `tests/case-autoplay.js`가 v29부터 사건 속 읽기 미션에서 멈추던 것도 고침(테스트 쪽 문제였고 게임은 정상).
 
 ### v29.1: 반짝이 가림 고침 + 그림 위치 고치기 + 사건 3 배경
 - 사용자 보고: "배경이 캐릭터 이미지들과 맞지 않고 겹쳐서 찾기 힘든 부분이 있다." 5가지 화면 크기 × 사건 12개 + 1권을 재 보니, 넓은 화면에서 반짝이가 잘린 그림 밖에 있거나 영웅 밑에 깔린 곳이 있었음 → `kzSpotsFit`, `kzHeroAvoid`로 고치고 `tests/spot-overlap.js`로 모든 크기에서 0건 확인.
@@ -440,7 +440,7 @@ npx playwright install chromium
 node tests/book1-playthrough.js          # 태블릿 크기
 node tests/book1-playthrough.js phone    # 휴대폰 크기
 node tests/playground-autoplay.js        # 놀이터 6종 × 1·5단계
-node tests/case-autoplay.js              # 사건 12개 (node tests/case-autoplay.js 3 → 3개만)
+node tests/case-autoplay.js              # 사건 12개, 사건 속 읽기 미션 포함 (node tests/case-autoplay.js 3 → 3개만)
 node tests/chaos-sim.js 7 14 mix slow    # 무작위 시뮬레이션: 시드 7, 14라운드, 화면 크기 섞기, 느린 음성 (약 10분)
 node tests/v29-features.js               # 읽기 도움·미션·오늘의 모험·부모 요약·백업 코드·마이크(가짜 인식기)
 node tests/spot-overlap.js               # 화면 5가지 × 사건 12개 + 1권: 반짝이가 가려지거나 그림 밖에 있는지, 🛠 위치 고치기

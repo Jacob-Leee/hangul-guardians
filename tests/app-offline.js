@@ -32,6 +32,9 @@ const path=require('path');const BASE=process.env.BASE||'http://localhost:8000/'
  // code fix pushed without a new sw.js: served from the saved copy first, refreshed in the background, used on the next launch
  await ctx.setOffline(false);
  const ajs=APPDIR+'/js/app.js',origJs=fs.readFileSync(ajs,'utf8');fs.writeFileSync(ajs,origJs+'\n/*swr-marker*/\n');
+ // the browser's own cache may answer the script without asking the worker (heuristic freshness grows with the file's age,
+ // and GitHub Pages sends max-age=600), so turn it off for this check: the request must reach the worker
+ await cdp.send('Network.setCacheDisabled',{cacheDisabled:true});
  try{await p.reload();await p.waitForTimeout(2500);
   const m1=await p.evaluate(async()=>{const k=(await caches.keys()).find(k=>k.startsWith('hg-'));const r=await (await caches.open(k)).match('js/app.js');return (await r.text()).includes('swr-marker')});
   ok('code change is fetched in the background into the saved copy',m1,{m1});
