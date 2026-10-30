@@ -58,7 +58,7 @@ for root, dirs, fs in os.walk(OUT):
         rel = os.path.relpath(os.path.join(root, f), OUT).replace(os.sep, '/')
         if rel in ('sw.js', 'README.md', '.nojekyll') or rel.endswith(('.txt', '.md', '.zip')) or f == 'LICENSE' or f.startswith('.'): continue
         files.append(rel)
-core = [f for f in ['index.html', 'css/style.css', 'js/app.js', 'audio/voices.js', 'books/b1/book.js', 'books/b2/book.js', 'manifest.webmanifest',
+core = [f for f in ['index.html', 'css/style.css', 'js/app.js', 'audio/voices.js', *['books/b%d/book.js'%i for i in range(1,13)], 'manifest.webmanifest',
                     'assets/fonts/jua-korean-400-normal.woff2', 'assets/fonts/gowun-dodum-korean-400-normal.woff2'] if f in files]
 rest = [f for f in files if f not in core]
 hsh = hashlib.sha256()

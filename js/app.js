@@ -4700,5 +4700,137 @@ RMS.b12=[
  {a:"삼 형제는 벽돌집에 모여 안전했어요.",b:"첫째와 둘째가 셋째네 벽돌집으로 달려갔어요. 늑대는 지쳐서 멀리 도망갔어요.",q:"삼 형제는 어디에 모였나요?",ans:["벽돌집","🧱"],o:[["지푸라기 집","🛖"],["늑대네 집","🐺"]]}];
 RMS.b12.forEach((m,i)=>{m.id="b12_"+i});
 HQ_ITEMS.push({id:"goldbrick",e:"🧱",n:["Golden brick","황금 벽돌"],src:"book_b12"});
+
+
+/* ===== v30a: 낚시·두더지 분위기 업 — 잔잔한 배경 생물 + 연속 정답 무지개 ===== */
+(function(){
+var _fish0=PGM.fish;PGM.fish=function(){var M=_fish0(),_s=M.setup;
+ M.setup=function(){_s();var A=$("pgArea").querySelector(".pond3");if(!A)return;
+  A.insertAdjacentHTML("beforeend",'<i class="lily a"></i><i class="lily b"></i><span class="pbfly" aria-hidden="true">🦋</span><span class="jumpf" aria-hidden="true">🐟</span>')};
+ return M};
+var _mole0=PGM.mole;PGM.mole=function(){var M=_mole0(),_s=M.setup;
+ M.setup=function(){_s();var A=$("pgArea").querySelector(".meadow");if(!A)return;
+  A.insertAdjacentHTML("beforeend",'<span class="pbfly" aria-hidden="true">🦋</span><span class="lbug" aria-hidden="true">🐞</span><i class="seed s1"></i><i class="seed s2"></i><i class="seed s3"></i>')};
+ return M};
+/* 3연속 정답 배너가 뜰 때, 낚시·두더지 무대에는 무지개도 뜬다 */
+var _ban0=pgBanner;pgBanner=function(t,cls){_ban0(t,cls);
+ if(cls!=="combo"||!PGS)return;var A=$("pgArea");if(!A)return;var sc=A.querySelector(".pond3,.meadow");if(!sc)return;
+ var r=document.createElement("i");r.className="pgrbow";sc.appendChild(r);setTimeout(function(){try{r.remove()}catch(e){}},2300)};
+})();
+
+/* ===== v30b: 따라 쓰기(✍️) — 큰 글자를 손가락으로 따라 쓰는 놀이터 게임 ===== */
+(function(){
+var JN={"ㄱ":"기역","ㄴ":"니은","ㄷ":"디귿","ㄹ":"리을","ㅁ":"미음","ㅂ":"비읍","ㅅ":"시옷","ㅇ":"이응","ㅈ":"지읒","ㅊ":"치읓","ㅋ":"키읔","ㅌ":"티읕","ㅍ":"피읖","ㅎ":"히읗",
+"ㅏ":"아","ㅑ":"야","ㅓ":"어","ㅕ":"여","ㅗ":"오","ㅛ":"요","ㅜ":"우","ㅠ":"유","ㅡ":"으","ㅣ":"이"};
+function trSay(t){if(t.length===1&&JN[t])say(JN[t]);else say(t)}
+LADDER.trc1={n:"자음 쓰기",items:function(){return "ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ".split("").map(function(t){return {t:t}})}};
+LADDER.trc2={n:"모음 쓰기",items:function(){return "ㅏㅑㅓㅕㅗㅛㅜㅠㅡㅣ".split("").map(function(t){return {t:t}})}};
+LADDER.trc3={n:"배운 글자 쓰기",items:function(){return POOL.map(function(t){return {t:t}})}};
+LADDER.trc4={n:"받침 글자 쓰기",items:function(){return "강산곰달별꽃집눈손밤숲물길봄섬".split("").map(function(t){return {t:t}})}};
+LADDER.trc5={n:"낱말 쓰기",items:function(){var ws=WB.filter(function(w){return w.lv<=2&&w.t.length===2});if(!ws.length)ws=WB.filter(function(w){return w.t.length===2});return ws.map(function(w){return {t:w.t,p:w.p}})}};
+PGAMES.trace={ic:"✍️",n:{en:"Trace & Write",ko:"따라 쓰기"},tag:{en:"Write it",ko:"글씨 쓰기"},
+ how:{en:"Trace the big letter with your finger until it shines.",ko:"큰 글자를 손가락으로 따라 써요. 글자가 다 채워지면 성공!"},
+ lv:["trc1","trc2","trc3","trc4","trc5"],goal:4};
+PGCOL.trace=["#BCAAA4","#6D4C41"];
+var GRID=96;
+PGM.trace=function(){var A,row,fill,boxes=[],qual=[],color="#3949AB";
+ function fontFam(){try{return getComputedStyle(document.body).fontFamily||"Jua,sans-serif"}catch(e){return "Jua,sans-serif"}}
+ function meter(){if(!fill)return;var un=boxes.filter(function(b){return !b.done}),v;
+  if(!boxes.length)v=0;else if(!un.length)v=1;else v=boxes.reduce(function(a,b){return a+(b.done?1:Math.min(1,b.cov()/b.th))},0)/boxes.length;
+  fill.style.width=Math.round(v*100)+"%"}
+ function mkBox(ch,sz){var S=PGS,box=document.createElement("div");box.className="trbox";box.style.width=sz+"px";box.style.height=sz+"px";
+  var g=document.createElement("canvas"),ink=document.createElement("canvas");g.className="trguide";ink.className="trink";
+  g.width=g.height=ink.width=ink.height=sz;box.appendChild(g);box.appendChild(ink);
+  var gc=g.getContext("2d");gc.font=Math.floor(sz*.8)+"px "+fontFam();gc.textAlign="center";gc.textBaseline="middle";
+  gc.fillStyle="#D5DEEA";gc.fillText(ch,sz/2,sz*.54);gc.strokeStyle="#B9C7D8";gc.lineWidth=Math.max(1.5,sz*.012);gc.strokeText(ch,sz/2,sz*.54);
+  var off=document.createElement("canvas");off.width=off.height=GRID;var oc=off.getContext("2d");
+  oc.font=Math.floor(GRID*.8)+"px "+fontFam();oc.textAlign="center";oc.textBaseline="middle";oc.fillStyle="#000";oc.fillText(ch,GRID/2,GRID*.54);
+  var dat=oc.getImageData(0,0,GRID,GRID).data,mask=new Uint8Array(GRID*GRID),cnt=0;
+  for(var i=0;i<GRID*GRID;i++)if(dat[i*4+3]>70){mask[i]=1;cnt++}
+  var ic=ink.getContext("2d");ic.lineCap=ic.lineJoin="round";
+  var b={el:box,ink:ink,ch:ch,done:false,hits:{},nh:0,out:{},no:0,th:G.easy?.42:.5,mark:0,
+   cov:function(){return cnt?b.nh/cnt:0},
+   q:function(){return b.nh?b.nh/(b.nh+b.no*.65):0},
+   reset:function(){ic.clearRect(0,0,sz,sz);b.hits={};b.nh=0;b.out={};b.no=0;b.mark=0;meter()}};
+  var R=Math.max(3,Math.round(sz*.11/2/sz*GRID)),last=null,down=false;
+  function stamp(gx,gy){for(var dy=-R;dy<=R;dy++)for(var dx=-R;dx<=R;dx++){if(dx*dx+dy*dy>R*R)continue;
+   var x=gx+dx,y=gy+dy;if(x<0||y<0||x>=GRID||y>=GRID)continue;var k=y*GRID+x;
+   if(mask[k]){if(!b.hits[k]){b.hits[k]=1;b.nh++}}else if(!b.out[k]){b.out[k]=1;b.no++}}}
+  function at(e){var r=ink.getBoundingClientRect();return [(e.clientX-r.left)/r.width*sz,(e.clientY-r.top)/r.height*sz]}
+  function seg(p,q2){ic.strokeStyle=color;ic.lineWidth=sz*.11;ic.beginPath();ic.moveTo(p[0],p[1]);ic.lineTo(q2[0],q2[1]);ic.stroke();
+   var n=Math.max(1,Math.ceil(Math.hypot(q2[0]-p[0],q2[1]-p[1])/(sz/GRID*2)));
+   for(var i2=0;i2<=n;i2++){var x=p[0]+(q2[0]-p[0])*i2/n,y=p[1]+(q2[1]-p[1])*i2/n;stamp(Math.round(x/sz*(GRID-1)),Math.round(y/sz*(GRID-1)))}}
+  function prog(x,y){meter();var c=b.cov();
+   if(c-b.mark>=.14){b.mark=c;var s=document.createElement("span");s.textContent="✨";s.style.cssText="position:absolute;left:"+Math.round(x/sz*100)+"%;top:"+Math.round(y/sz*100)+"%;translate:-50% -50%;pointer-events:none;font-size:18px;animation:v30dizzy2 .6s ease-out forwards";
+    box.appendChild(s);setTimeout(function(){try{s.remove()}catch(e){}},650)}
+   if(c>=b.th)fin()}
+  function fin(){if(b.done)return;b.done=true;box.classList.add("done");qual.push(Math.max(.4,Math.min(1,b.q()+.15)));sfx2("pop");burstAt(box);meter();
+   if(PGS===S&&!S.dead&&boxes.every(function(x){return x.done})){var t=S.target.t,sv=t.length===1&&JN[t]?JN[t]:t;
+    pgRight(box,{say:sv,wait:1050+hanN(sv)*130})}}
+  function pd(e){var S2=PGS;if(S2!==S||S2.dead||S2.lock||b.done)return;
+   down=true;last=at(e);seg(last,last);prog(last[0],last[1]);e.preventDefault&&e.preventDefault();
+   try{ink.setPointerCapture&&e.pointerId!=null&&ink.setPointerCapture(e.pointerId)}catch(err){}}
+  function pm(e){if(!down||b.done)return;var p2=at(e);seg(last,p2);last=p2;prog(p2[0],p2[1])}
+  function pu(){down=false;last=null}
+  ink.addEventListener("pointerdown",pd);ink.addEventListener("pointermove",pm);
+  ink.addEventListener("pointerup",pu);ink.addEventListener("pointercancel",pu);ink.addEventListener("pointerleave",pu);
+  return b}
+ var M={
+  setup:function(){A=document.createElement("div");A.className="trace3";
+   A.innerHTML='<div class="trrow"></div><div class="trtools"><div class="trmeter"><i></i></div><button class="btn trclr" type="button">🧽 '+K("Erase","지우개")+'</button><span class="trpens">'+
+    ["#3949AB","#E53935","#2E7D32"].map(function(c,i){return '<button class="trpen'+(i?'':' on')+'" type="button" style="background:'+c+'" data-c="'+c+'" aria-label="'+K("Crayon","크레파스")+'"></button>'}).join("")+'</span></div>';
+   $("pgArea").appendChild(A);row=A.querySelector(".trrow");fill=A.querySelector(".trmeter i");
+   A.querySelector(".trclr").onclick=function(){sfx("tap");boxes.forEach(function(b){if(!b.done)b.reset()})};
+   A.querySelectorAll(".trpen").forEach(function(p){p.onclick=function(){color=p.dataset.c;A.querySelectorAll(".trpen").forEach(function(x){x.classList.toggle("on",x===p)})}})},
+  target:function(it){row.innerHTML="";boxes=[];var chs=it.t.split("");
+   var rw=row.clientWidth||A.clientWidth||600,rh=row.clientHeight||260;
+   var sz=Math.floor(Math.min(rh*.94,(rw-14*chs.length)/chs.length,430));sz=Math.max(120,sz);
+   chs.forEach(function(ch){var b=mkBox(ch,sz);boxes.push(b);row.appendChild(b.el)});meter()},
+  hint:function(){boxes.forEach(function(b){if(!b.done)b.el.classList.add("pghint")})},
+  say:function(){var S=PGS;if(S&&S.target)trSay(S.target.t)},
+  prompt:function(it){return '<span class="lab">'+K("Trace it","따라 써요")+'</span><span class="trbig">'+escH(it.t)+'</span>'+(it.p?'<span class="pic">'+it.p+'</span>':"")+'<button class="spk big" id="pgSpk" aria-label="'+K("Hear it","듣기")+'">🔊</button>'},
+  acc:function(){if(!qual.length)return .8;var a=qual.reduce(function(x,y){return x+y},0)/qual.length;return Math.max(.5,Math.min(1,a))}};
+ return M};
+})();
+
+/* ===== v30c: 오늘의 모험 × 한글 섬 — 모험 돌이 섬 위에 깔린다 ===== */
+(function(){
+/* 한 바퀴에 따라 쓰기 포함 (9게임 + 이야기 + 낱말 = 11) */
+tdLap=function(){return ["fish","mole","course","pair","rain","battle","train","trace","fill"]};
+var STN=null;
+function occ(x,y){if(!ground(x,y))return 1;if(npcAt(x,y))return 1;if(chestAt(x,y)>=0)return 1;if(stationAt(x,y))return 1;
+ if(typeof SPAWNS!=="undefined"&&SPAWNS.some(function(s){return s.x===x&&s.y===y}))return 1;
+ if(G.px===x&&G.py===y)return 1;if(G.fx===x&&G.fy===y)return 1;if(MAP[y]&&MAP[y][x]!==".")return 1;return 0}
+function stones(){if(STN)return STN;
+ var want=[[2,1],[4,1],[6,1],[7,2],[6,3],[4,3],[2,4],[5,5],[6,6],[5,7],[6,8]],used={},out=[];
+ want.forEach(function(a){var best=null,bd=1e9;
+  for(var y=0;y<H;y++)for(var x=0;x<W;x++){var k=x+","+y;if(used[k]||occ(x,y))continue;
+   var d=Math.abs(x-a[0])*2+Math.abs(y-a[1])*2+((x+","+y)===(a[0]+","+a[1])?-1:0);if(d<bd){bd=d;best=[x,y]}}
+  if(best){used[best[0]+","+best[1]]=1;out.push(best)}});
+ return STN=out}
+window.tdStoneAt=function(x,y){var st=stones();for(var i=0;i<st.length;i++)if(st[i][0]===x&&st[i][1]===y)return i+1;return 0};
+function tdActs(){return tdLap().concat(["story","words"])}
+function stDone(k){var T=tdFresh();return k==="story"?!!T.story:k==="words"?!!T.words:!!(T.lap&&T.lap[k])}
+function stIc(k){return k==="story"?"📖":k==="words"?"🔤":tdIc(k)}
+function stName(k){return k==="story"?K("Read a story","이야기 읽기"):k==="words"?K("5 words","낱말 5개"):tdName(k)}
+var _rEnts0=renderEnts;renderEnts=function(){_rEnts0();var ents=$("ents");if(!ents)return;
+ try{var acts=tdActs(),st=stones(),nxt=-1,h="";
+  acts.forEach(function(k,i){if(!st[i])return;var d=stDone(k),nx=!d&&nxt<0;if(nx)nxt=i;
+   h+='<div class="ent tdstone'+(d?" done":"")+(nx?" nx":"")+'" style="'+pos(st[i][0],st[i][1])+'" aria-label="'+escH(stName(k))+(d?" ✓":"")+'"><div class="sp"><span class="stn">'+stIc(k)+(d?'<i class="ck">✓</i>':"")+'</span>'+(nx?'<span class="sunb">☀️</span>':"")+'</div>'+(i===0?'<span class="tag">☀️ '+tdCount()+'/'+tdTotal()+'</span>':"")+'</div>'});
+  ents.insertAdjacentHTML("beforeend",h)}catch(e){}};
+function tdGoStone(k){TDR=null;hush();
+ if(k==="story"){var st=tdStory();if(st.kind==="book")openBook("b1");else{openCases();caseStart(st.i)}return}
+ if(k==="words")return rmWords(function(){});
+ if(k==="course")return startRun();
+ if(k==="battle")return practiceBattle();
+ pgPlay(k,tdPgLv(k))}
+var _ia0=interactAt;interactAt=function(x,y){var i=window.tdStoneAt(x,y);
+ if(i){var k=tdActs()[i-1];return function(){sfx("tap");tdGoStone(k)}}
+ return _ia0(x,y)};
+/* 돌을 처음 보여줄 때 한 번만 짧은 안내 */
+var _rAll0=renderAll;renderAll=function(){_rAll0();
+ if(!G.tdIslIntro&&!overlayOpen()&&$("map")&&!$("map").hidden){G.tdIslIntro=1;save();
+  setTimeout(function(){if(!overlayOpen())toast("☀️ "+K("Sun stones are on the island now: tap one for today's adventure!","섬에 해님 돌이 생겼어요! 돌을 누르면 오늘의 모험이 시작돼요"))},900)}};
+})();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

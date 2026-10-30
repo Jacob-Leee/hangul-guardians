@@ -17,7 +17,7 @@ const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(
  await p.addScriptTag({content:HELP('kz-auto.js')});await p.addScriptTag({content:HELP('pg-auto.js')});
  // 1. defaults for a fresh save
  let st=await p.evaluate(()=>({rd:G.rd,auto:G.autoRead,today:G.today&&G.today.d,days:typeof G.days,mic:G.mic,rmOff:G.rmOff,lap:tdIsLap(),hud:emjText($("tdHud"))}));
- ok('fresh save → reading help 3, auto read off, today = one lap (0/10)',st.rd===3&&st.auto===false&&st.lap===true&&st.hud==='☀️ 0/10',st);
+ ok('fresh save → reading help 3, auto read off, today = one lap (0/11)',st.rd===3&&st.auto===false&&st.lap===true&&st.hud==='☀️ 0/11',st);
  // the rest of this test checks the short 3-step flow (the lap has its own test: today-lap.js)
  await p.evaluate(()=>{G.tdLen="short";save();tdHudSet()});
  await p.evaluate(()=>document.querySelector('#spGo').click());await p.waitForTimeout(300);

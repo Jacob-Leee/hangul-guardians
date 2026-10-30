@@ -27,8 +27,8 @@ function screens(info){const S=[
  ['home','renderAll()',700,'body'],
  ['today','tdOpen()',800,'#tdOv'],
  ['settings','$("tdOv").hidden=true;showSettings()',700,'#setOv'],
- ['pghub','$("setOv").hidden=true;pgHub()',700,'#pgOv']];
- info.pg.forEach(g=>S.push(['pg_'+g,`pgPlay(${JSON.stringify(g)},3);setTimeout(()=>{const b=document.querySelector('#pgGo');b&&b.click()},300)`,1900,'#pgOv']));
+ ['pghub','$("setOv").hidden=true;$("tdOv").hidden=true;pgHub()',700,'#pgOv']];
+ info.pg.forEach(g=>S.push(['pg_'+g,`$("tdOv").hidden=true;pgPlay(${JSON.stringify(g)},3);setTimeout(()=>{const b=document.querySelector('#pgGo');b&&b.click()},300)`,1900,'#pgOv']));
  S.push(['wordbook','pgStop();wbBook()',700,'#pgOv']);
  S.push(['course','pgStop();$("pgOv").hidden=true;startRun()',1600,'#runOv']);
  S.push(['duel','try{cancelAnimationFrame(RUN.raf)}catch(e){};$("runOv").hidden=true;duel({lv:1,practice:true})',1800,'#duelOv']);

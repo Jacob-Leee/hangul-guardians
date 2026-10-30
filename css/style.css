@@ -1961,3 +1961,71 @@ textarea,input,select{-webkit-user-select:text;user-select:text;-webkit-touch-ca
 @media (prefers-reduced-motion:reduce){.dnom,.dopts.dswap .dop{animation:none}}
 
 .stardim{display:inline-block;filter:grayscale(1);opacity:.4}
+/* ===== v30: 낚시·두더지 분위기 업 + 따라 쓰기 + 섬 위 오늘의 모험 ===== */
+/* 낚시 연출 */
+.pond3 .lily{position:absolute;width:62px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7ED08A,#2E8F4F 70%);box-shadow:inset 0 -4px 0 rgba(0,0,0,.14);animation:v30lily 5.2s ease-in-out infinite}
+.pond3 .lily::after{content:"";position:absolute;right:6px;top:-4px;width:12px;height:12px;border-radius:50%;background:radial-gradient(#FFD9E8,#F48FB1)}
+.pond3 .lily.a{left:9%;top:11%}
+.pond3 .lily.b{left:66%;top:8%;transform:scale(.78);animation-delay:1.4s}
+@keyframes v30lily{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 4px;rotate:2deg}}
+.pond3 .pbfly{position:absolute;left:4%;top:4%;font-size:clamp(16px,2.6vmin,24px);pointer-events:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15));animation:v30fly 13s ease-in-out infinite}
+@keyframes v30fly{0%{translate:0 0;rotate:-8deg}22%{translate:26vmin 3vmin;rotate:10deg}45%{translate:46vmin 0.5vmin;rotate:-6deg}70%{translate:22vmin 6vmin;rotate:8deg}100%{translate:0 0;rotate:-8deg}}
+.pond3 .jumpf{position:absolute;left:72%;top:16%;font-size:clamp(14px,2.4vmin,22px);pointer-events:none;opacity:0;animation:v30jump 9s ease-in-out infinite;animation-delay:2.5s}
+@keyframes v30jump{0%,78%,100%{opacity:0;translate:0 14px;rotate:0deg}82%{opacity:1;translate:3vmin -16px;rotate:-38deg}86%{opacity:1;translate:6vmin -22px;rotate:-90deg}90%{opacity:1;translate:9vmin -12px;rotate:-150deg}94%{opacity:0;translate:11vmin 16px;rotate:-190deg}}
+.pgfish .in::before{content:"";position:absolute;left:-4px;top:38%;width:6px;height:6px;border:2px solid rgba(255,255,255,.75);border-radius:50%;opacity:0;animation:v30bub 3.1s ease-out infinite}
+.pgfish:nth-of-type(2n) .in::before{animation-delay:1.2s}
+.pgfish:nth-of-type(3n) .in::before{animation-delay:2.1s}
+.pgfish.r .in::before{left:auto;right:-4px}
+@keyframes v30bub{0%,55%{opacity:0;translate:0 0;scale:.5}62%{opacity:.9;scale:.7}100%{opacity:0;translate:-4px -34px;scale:1.15}}
+/* 연속 정답 무지개 (낚시·두더지 공용) */
+.pgrbow{position:absolute;left:10%;right:10%;top:5%;height:52%;border-radius:50% 50% 0 0/100% 100% 0 0;border:8px solid rgba(244,96,96,.75);border-bottom:none;pointer-events:none;opacity:0;animation:v30rbow 2.2s ease-in-out forwards;box-shadow:inset 0 8px 0 rgba(255,183,77,.75),inset 0 16px 0 rgba(255,241,118,.8),inset 0 24px 0 rgba(129,199,132,.8),inset 0 32px 0 rgba(100,181,246,.8)}
+@keyframes v30rbow{0%{opacity:0;translate:0 12px}25%{opacity:1;translate:0 0}75%{opacity:1}100%{opacity:0;translate:0 -6px}}
+/* 두더지 연출 */
+.meadow .pbfly{position:absolute;left:6%;top:9%;font-size:clamp(15px,2.4vmin,22px);pointer-events:none;animation:v30fly 15s ease-in-out infinite}
+.meadow .lbug{position:absolute;left:12%;bottom:42%;font-size:clamp(11px,1.9vmin,17px);pointer-events:none;animation:v30bug 17s linear infinite}
+@keyframes v30bug{0%{translate:0 0;rotate:0deg}24%{translate:30vmin -1vmin;rotate:12deg}26%{rotate:-120deg}50%{translate:52vmin 1vmin;rotate:-150deg}52%{rotate:60deg}76%{translate:24vmin 2.5vmin;rotate:40deg}78%{rotate:170deg}100%{translate:0 0;rotate:360deg}}
+.meadow .seed{position:absolute;top:-12px;width:9px;height:9px;pointer-events:none;background:radial-gradient(circle at 50% 70%,#fff 28%,transparent 32%),conic-gradient(from 0deg,transparent 0 10deg,rgba(255,255,255,.85) 12deg 16deg,transparent 18deg 100deg,rgba(255,255,255,.85) 104deg 108deg,transparent 110deg 200deg,rgba(255,255,255,.85) 204deg 208deg,transparent 210deg 300deg,rgba(255,255,255,.85) 304deg 308deg,transparent 310deg);border-radius:50%;opacity:.9;animation:v30seed 11s linear infinite}
+.meadow .seed.s1{left:18%}.meadow .seed.s2{left:52%;animation-delay:3.6s}.meadow .seed.s3{left:80%;animation-delay:7.2s}
+@keyframes v30seed{0%{translate:0 -12px;rotate:0deg;opacity:0}6%{opacity:.9}50%{translate:6vmin 46vmin;rotate:160deg}96%{opacity:.75}100%{translate:-2vmin 88vmin;rotate:320deg;opacity:0}}
+.mole3 .e{animation:v30blink 4.6s infinite}
+@keyframes v30blink{0%,91%,97%,100%{transform:scaleY(1)}94%{transform:scaleY(.08)}}
+.hole3.pop .lip::before{content:"";position:absolute;left:18%;top:-7px;width:8px;height:8px;border-radius:50%;background:#8A5A33;box-shadow:26px -7px 0 -1px #7A4D29,50px -3px 0 -2px #99683C,14px -16px 0 -2px #7A4D29,40px -15px 0 -3px #8A5A33;opacity:0;animation:v30dirt .55s ease-out}
+@keyframes v30dirt{0%{opacity:1;translate:0 6px;scale:.5}70%{opacity:1}100%{opacity:0;translate:0 -14px;scale:1.1}}
+.mole3.bonk .face{animation:v30squash .5s ease-out}
+@keyframes v30squash{0%{transform:scale(1.15,.6)}55%{transform:scale(.92,1.1)}100%{transform:scale(1,1)}}
+.mole3.bonk .face::after{content:"💫";position:absolute;left:50%;top:-20px;translate:-50% 0;font-size:clamp(14px,2.6vmin,22px);animation:v30dizzy .85s ease-out forwards}
+@keyframes v30dizzy{0%{opacity:0;rotate:0deg;scale:.4}25%{opacity:1}100%{opacity:0;rotate:300deg;scale:1.25;translate:-50% -12px}}
+.mole3.laugh .sign{animation:v30wob .5s ease-in-out}
+@keyframes v30wob{0%,100%{rotate:0deg}30%{rotate:-7deg}70%{rotate:7deg}}
+/* 따라 쓰기 */
+.trace3{position:absolute;inset:0;background:linear-gradient(#FFFDF4,#FFF3D6);display:flex;flex-direction:column;align-items:stretch;padding:8px 10px;gap:6px}
+.trrow{flex:1;min-height:0;display:flex;gap:12px;align-items:center;justify-content:center}
+.trbox{position:relative;background:#fff;border:3px solid #EAD9A8;border-radius:16px;box-shadow:0 4px 0 rgba(0,0,0,.07);touch-action:none;overflow:hidden;background-image:linear-gradient(rgba(63,81,181,.14) 0 1px,transparent 1px),linear-gradient(90deg,rgba(63,81,181,.14) 0 1px,transparent 1px);background-size:100% 50.5%,50.5% 100%;background-position:0 1px,1px 0;background-repeat:no-repeat;background-origin:content-box}
+.trbox canvas{position:absolute;inset:0;width:100%;height:100%}
+.trbox canvas.trink{cursor:crosshair}
+.trbox.pghint{box-shadow:0 0 0 4px #FFD54F,0 4px 0 rgba(0,0,0,.07)}
+.trbox.done{animation:v30trpop .55s ease-out}
+.trbox.done::after{content:"💮";position:absolute;right:4px;top:2px;font-size:clamp(18px,3.4vmin,30px);animation:v30dizzy2 .7s ease-out}
+@keyframes v30trpop{0%{transform:scale(1)}35%{transform:scale(1.07) rotate(-1.5deg)}70%{transform:scale(.98)}100%{transform:scale(1)}}
+@keyframes v30dizzy2{0%{opacity:0;scale:.3}60%{opacity:1;scale:1.25}100%{scale:1}}
+.trtools{display:flex;gap:8px;align-items:center;justify-content:center;flex:0 0 auto;flex-wrap:wrap}
+.trmeter{width:min(42%,220px);height:14px;border-radius:8px;background:#F0E6C8;overflow:hidden;border:2px solid #E2CF9B}
+.trmeter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#FFB74D,#FFD54F);transition:width .25s}
+.trpens{display:flex;gap:6px}
+.trpen{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.15);cursor:pointer;padding:0}
+.trpen.on{box-shadow:0 0 0 3px #22304A}
+.trbig{font-family:inherit;font-weight:800;font-size:clamp(20px,4.2vmin,34px);background:#FFF3D6;border-radius:10px;padding:0 10px;border:2px solid #EAD9A8}
+.pg-trace .pgarea{min-height:0}
+@media (orientation:landscape) and (max-height:520px){.trace3{flex-direction:row}.trtools{flex-direction:column;width:88px}}
+/* 섬 위 오늘의 모험 길 */
+.ent.tdstone{pointer-events:none;z-index:4}
+.tdstone .sp{display:grid;place-items:center;position:relative}
+.tdstone .stn{position:relative;width:68%;height:60%;border-radius:50%;background:radial-gradient(circle at 36% 30%,#FFF6CF,#FFD66B 62%,#E8AC3C);border:2px solid #C98F1B;box-shadow:0 3px 0 rgba(0,0,0,.2),inset 0 -4px 0 rgba(0,0,0,.1);display:grid;place-items:center;font-size:clamp(11px,2.3vmin,20px)}
+.tdstone.done .stn{background:radial-gradient(circle at 36% 30%,#F2EFE6,#D8D2C0 62%,#BDB49C);border-color:#9E9478;filter:saturate(.55)}
+.tdstone .ck{position:absolute;right:-6%;bottom:-8%;font-size:.62em;font-style:normal;background:#43A047;color:#fff;border-radius:50%;width:1.25em;height:1.25em;display:grid;place-items:center;border:2px solid #fff}
+.tdstone.nx .stn{animation:v30stn 1.5s ease-in-out infinite;box-shadow:0 0 0 4px rgba(255,214,107,.55),0 3px 0 rgba(0,0,0,.2)}
+@keyframes v30stn{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.tdstone .sunb{position:absolute;left:50%;top:-58%;translate:-50% 0;font-size:clamp(12px,2.6vmin,22px);animation:v30sunb 1.5s ease-in-out infinite;text-shadow:0 2px 3px rgba(0,0,0,.25)}
+@keyframes v30sunb{0%,100%{translate:-50% 0}50%{translate:-50% -5px}}
+.tdstone .tag{bottom:auto;top:-62%}
+.tdstone.done .sp{opacity:.92}

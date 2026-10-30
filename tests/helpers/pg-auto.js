@@ -10,6 +10,11 @@ window.PGAUTO=function(wrong){const S=PGS;if(document.querySelector('.pgres'))re
  if(S.g==='train'){let parts;if(S.lv<=2){const j=jamoOf(T);parts=[j.c,j.v]}else if(S.target.parts)parts=S.target.parts;else parts=[...T];
   const filled=document.querySelectorAll('#pgTrain .car.full').length+document.querySelectorAll('.dfly').length;const used=document.querySelectorAll('.blk.used').length;const next=parts[used];
   const b=[...document.querySelectorAll('.blk:not(.used)')].find(e=>wrong?e.textContent!==next:e.textContent===next);return b?clk(b):'none'}
+ if(S.g==='trace'){const c=document.querySelector('.trbox:not(.done) canvas.trink');if(!c)return 'wait';
+  const r=c.getBoundingClientRect(),ev=(t,x,y)=>c.dispatchEvent(new PointerEvent(t,{bubbles:true,clientX:r.left+x,clientY:r.top+y,pointerId:7,pointerType:'touch',isPrimary:true}));
+  for(let y=r.height*.06;y<r.height*.97;y+=Math.max(5,r.height*.05)){ev('pointerdown',r.width*.04,y);
+   for(let x=r.width*.04;x<=r.width*.97;x+=Math.max(5,r.width*.06))ev('pointermove',x,y);ev('pointerup',r.width*.96,y)}
+  return 'click'}
  if(S.g==='pair'){if(!S.started)return 'wait';const open=[...document.querySelectorAll('.pcard.up:not(.done)')];if(open.length>=2)return 'wait';
   const cards=[...document.querySelectorAll('.pcard:not(.done)')];if(wrong&&!open.length){const w=cards.filter(c=>c.querySelector('.cw'));if(w.length>=2){w[0].click();setTimeout(()=>w[1].click(),50);return 'click'}}
   const pic2t=Object.fromEntries(S.pool.map(x=>[x.p,x.t]));
