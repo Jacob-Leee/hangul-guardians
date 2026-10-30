@@ -58,3 +58,10 @@ casting.csv    역할마다 고른 목소리 (1_voices.bat이 만듭니다)
 voices.csv     Typecast 목소리 목록 (1_voices.bat이 만듭니다)
 pick.html      목소리 고르기 화면
 out\           만든 MP3 파일
+
+[캐스팅 정책 — 2026-10-30 보호자 결정]
+책 2~12권에서 새 인물이 나와도 새 성우를 뽑지 않습니다.
+- 영웅 12명·거북이 스승님·악당 고양이들: 지금 성우 그대로.
+- 그 밖의 새 인물: 이미 쓰는 성우를 다시 쓰되, roles.csv에서 pitch(높낮이)와 tempo(속도)만 바꿔 다른 인물처럼 들리게 합니다.
+  (API의 output.audio_pitch / output.audio_tempo 값. 예: pitch +2, tempo 1.1)
+- 녹음이 없는 동안에는 게임이 알아서 기기 목소리에 높낮이·속도 변화를 줘서 서로 다르게 들립니다.

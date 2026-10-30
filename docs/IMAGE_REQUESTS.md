@@ -31,6 +31,8 @@
 | 1 | `page3.png` | 2권 이야기 그림 3: 노을 진 시골길로 집에 돌아가는 시골 쥐 (지금은 임시 그림) | 1536×1024 가로 | `books/b2/country_stand.webp`, `books/b2/spread.webp` |
 | 2 | `case12_pig.png` | 사건 12 배경: 나무집 숲속 신문사 (지금은 코드로 그린 장면) | 1536×1024 가로 | `assets/img/case/case01_rat.webp` |
 | 3 | `case09_monkey_blocked.png` | 사건 9 배경 고친 그림: 큰 돌이 개울을 막아 물이 멈춘 모습. 지금 그림은 물이 흘러서 "물이 흐르지 않아요"라는 글과 다릅니다. 지금 그림은 해결 장면(물이 다시 흐름)에 씁니다 | 1536×1024 가로 | `assets/img/case/case09_monkey.webp` |
+| 4 | `room_living.png` `room_case.png` `room_deck.png` `room_study.png` | **우리 본부(v29.5)** 방 배경 4장: 거실, 수사실, 옥상 관측대, 서재. 지금은 코드로 그린 방을 씁니다. 가구 없이 빈 방이어야 합니다(보물은 아이가 놓음) | 1536×1024 가로 | `assets/img/case/case01_rat.webp`(그림체), `assets/img/hero/tiger.webp` |
+| 있으면 좋음 | `item_sofa.png` `item_plant.png` `item_lamp.png` `item_clock.png` `item_mirror.png` `item_piano.png` `item_scope.png` `item_books.png` `item_trophy.png` `item_shield.png` `item_orb.png` `item_star.png` | 본부 보물(가구) 12개, 투명 PNG. 지금은 3D 이모지를 씁니다 | 각 1024×1024 투명 | `assets/img/case/case01_rat.webp`(그림체) |
 | 선택 | `country_walk.png`, `country_happy.png`, `city_walk.png`, `city_proud.png`, `cat_pounce.png`, `cover.png` | 2권 자세 5장과 표지. 없으면 기본 자세와 이야기 그림 1을 대신 씁니다 | 아래 표 | 아래 표 |
 
 ### ① 2권 이야기 그림 3 → `page3.png`
@@ -94,6 +96,37 @@ Art style: the same cute, high-quality 3D animated storybook look as the attache
 No text, letters, numbers, title, logos or watermark.
 Canvas 1024x1536 (portrait).
 ```
+
+
+### ④ 우리 본부 방 배경 4장 → `room_<id>.png` (v29.5)
+
+본부는 **열두 이야기 도서관 큰 나무 속 비밀 기지**입니다. 방을 옆에서 본 모습(무대처럼 정면)이고, **가구는 넣지 않습니다** — 아이가 받은 보물을 빈 자리에 놓아 꾸밉니다. 바닥 아랫부분과 벽 가운데는 비워 두세요. 영웅 2명이 바닥 가운데에 서고, 8개의 보물 자리가 벽과 바닥에 흩어집니다.
+
+공통 프롬프트 (방마다 Scene만 바꿔서):
+
+```
+A background for a cute 3D animated storybook game, matching the rendering of the attached reference image: soft, warm, slightly painterly 3D.
+Scene: a secret clubhouse room INSIDE a giant hollow tree — curved wooden walls with visible grain, cosy and warm. NO furniture, NO objects on the floor or walls: the room must be empty, because the player decorates it in the game.
+[방마다] living: a round window with soft sky light, a warm rug-less wooden floor, a doorway hint on one side. / case: a cork pin-board shaped empty wall panel and a long empty wooden shelf line on the wall, detective-office mood, warm lamp light. / deck: the tree-top lookout, open to the sky, wooden railing at the back, clouds and the island far away, daytime. / study: tall empty wooden bookshelf arches built into the walls (shelves empty), a round window, quiet evening light.
+Camera: straight on, at a small child's eye level, like a doll-house stage.
+Composition: the floor takes the lower 30%. The middle of every wall stays plain and empty. Low contrast overall so small items placed on top stand out.
+Light: warm and cosy. No text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape).
+```
+
+저장: `incoming/room_living.png`처럼 올리면 Claude가 WebP로 줄여 `assets/img/hq/room_<id>.webp`로 넣습니다. 그림이 들어오면 코드로 그린 방 대신 자동으로 쓰입니다(파일 이름만 맞으면 됩니다).
+
+### ⑤ 본부 보물(가구) 12개 → `item_<id>.png` (있으면 좋음)
+
+하나씩, 투명 배경 PNG. 12개: sofa 소파 / plant 화분 / lamp 전등 / clock 벽시계 / mirror 거울 / piano 작은 피아노 / scope 망원경 / books 책 탑 / trophy 금 트로피 / shield 수비대 방패 / orb 책 구슬 램프 / star 별 전등.
+
+```
+A single cute toy-like [소파/화분/...] for a children's game, in the same soft 3D storybook style as the attached reference. Centered, facing slightly left, whole object visible.
+Transparent background (PNG with alpha). No floor, no shadow outside the object, no text or watermark.
+Canvas 1024x1024.
+```
+
+저장: `incoming/item_sofa.png` → Claude가 `assets/img/hq/item_sofa.webp`로 넣으면 그 보물만 이모지 대신 그림으로 바뀝니다.
 
 ## 5. 이미 받아서 넣은 그림 (2026-10-30)
 

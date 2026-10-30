@@ -1141,7 +1141,7 @@ function showPartner(){
 $("pClose").onclick=()=>$("parOv").hidden=true;
 
 /* adventure course (side-scroller) */
-const T=48,ROWS=9,SOLID="#B?LU";
+const T=48,ROWS=9,SOLID="#B?LUSC";
 let RUN=null;
 function svgImg(svg,w,h){const im=new Image();im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg.replace("<svg ",`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" `));return im}
 function portalSVG(){
@@ -2686,7 +2686,7 @@ async function bookEnter(){const b=BK,B=b.B,D=b.D;capt(null);hush();sfx("evo");
  b.vt++;$("bStage").classList.remove("gloom","cine","slow");setState("broken");actMark("turtle","?");claimShow(true);camSet({x:30,y:100,z:1.3},0);
  await hidePov();if(!bAlive(b))return;camSet(null,1600);
  await runScript(D.enter||[]);if(!bAlive(b))return;goStep(0)}
-function goStep(i){const b=BK;hush();b.si=i;b.ss={};b.clue=null;b.busy=false;bMentorOff();capt(null);bStepsUpd();const S=b.D.steps[i];if(!S)return bFinish();
+function goStep(i){const b=BK;hush();b.si=i;b.ss={};b.clue=null;b.busy=false;bMentorOff();capt(null);bStepsUpd();const S=b.D.steps[i];if(!S)return bFinish();if(S.type!=="explore")$("bHots").innerHTML="";
  ({explore:stExplore,choose:stChoose,fix:stFix,script:stScript,order:stOrder,story:stStory,match:stMatch})[S.type](S)}
 /* --- shared panel pieces --- */
 function recHTML(mode){const b=BK;return `<div class="recs">${b.D.records.map(r=>{const f=b.found[r.k],dis=mode==="ev"&&(b.ss.evDis||[]).includes(r.k);
@@ -3988,7 +3988,7 @@ var _pgPlay0=pgPlay;pgPlay=function(g,lv,o){_pgPlay0(g,lv,o);if(o&&o.td){const b
 /* -- 3D emoji: Microsoft Fluent Emoji 3D (MIT licence, assets/img/emoji/LICENSE-fluent-emoji.txt), packed in
    8×8 sheets (assets/img/emoji/e0.webp, e1.webp ..., 160px cells; rebuild with tools/build_emoji_sheets.py). Any emoji written into the page becomes a <span class="emj"> showing its
    picture, so every device shows the same 3D look. Canvas drawings, inputs, SVG and .noemj parts are left alone. -- */
-var EMJ_MAP={"1f0cf":[0,0],"1f300":[0,1],"1f305":[0,2],"1f308":[0,3],"1f309":[0,4],"1f30a":[0,5],"1f30b":[0,6],"1f30c":[0,7],"1f30d":[0,8],"1f310":[0,9],"1f319":[0,10],"1f327":[0,11],"1f32c":[0,12],"1f32d":[0,13],"1f32e":[0,14],"1f330":[0,15],"1f331":[0,16],"1f332":[0,17],"1f333":[0,18],"1f335":[0,19],"1f336":[0,20],"1f337":[0,21],"1f338":[0,22],"1f339":[0,23],"1f33a":[0,24],"1f33b":[0,25],"1f33d":[0,26],"1f341":[0,27],"1f342":[0,28],"1f343":[0,29],"1f344":[0,30],"1f345":[0,31],"1f346":[0,32],"1f347":[0,33],"1f348":[0,34],"1f349":[0,35],"1f34a":[0,36],"1f34b":[0,37],"1f34c":[0,38],"1f34d":[0,39],"1f34e":[0,40],"1f350":[0,41],"1f351":[0,42],"1f352":[0,43],"1f353":[0,44],"1f354":[0,45],"1f355":[0,46],"1f356":[0,47],"1f357":[0,48],"1f359":[0,49],"1f35a":[0,50],"1f35b":[0,51],"1f35c":[0,52],"1f35d":[0,53],"1f35e":[0,54],"1f35f":[0,55],"1f360":[0,56],"1f363":[0,57],"1f364":[0,58],"1f366":[0,59],"1f367":[0,60],"1f369":[0,61],"1f36a":[0,62],"1f36b":[0,63],"1f36c":[1,0],"1f36d":[1,1],"1f36e":[1,2],"1f36f":[1,3],"1f370":[1,4],"1f371":[1,5],"1f372":[1,6],"1f373":[1,7],"1f374":[1,8],"1f375":[1,9],"1f37c":[1,10],"1f37d":[1,11],"1f37f":[1,12],"1f380":[1,13],"1f381":[1,14],"1f382":[1,15],"1f384":[1,16],"1f385":[1,17],"1f386":[1,18],"1f388":[1,19],"1f389":[1,20],"1f392":[1,21],"1f3a0":[1,22],"1f3a1":[1,23],"1f3a2":[1,24],"1f3a3":[1,25],"1f3a4":[1,26],"1f3a8":[1,27],"1f3b2":[1,28],"1f3b3":[1,29],"1f3b5":[1,30],"1f3b8":[1,31],"1f3b9":[1,32],"1f3ba":[1,33],"1f3bb":[1,34],"1f3be":[1,35],"1f3c0":[1,36],"1f3c9":[1,37],"1f3ca":[1,38],"1f3cd":[1,39],"1f3d0":[1,40],"1f3d3":[1,41],"1f3d6":[1,42],"1f3db":[1,43],"1f3dd":[1,44],"1f3df":[1,45],"1f3e0":[1,46],"1f3e4":[1,47],"1f3e5":[1,48],"1f3e6":[1,49],"1f3e8":[1,50],"1f3eb":[1,51],"1f3ed":[1,52],"1f3f0":[1,53],"1f406":[1,54],"1f40a":[1,55],"1f40c":[1,56],"1f40d":[1,57],"1f410":[1,58],"1f411":[1,59],"1f414":[1,60],"1f418":[1,61],"1f419":[1,62],"1f41a":[1,63],"1f41b":[2,0],"1f41c":[2,1],"1f41d":[2,2],"1f41e":[2,3],"1f41f":[2,4],"1f420":[2,5],"1f421":[2,6],"1f422":[2,7],"1f424":[2,8],"1f426":[2,9],"1f427":[2,10],"1f428":[2,11],"1f42b":[2,12],"1f42c":[2,13],"1f42d":[2,14],"1f42e":[2,15],"1f42f":[2,16],"1f430":[2,17],"1f431":[2,18],"1f433":[2,19],"1f434":[2,20],"1f435":[2,21],"1f436":[2,22],"1f437":[2,23],"1f438":[2,24],"1f439":[2,25],"1f43a":[2,26],"1f43b":[2,27],"1f43b 200d 2744":[2,28],"1f43c":[2,29],"1f43e":[2,30],"1f43f":[2,31],"1f440":[2,32],"1f442":[2,33],"1f443":[2,34],"1f444":[2,35],"1f445":[2,36],"1f44d":[2,37],"1f44f":[2,38],"1f451":[2,39],"1f453":[2,40],"1f454":[2,41],"1f455":[2,42],"1f456":[2,43],"1f457":[2,44],"1f45b":[2,45],"1f45e":[2,46],"1f45f":[2,47],"1f462":[2,48],"1f46e":[2,49],"1f470":[2,50],"1f474":[2,51],"1f475":[2,52],"1f476":[2,53],"1f478":[2,54],"1f47b":[2,55],"1f47c":[2,56],"1f47d":[2,57],"1f485":[2,58],"1f48d":[2,59],"1f4a1":[2,60],"1f4a7":[2,61],"1f4aa":[2,62],"1f4bb":[2,63],"1f4c5":[3,0],"1f4cc":[3,1],"1f4ce":[3,2],"1f4cf":[3,3],"1f4d3":[3,4],"1f4da":[3,5],"1f4e6":[3,6],"1f4f1":[3,7],"1f4f7":[3,8],"1f4fa":[3,9],"1f50b":[3,10],"1f50d":[3,11],"1f511":[3,12],"1f512":[3,13],"1f525":[3,14],"1f528":[3,15],"1f52a":[3,16],"1f534":[3,17],"1f535":[3,18],"1f53a":[3,19],"1f54a":[3,20],"1f56f":[3,21],"1f576":[3,22],"1f577":[3,23],"1f578":[3,24],"1f58d":[3,25],"1f5fc":[3,26],"1f646":[3,27],"1f680":[3,28],"1f681":[3,29],"1f682":[3,30],"1f687":[3,31],"1f68c":[3,32],"1f68f":[3,33],"1f691":[3,34],"1f692":[3,35],"1f693":[3,36],"1f695":[3,37],"1f697":[3,38],"1f69a":[3,39],"1f69c":[3,40],"1f6a1":[3,41],"1f6aa":[3,42],"1f6b2":[3,43],"1f6bd":[3,44],"1f6c1":[3,45],"1f6cb":[3,46],"1f6cf":[3,47],"1f6e3":[3,48],"1f6f0":[3,49],"1f6f3":[3,50],"1f6f4":[3,51],"1f6f7":[3,52],"1f6fc":[3,53],"1f7e0":[3,54],"1f7e1":[3,55],"1f7e2":[3,56],"1f7e3":[3,57],"1f7e6":[3,58],"1f916":[3,59],"1f91d":[3,60],"1f921":[3,61],"1f927":[3,62],"1f934":[3,63],"1f935":[4,0],"1f941":[4,1],"1f944":[4,2],"1f94a":[4,3],"1f951":[4,4],"1f952":[4,5],"1f954":[4,6],"1f955":[4,7],"1f957":[4,8],"1f95a":[4,9],"1f95b":[4,10],"1f95c":[4,11],"1f95d":[4,12],"1f95e":[4,13],"1f95f":[4,14],"1f962":[4,15],"1f963":[4,16],"1f964":[4,17],"1f965":[4,18],"1f966":[4,19],"1f96a":[4,20],"1f96c":[4,21],"1f96d":[4,22],"1f96f":[4,23],"1f977":[4,24],"1f980":[4,25],"1f981":[4,26],"1f982":[4,27],"1f983":[4,28],"1f985":[4,29],"1f986":[4,30],"1f987":[4,31],"1f988":[4,32],"1f989":[4,33],"1f98a":[4,34],"1f98b":[4,35],"1f98c":[4,36],"1f98d":[4,37],"1f98e":[4,38],"1f98f":[4,39],"1f990":[4,40],"1f991":[4,41],"1f992":[4,42],"1f993":[4,43],"1f994":[4,44],"1f995":[4,45],"1f996":[4,46],"1f997":[4,47],"1f998":[4,48],"1f99a":[4,49],"1f99b":[4,50],"1f99c":[4,51],"1f99d":[4,52],"1f99e":[4,53],"1f99f":[4,54],"1f9a2":[4,55],"1f9a5":[4,56],"1f9a6":[4,57],"1f9a8":[4,58],"1f9a9":[4,59],"1f9ac":[4,60],"1f9ad":[4,61],"1f9b4":[4,62],"1f9b5":[4,63],"1f9b6":[5,0],"1f9b7":[5,1],"1f9c0":[5,2],"1f9c3":[5,3],"1f9c4":[5,4],"1f9c5":[5,5],"1f9c7":[5,6],"1f9ca":[5,7],"1f9d1":[5,8],"1f9d1 200d 1f33e":[5,9],"1f9d1 200d 1f373":[5,10],"1f9d1 200d 1f3a4":[5,11],"1f9d1 200d 1f3a8":[5,12],"1f9d1 200d 1f3eb":[5,13],"1f9d1 200d 1f680":[5,14],"1f9d1 200d 1f692":[5,15],"1f9d1 200d 2695":[5,16],"1f9d9":[5,17],"1f9da":[5,18],"1f9dc":[5,19],"1f9e0":[5,20],"1f9e2":[5,21],"1f9e3":[5,22],"1f9e4":[5,23],"1f9e5":[5,24],"1f9e6":[5,25],"1f9e9":[5,26],"1f9ee":[5,27],"1f9f1":[5,28],"1f9f5":[5,29],"1f9f8":[5,30],"1f9f9":[5,31],"1f9fa":[5,32],"1f9fb":[5,33],"1f9fc":[5,34],"1fa71":[5,35],"1fa80":[5,36],"1fa81":[5,37],"1fa82":[5,38],"1fa91":[5,39],"1fa9c":[5,40],"1fa9e":[5,41],"1fa9f":[5,42],"1faa5":[5,43],"1faa8":[5,44],"1fab0":[5,45],"1fab1":[5,46],"1fab2":[5,47],"1fab4":[5,48],"1fad0":[5,49],"1fad1":[5,50],"1fad6":[5,51],"23f0":[5,52],"23f3":[5,53],"2600":[5,54],"2601":[5,55],"2602":[5,56],"260e":[5,57],"2614":[5,58],"2615":[5,59],"26a1":[5,60],"26bd":[5,61],"26be":[5,62],"26c4":[5,63],"26ea":[6,0],"26f0":[6,1],"26f2":[6,2],"26f3":[6,3],"26f5":[6,4],"26f7":[6,5],"26f8":[6,6],"26fa":[6,7],"2702":[6,8],"2708":[6,9],"2709":[6,10],"270b":[6,11],"270f":[6,12],"2744":[6,13],"2764":[6,14],"2b50":[6,15],"2b55":[6,16],"1f31f":[6,17],"1f328":[6,18],"1f33c":[6,19],"1f33e":[6,20],"1f38a":[6,21],"1f396":[6,22],"1f3a9":[6,23],"1f3aa":[6,24],"1f3ad":[6,25],"1f3ae":[6,26],"1f3af":[6,27],"1f3c1":[6,28],"1f3c3":[6,29],"1f3c6":[6,30],"1f3dc":[6,31],"1f3ee":[6,32],"1f3f3":[6,33],"1f3f7":[6,34],"1f3f9":[6,35],"1f408":[6,36],"1f409":[6,37],"1f413":[6,38],"1f415":[6,39],"1f423":[6,40],"1f425":[6,41],"1f432":[6,42],"1f446":[6,43],"1f449":[6,44],"1f450":[6,45],"1f48c":[6,46],"1f48e":[6,47],"1f497":[6,48],"1f49b":[6,49],"1f4a4":[6,50],"1f4a8":[6,51],"1f4ab":[6,52],"1f4ac":[6,53],"1f4c1":[6,54],"1f4c2":[6,55],"1f4c3":[6,56],"1f4c4":[6,57],"1f4ca":[6,58],"1f4cb":[6,59],"1f4d2":[6,60],"1f4d6":[6,61],"1f4d8":[6,62],"1f4dc":[6,63],"1f4dd":[7,0],"1f4e2":[7,1],"1f4e5":[7,2],"1f4f0":[7,3],"1f4f2":[7,4],"1f4f8":[7,5],"1f501":[7,6],"1f507":[7,7],"1f508":[7,8],"1f50a":[7,9],"1f50e":[7,10],"1f513":[7,11],"1f518":[7,12],"1f51f":[7,13],"1f524":[7,14],"1f526":[7,15],"1f529":[7,16],"1f52e":[7,17],"1f530":[7,18],"1f531":[7,19],"1f537":[7,20],"1f53c":[7,21],"1f570":[7,22],"1f573":[7,23],"1f575":[7,24],"1f58a":[7,25],"1f58b":[7,26],"1f58c":[7,27],"1f5bc":[7,28],"1f5d1":[7,29],"1f5e1":[7,30],"1f5fa":[7,31],"1f604":[7,32],"1f60b":[7,33],"1f61e":[7,34],"1f61f":[7,35],"1f620":[7,36],"1f622":[7,37],"1f628":[7,38],"1f634":[7,39],"1f6ab":[7,40],"1f6d6":[7,41],"1f6e0":[7,42],"1f6e1":[7,43],"1f6e4":[7,44],"1f7eb":[7,45],"1f90d":[7,46],"1f917":[7,47],"1f929":[7,48],"1f932":[7,49],"1f945":[7,50],"1f947":[7,51],"1f9ab":[7,52],"1f9e1":[7,53],"1f9ea":[7,54],"1f9ed":[7,55],"1f9f4":[7,56],"1f9f6":[7,57],"1f9ff":[7,58],"1fa79":[7,59],"1fa83":[7,60],"1fa84":[7,61],"1fa93":[7,62],"1fa99":[7,63],"1faa2":[8,0],"1faaa":[8,1],"1faad":[8,2],"1fab5":[8,3],"1fab6":[8,4],"1fae7":[8,5],"1faf1":[8,6],"21a9":[8,7],"23ed":[8,8],"2694":[8,9],"2699":[8,10],"26ab":[8,11],"26cf":[8,12],"2705":[8,13],"2714":[8,14],"2728":[8,15],"274c":[8,16],"2753":[8,17],"2754":[8,18],"2795":[8,19],"27a1":[8,20],"2b05":[8,21],"2b06":[8,22],"2b1c":[8,23],"1f3d9":[8,24],"1f3e1":[8,25],"1f6a9":[8,26]};
+var EMJ_MAP={"1f0cf":[0,0],"1f300":[0,1],"1f305":[0,2],"1f308":[0,3],"1f309":[0,4],"1f30a":[0,5],"1f30b":[0,6],"1f30c":[0,7],"1f30d":[0,8],"1f310":[0,9],"1f319":[0,10],"1f327":[0,11],"1f32c":[0,12],"1f32d":[0,13],"1f32e":[0,14],"1f330":[0,15],"1f331":[0,16],"1f332":[0,17],"1f333":[0,18],"1f335":[0,19],"1f336":[0,20],"1f337":[0,21],"1f338":[0,22],"1f339":[0,23],"1f33a":[0,24],"1f33b":[0,25],"1f33d":[0,26],"1f341":[0,27],"1f342":[0,28],"1f343":[0,29],"1f344":[0,30],"1f345":[0,31],"1f346":[0,32],"1f347":[0,33],"1f348":[0,34],"1f349":[0,35],"1f34a":[0,36],"1f34b":[0,37],"1f34c":[0,38],"1f34d":[0,39],"1f34e":[0,40],"1f350":[0,41],"1f351":[0,42],"1f352":[0,43],"1f353":[0,44],"1f354":[0,45],"1f355":[0,46],"1f356":[0,47],"1f357":[0,48],"1f359":[0,49],"1f35a":[0,50],"1f35b":[0,51],"1f35c":[0,52],"1f35d":[0,53],"1f35e":[0,54],"1f35f":[0,55],"1f360":[0,56],"1f363":[0,57],"1f364":[0,58],"1f366":[0,59],"1f367":[0,60],"1f369":[0,61],"1f36a":[0,62],"1f36b":[0,63],"1f36c":[1,0],"1f36d":[1,1],"1f36e":[1,2],"1f36f":[1,3],"1f370":[1,4],"1f371":[1,5],"1f372":[1,6],"1f373":[1,7],"1f374":[1,8],"1f375":[1,9],"1f37c":[1,10],"1f37d":[1,11],"1f37f":[1,12],"1f380":[1,13],"1f381":[1,14],"1f382":[1,15],"1f384":[1,16],"1f385":[1,17],"1f386":[1,18],"1f388":[1,19],"1f389":[1,20],"1f392":[1,21],"1f3a0":[1,22],"1f3a1":[1,23],"1f3a2":[1,24],"1f3a3":[1,25],"1f3a4":[1,26],"1f3a8":[1,27],"1f3b2":[1,28],"1f3b3":[1,29],"1f3b5":[1,30],"1f3b8":[1,31],"1f3b9":[1,32],"1f3ba":[1,33],"1f3bb":[1,34],"1f3be":[1,35],"1f3c0":[1,36],"1f3c9":[1,37],"1f3ca":[1,38],"1f3cd":[1,39],"1f3d0":[1,40],"1f3d3":[1,41],"1f3d6":[1,42],"1f3db":[1,43],"1f3dd":[1,44],"1f3df":[1,45],"1f3e0":[1,46],"1f3e4":[1,47],"1f3e5":[1,48],"1f3e6":[1,49],"1f3e8":[1,50],"1f3eb":[1,51],"1f3ed":[1,52],"1f3f0":[1,53],"1f406":[1,54],"1f40a":[1,55],"1f40c":[1,56],"1f40d":[1,57],"1f410":[1,58],"1f411":[1,59],"1f414":[1,60],"1f418":[1,61],"1f419":[1,62],"1f41a":[1,63],"1f41b":[2,0],"1f41c":[2,1],"1f41d":[2,2],"1f41e":[2,3],"1f41f":[2,4],"1f420":[2,5],"1f421":[2,6],"1f422":[2,7],"1f424":[2,8],"1f426":[2,9],"1f427":[2,10],"1f428":[2,11],"1f42b":[2,12],"1f42c":[2,13],"1f42d":[2,14],"1f42e":[2,15],"1f42f":[2,16],"1f430":[2,17],"1f431":[2,18],"1f433":[2,19],"1f434":[2,20],"1f435":[2,21],"1f436":[2,22],"1f437":[2,23],"1f438":[2,24],"1f439":[2,25],"1f43a":[2,26],"1f43b":[2,27],"1f43b 200d 2744":[2,28],"1f43c":[2,29],"1f43e":[2,30],"1f43f":[2,31],"1f440":[2,32],"1f442":[2,33],"1f443":[2,34],"1f444":[2,35],"1f445":[2,36],"1f44d":[2,37],"1f44f":[2,38],"1f451":[2,39],"1f453":[2,40],"1f454":[2,41],"1f455":[2,42],"1f456":[2,43],"1f457":[2,44],"1f45b":[2,45],"1f45e":[2,46],"1f45f":[2,47],"1f462":[2,48],"1f46e":[2,49],"1f470":[2,50],"1f474":[2,51],"1f475":[2,52],"1f476":[2,53],"1f478":[2,54],"1f47b":[2,55],"1f47c":[2,56],"1f47d":[2,57],"1f485":[2,58],"1f48d":[2,59],"1f4a1":[2,60],"1f4a7":[2,61],"1f4aa":[2,62],"1f4bb":[2,63],"1f4c5":[3,0],"1f4cc":[3,1],"1f4ce":[3,2],"1f4cf":[3,3],"1f4d3":[3,4],"1f4da":[3,5],"1f4e6":[3,6],"1f4f1":[3,7],"1f4f7":[3,8],"1f4fa":[3,9],"1f50b":[3,10],"1f50d":[3,11],"1f511":[3,12],"1f512":[3,13],"1f525":[3,14],"1f528":[3,15],"1f52a":[3,16],"1f534":[3,17],"1f535":[3,18],"1f53a":[3,19],"1f54a":[3,20],"1f56f":[3,21],"1f576":[3,22],"1f577":[3,23],"1f578":[3,24],"1f58d":[3,25],"1f5fc":[3,26],"1f646":[3,27],"1f680":[3,28],"1f681":[3,29],"1f682":[3,30],"1f687":[3,31],"1f68c":[3,32],"1f68f":[3,33],"1f691":[3,34],"1f692":[3,35],"1f693":[3,36],"1f695":[3,37],"1f697":[3,38],"1f69a":[3,39],"1f69c":[3,40],"1f6a1":[3,41],"1f6aa":[3,42],"1f6b2":[3,43],"1f6bd":[3,44],"1f6c1":[3,45],"1f6cb":[3,46],"1f6cf":[3,47],"1f6e3":[3,48],"1f6f0":[3,49],"1f6f3":[3,50],"1f6f4":[3,51],"1f6f7":[3,52],"1f6fc":[3,53],"1f7e0":[3,54],"1f7e1":[3,55],"1f7e2":[3,56],"1f7e3":[3,57],"1f7e6":[3,58],"1f916":[3,59],"1f91d":[3,60],"1f921":[3,61],"1f927":[3,62],"1f934":[3,63],"1f935":[4,0],"1f941":[4,1],"1f944":[4,2],"1f94a":[4,3],"1f951":[4,4],"1f952":[4,5],"1f954":[4,6],"1f955":[4,7],"1f957":[4,8],"1f95a":[4,9],"1f95b":[4,10],"1f95c":[4,11],"1f95d":[4,12],"1f95e":[4,13],"1f95f":[4,14],"1f962":[4,15],"1f963":[4,16],"1f964":[4,17],"1f965":[4,18],"1f966":[4,19],"1f96a":[4,20],"1f96c":[4,21],"1f96d":[4,22],"1f96f":[4,23],"1f977":[4,24],"1f980":[4,25],"1f981":[4,26],"1f982":[4,27],"1f983":[4,28],"1f985":[4,29],"1f986":[4,30],"1f987":[4,31],"1f988":[4,32],"1f989":[4,33],"1f98a":[4,34],"1f98b":[4,35],"1f98c":[4,36],"1f98d":[4,37],"1f98e":[4,38],"1f98f":[4,39],"1f990":[4,40],"1f991":[4,41],"1f992":[4,42],"1f993":[4,43],"1f994":[4,44],"1f995":[4,45],"1f996":[4,46],"1f997":[4,47],"1f998":[4,48],"1f99a":[4,49],"1f99b":[4,50],"1f99c":[4,51],"1f99d":[4,52],"1f99e":[4,53],"1f99f":[4,54],"1f9a2":[4,55],"1f9a5":[4,56],"1f9a6":[4,57],"1f9a8":[4,58],"1f9a9":[4,59],"1f9ac":[4,60],"1f9ad":[4,61],"1f9b4":[4,62],"1f9b5":[4,63],"1f9b6":[5,0],"1f9b7":[5,1],"1f9c0":[5,2],"1f9c3":[5,3],"1f9c4":[5,4],"1f9c5":[5,5],"1f9c7":[5,6],"1f9ca":[5,7],"1f9d1":[5,8],"1f9d1 200d 1f33e":[5,9],"1f9d1 200d 1f373":[5,10],"1f9d1 200d 1f3a4":[5,11],"1f9d1 200d 1f3a8":[5,12],"1f9d1 200d 1f3eb":[5,13],"1f9d1 200d 1f680":[5,14],"1f9d1 200d 1f692":[5,15],"1f9d1 200d 2695":[5,16],"1f9d9":[5,17],"1f9da":[5,18],"1f9dc":[5,19],"1f9e0":[5,20],"1f9e2":[5,21],"1f9e3":[5,22],"1f9e4":[5,23],"1f9e5":[5,24],"1f9e6":[5,25],"1f9e9":[5,26],"1f9ee":[5,27],"1f9f1":[5,28],"1f9f5":[5,29],"1f9f8":[5,30],"1f9f9":[5,31],"1f9fa":[5,32],"1f9fb":[5,33],"1f9fc":[5,34],"1fa71":[5,35],"1fa80":[5,36],"1fa81":[5,37],"1fa82":[5,38],"1fa91":[5,39],"1fa9c":[5,40],"1fa9e":[5,41],"1fa9f":[5,42],"1faa5":[5,43],"1faa8":[5,44],"1fab0":[5,45],"1fab1":[5,46],"1fab2":[5,47],"1fab4":[5,48],"1fad0":[5,49],"1fad1":[5,50],"1fad6":[5,51],"23f0":[5,52],"23f3":[5,53],"2600":[5,54],"2601":[5,55],"2602":[5,56],"260e":[5,57],"2614":[5,58],"2615":[5,59],"26a1":[5,60],"26bd":[5,61],"26be":[5,62],"26c4":[5,63],"26ea":[6,0],"26f0":[6,1],"26f2":[6,2],"26f3":[6,3],"26f5":[6,4],"26f7":[6,5],"26f8":[6,6],"26fa":[6,7],"2702":[6,8],"2708":[6,9],"2709":[6,10],"270b":[6,11],"270f":[6,12],"2744":[6,13],"2764":[6,14],"2b50":[6,15],"2b55":[6,16],"1f31f":[6,17],"1f328":[6,18],"1f33c":[6,19],"1f33e":[6,20],"1f38a":[6,21],"1f396":[6,22],"1f3a9":[6,23],"1f3aa":[6,24],"1f3ad":[6,25],"1f3ae":[6,26],"1f3af":[6,27],"1f3c1":[6,28],"1f3c3":[6,29],"1f3c6":[6,30],"1f3dc":[6,31],"1f3ee":[6,32],"1f3f3":[6,33],"1f3f7":[6,34],"1f3f9":[6,35],"1f408":[6,36],"1f409":[6,37],"1f413":[6,38],"1f415":[6,39],"1f423":[6,40],"1f425":[6,41],"1f432":[6,42],"1f446":[6,43],"1f449":[6,44],"1f450":[6,45],"1f48c":[6,46],"1f48e":[6,47],"1f497":[6,48],"1f49b":[6,49],"1f4a4":[6,50],"1f4a8":[6,51],"1f4ab":[6,52],"1f4ac":[6,53],"1f4c1":[6,54],"1f4c2":[6,55],"1f4c3":[6,56],"1f4c4":[6,57],"1f4ca":[6,58],"1f4cb":[6,59],"1f4d2":[6,60],"1f4d6":[6,61],"1f4d8":[6,62],"1f4dc":[6,63],"1f4dd":[7,0],"1f4e2":[7,1],"1f4e5":[7,2],"1f4f0":[7,3],"1f4f2":[7,4],"1f4f8":[7,5],"1f501":[7,6],"1f507":[7,7],"1f508":[7,8],"1f50a":[7,9],"1f50e":[7,10],"1f513":[7,11],"1f518":[7,12],"1f51f":[7,13],"1f524":[7,14],"1f526":[7,15],"1f529":[7,16],"1f52e":[7,17],"1f530":[7,18],"1f531":[7,19],"1f537":[7,20],"1f53c":[7,21],"1f570":[7,22],"1f573":[7,23],"1f575":[7,24],"1f58a":[7,25],"1f58b":[7,26],"1f58c":[7,27],"1f5bc":[7,28],"1f5d1":[7,29],"1f5e1":[7,30],"1f5fa":[7,31],"1f604":[7,32],"1f60b":[7,33],"1f61e":[7,34],"1f61f":[7,35],"1f620":[7,36],"1f622":[7,37],"1f628":[7,38],"1f634":[7,39],"1f6ab":[7,40],"1f6d6":[7,41],"1f6e0":[7,42],"1f6e1":[7,43],"1f6e4":[7,44],"1f7eb":[7,45],"1f90d":[7,46],"1f917":[7,47],"1f929":[7,48],"1f932":[7,49],"1f945":[7,50],"1f947":[7,51],"1f9ab":[7,52],"1f9e1":[7,53],"1f9ea":[7,54],"1f9ed":[7,55],"1f9f4":[7,56],"1f9f6":[7,57],"1f9ff":[7,58],"1fa79":[7,59],"1fa83":[7,60],"1fa84":[7,61],"1fa93":[7,62],"1fa99":[7,63],"1faa2":[8,0],"1faaa":[8,1],"1faad":[8,2],"1fab5":[8,3],"1fab6":[8,4],"1fae7":[8,5],"1faf1":[8,6],"21a9":[8,7],"23ed":[8,8],"2694":[8,9],"2699":[8,10],"26ab":[8,11],"26cf":[8,12],"2705":[8,13],"2714":[8,14],"2728":[8,15],"274c":[8,16],"2753":[8,17],"2754":[8,18],"2795":[8,19],"27a1":[8,20],"2b05":[8,21],"2b06":[8,22],"2b1c":[8,23],"1f3d9":[8,24],"1f3e1":[8,25],"1f6a9":[8,26],"1f38f":[8,27],"1f3c5":[8,28],"1f4c7":[8,29],"1f4cd":[8,30],"1f52d":[8,31],"1f689":[8,32],"1f948":[8,33],"1f949":[8,34],"1f9f0":[8,35]};
 var EMJ={re:null,bad:{},on:true};
 function emjKey(s){const k=[];for(const ch of s){const c=ch.codePointAt(0);if(c!==0xfe0f)k.push(c.toString(16))}return k.join(" ")}
 function emjBuild(){const keys=Object.keys(EMJ_MAP).sort((a,b)=>b.split(" ").length-a.split(" ").length||b.length-a.length);
@@ -4256,5 +4256,347 @@ var _showSettings1=showSettings;showSettings=function(){_showSettings1();const c
  if(c&&n&&!c.querySelector(".vcredit")){const p=document.createElement("p");p.className="credit vcredit noemj";
   p.textContent=K("Voices: "+n+" lines are AI voices made with Typecast. The other lines use this device's voice.","목소리: 대사 "+n+"줄은 Typecast로 만든 AI 음성이에요. 나머지 대사는 이 기기의 목소리로 읽어요.");
   const ref=c.querySelector(".credit");if(ref)ref.after(p);else c.appendChild(p)}};
+
+
+window.HQART={"room":{},"item":{}};
+/* ===== v29.5 우리 본부 (HQ): the shop is gone; reading achievements give treasures to decorate the HQ in the library tree.
+   Treasures come when something is achieved (a case solved, a book won back, a playground level, a battle tier, course runs,
+   one lap of today's adventure), not for every game. Rooms open with the hero level (3, 6, 9).
+   Pictures: every room and treasure is drawn by code / 3D emoji until a picture exists. HQART is filled at build time from
+   assets/img/hq/ (room_<id>.webp, item_<id>.webp), so new pictures only need the right file name. ===== */
+var HQART=window.HQART||{room:{},item:{}};
+var HQ_ITEMS=[
+ /* case squad: the evidence of each case */
+ {id:"key",e:"🔑",n:["Golden key","황금 열쇠"],src:"case_k1"},{id:"hut",e:"🛖",n:["Little hut","작은 오두막"],src:"case_k2"},
+ {id:"gold",e:"🥇",n:["Gold medal","금메달"],src:"case_k3"},{id:"cake",e:"🎂",n:["Birthday cake","생일 케이크"],src:"case_k4"},
+ {id:"invite",e:"💌",n:["Invitation","초대장"],src:"case_k5"},{id:"hourglass",e:"⏳",n:["Hourglass","모래시계"],src:"case_k6"},
+ {id:"cookies",e:"🍪",n:["Cookie jar","쿠키 단지"],src:"case_k7"},{id:"cards",e:"📇",n:["Friend cards","친구 카드"],src:"case_k8"},
+ {id:"gear",e:"⚙️",n:["Waterwheel gear","물레방아 톱니"],src:"case_k9"},{id:"fflag",e:"🎏",n:["Festival flags","축제 깃발"],src:"case_k10"},
+ {id:"lantern",e:"🏮",n:["Lantern","등불"],src:"case_k11"},{id:"paper",e:"📰",n:["Forest newspaper","숲속 신문"],src:"case_k12"},
+ /* storybooks */
+ {id:"finish",e:"🏁",n:["Finish flag","결승 깃발"],src:"book_b1"},{id:"meal",e:"🍲",n:["Country supper","시골 밥상"],src:"book_b2"},
+ /* playground: level 3 and level 5 of each game */
+ {id:"rod",e:"🎣",n:["Fishing rod","낚싯대"],src:"pg_fish_3"},{id:"tank",e:"🐠",n:["Fish tank","어항"],src:"pg_fish_5"},
+ {id:"hammer",e:"🔨",n:["Toy hammer","뿅망치"],src:"pg_mole_3"},{id:"teddy",e:"🧸",n:["Mole teddy","두더지 인형"],src:"pg_mole_5"},
+ {id:"cardbox",e:"🃏",n:["Card box","카드 상자"],src:"pg_pair_3"},{id:"frame",e:"🖼️",n:["Picture frame","짝꿍 액자"],src:"pg_pair_5"},
+ {id:"umbrella",e:"☂️",n:["Umbrella","우산"],src:"pg_rain_3"},{id:"rainbow",e:"🌈",n:["Rainbow mobile","무지개 모빌"],src:"pg_rain_5"},
+ {id:"train",e:"🚂",n:["Model train","기차 모형"],src:"pg_train_3"},{id:"station",e:"🚉",n:["Station sign","기차역 표지판"],src:"pg_train_5"},
+ {id:"puzzle",e:"🧩",n:["Puzzle frame","퍼즐 액자"],src:"pg_fill_3"},{id:"books",e:"📚",n:["Book tower","책 탑"],src:"pg_fill_5"},
+ /* practice battle tiers */
+ {id:"bronze",e:"🥉",n:["Bronze trophy","동메달"],src:"duel_1"},{id:"silver",e:"🥈",n:["Silver trophy","은메달"],src:"duel_2"},
+ {id:"trophy",e:"🏆",n:["Gold trophy","금 트로피"],src:"duel_3"},{id:"shield",e:"🛡️",n:["Guardian shield","수비대 방패"],src:"duel_4"},
+ /* adventure course runs */
+ {id:"orb",e:"🔮",n:["Book orb lamp","책 구슬 램프"],src:"run_1"},{id:"door",e:"🚪",n:["Little book door","작은 책 문"],src:"run_5"},
+ {id:"runmedal",e:"🏅",n:["Runner's medal","완주 메달"],src:"run_10"},
+ /* one lap of today's adventure: one a day, in this order */
+ {id:"plant",e:"🪴",n:["Pot plant","화분"],src:"lap_1"},{id:"sofa",e:"🛋️",n:["Sofa","소파"],src:"lap_2"},
+ {id:"lamp",e:"💡",n:["Lamp","전등"],src:"lap_3"},{id:"yarn",e:"🧶",n:["Yarn basket","털실 바구니"],src:"lap_4"},
+ {id:"clock",e:"🕰️",n:["Wall clock","벽시계"],src:"lap_5"},{id:"sunflower",e:"🌻",n:["Sunflower","해바라기"],src:"lap_6"},
+ {id:"balloons",e:"🎈",n:["Balloons","풍선"],src:"lap_7"},{id:"kite",e:"🪁",n:["Kite","연"],src:"lap_8"},
+ {id:"star",e:"🌟",n:["Star light","별 전등"],src:"lap_9"},{id:"mirror",e:"🪞",n:["Mirror","거울"],src:"lap_10"},
+ {id:"basket",e:"🧺",n:["Picnic basket","소풍 바구니"],src:"lap_11"},{id:"candle",e:"🕯️",n:["Candle","양초"],src:"lap_12"},
+ {id:"paints",e:"🎨",n:["Paint set","그림 도구"],src:"lap_13"},{id:"piano",e:"🎹",n:["Little piano","작은 피아노"],src:"lap_14"},
+ {id:"scope",e:"🔭",n:["Telescope","망원경"],src:"lap_15"}];
+var HQ_ROOMS=[
+ {id:"living",lv:1,n:["Living room","거실"],slots:[[16,30,12],[84,30,12],[50,9,10],[28,58,11],[72,58,11],[16,82,17],[50,85,19],[84,82,17]]},
+ {id:"case",lv:3,n:["Case room","수사실"],slots:[[50,30,22],[15,26,11],[85,26,11],[24,56,10],[76,56,10],[20,84,16],[50,84,18],[80,84,16]]},
+ {id:"deck",lv:6,n:["Lookout","옥상 관측대"],slots:[[20,24,12],[80,20,12],[50,15,12],[12,62,12],[88,62,12],[28,84,17],[50,86,17],[72,84,17]]},
+ {id:"study",lv:9,n:["Study","서재"],slots:[[50,22,14],[14,36,10],[14,60,10],[86,36,10],[86,60,10],[34,84,16],[50,62,12],[66,84,16]]}];
+var HQS={room:"living",slot:null,item:null},HQQ=[],HQGIFT=false;
+function hqG(){if(!isObj(G.hq))G.hq={};const h=G.hq;["got","place","seen"].forEach(k=>{if(!isObj(h[k]))h[k]={}});h.runs=+h.runs||0;return h}
+const hqN=x=>Array.isArray(x)?(G.lang==="ko"?x[1]:x[0]):L(x);
+const hqItem=id=>HQ_ITEMS.find(x=>x.id===id);
+const hqOwned=()=>HQ_ITEMS.filter(x=>hqG().got[x.src]);
+const hqCount=()=>hqOwned().length;
+function hqArt(it,cls){const f=HQART.item&&HQART.item[it.id];return f?`<img class="hqimg ${cls||""}" src="${f}" alt="">`:`<span class="hqe ${cls||""}">${it.e}</span>`}
+function hqRoomOpen(r){return (G.lv||1)>=r.lv}
+/* where a treasure came from, in words */
+function hqWhy(src){const p=src.split("_");
+ if(p[0]==="case"){const i=KC.findIndex(c=>c.id===p[1]);return K(`You solved case ${i+1}!`,`사건 ${i+1}을 해결했어요!`)}
+ if(p[0]==="book"){const b=(typeof BOOKS!=="undefined"?BOOKS:[]).find(x=>x.id===p[1]);return b?K(`You won back "${b.te||b.t}"!`,`〈${b.t}〉을 되찾았어요!`):""}
+ if(p[0]==="pg"){const g=PGAMES[p[1]];return g?K(`${L(g.n)}: level ${p[2]} cleared!`,`${L(g.n)} ${p[2]}단계를 깼어요!`):""}
+ if(p[0]==="duel")return K(`First win in practice battle (${["","easy","medium","hard","boss"][+p[1]]})!`,`연습 배틀 ${["","초급","중급","고급","보스전"][+p[1]]} 첫 승리!`);
+ if(p[0]==="run")return K(`Adventure course finished ${p[1]} time${p[1]>1?"s":""}!`,`모험 코스를 ${p[1]}번 완주했어요!`);
+ if(p[0]==="lap")return K("One lap of today's adventure!","오늘의 모험 한 바퀴를 다 했어요!");
+ return ""}
+/* give a treasure once; shows the gift box (after the result screen has been seen) */
+function hqAward(src,quiet){const h=hqG();if(h.got[src])return null;const it=HQ_ITEMS.find(x=>x.src===src);if(!it)return null;
+ h.got[src]=Date.now();save();if(!quiet){HQQ.push({it,src});setTimeout(hqGiftNext,1300)}return it}
+/* treasures for things done before the HQ existed (cases, books, playground stars) */
+function hqSync(){const h=hqG(),got=[];const give=s=>{const it=hqAward(s,true);if(it)got.push(it)};
+ KC.forEach(c=>{if(G.cases&&G.cases[c.id])give("case_"+c.id)});
+ if(G.books)Object.keys(G.books).forEach(id=>{if(G.books[id]&&G.books[id].done)give("book_"+id)});
+ Object.keys(PGAMES).forEach(g=>{[3,5].forEach(l=>{if(pgStars(g,l)>=1)give(`pg_${g}_${l}`)})});
+ return got}
+function hqGiftNext(){if(HQGIFT||!HQQ.length)return;const q=HQQ.shift();HQGIFT=true;let ov=$("hqGiftOv");
+ if(!ov){ov=document.createElement("div");ov.id="hqGiftOv";ov.className="ov center";ov.innerHTML='<div class="card hqgift" id="hqGiftCard" role="dialog" aria-modal="true"></div>';document.body.appendChild(ov)}
+ const it=q.it,room=q.room;
+ $("hqGiftCard").innerHTML=room?`<div class="hqbox open">🚪</div><h2>${K("A new room!","새 방이 열렸어요!")}</h2><p class="hqgn">${hqN(room.n)}</p><p class="hqwhy">${K(`Your hero reached level ${room.lv}.`,`영웅이 레벨 ${room.lv}이 되었어요.`)}</p>
+   <div class="btns"><button class="btn pri" id="hqGo">🏠 ${K("Go and see","보러 가기")}</button><button class="btn" id="hqLater">${K("Later","나중에")}</button></div>`
+  :`<div class="hqbox"><span class="lid"></span><span class="bx"></span><div class="hqpop">${hqArt(it,"big")}</div></div><h2>🎁 ${K("New treasure!","새 보물!")}</h2><p class="hqgn">${hqN(it.n)}</p><p class="hqwhy">${hqWhy(q.src)}</p>
+   <div class="btns"><button class="btn pri" id="hqGo">🏠 ${K("Put it in our HQ","본부에 놓기")}</button><button class="btn" id="hqLater">${HQQ.length?K("Next treasure ▶","다음 보물 ▶"):K("Later","나중에")}</button></div>`;
+ ov.hidden=false;sfx("star");try{narrate([room?K("A new room is open!","새 방이 열렸어요!"):K("A new treasure! ","새 보물이에요! ")+hqN(it.n)])}catch(e){}
+ const close=()=>{ov.hidden=true;HQGIFT=false;hush()};
+ $("hqGo").onclick=()=>{sfx("tap");close();HQQ.length=0;hqOpen(room?room.id:null,it?it.id:null)};
+ $("hqLater").onclick=()=>{sfx("tap");close();setTimeout(hqGiftNext,250)}}
+/* what to do for the next treasures (up to 3) */
+function hqNext(){const h=hqG(),out=[],add=(src,txt)=>{const it=HQ_ITEMS.find(x=>x.src===src);if(it&&!h.got[src])out.push(`<li>${hqArt(it,"sm")}<span>${txt}</span></li>`)};
+ const lapIt=HQ_ITEMS.find(x=>/^lap_/.test(x.src)&&!h.got[x.src]);if(lapIt&&h.lapDay!==dkey())add(lapIt.src,K("Finish one lap of today's adventure","오늘의 모험 한 바퀴 하기"));
+ const ci=KC.findIndex(c=>!(G.cases&&G.cases[c.id]));if(ci>=0)add("case_"+KC[ci].id,K(`Solve case ${ci+1}`,`사건 ${ci+1} 해결하기`));
+ const nb=(typeof BOOKS!=="undefined"?BOOKS:[]).find(b=>b.ready&&!(G.books&&G.books[b.id]&&G.books[b.id].done));if(nb)add("book_"+nb.id,K(`Win back "${nb.te||nb.t}"`,`〈${nb.t}〉 되찾기`));
+ for(const g of Object.keys(PGAMES)){const l=pgStars(g,3)<1?3:pgStars(g,5)<1?5:0;if(l){add(`pg_${g}_${l}`,K(`${L(PGAMES[g].n)}: clear level ${l}`,`${L(PGAMES[g].n)} ${l}단계 깨기`));break}}
+ const dt=[1,2,3,4].find(t=>!h.got["duel_"+t]);if(dt)add("duel_"+dt,K("Win a practice battle","연습 배틀 이기기")+` (${["","초급","중급","고급","보스전"][dt]})`);
+ const rn=[1,5,10].find(n=>!h.got["run_"+n]);if(rn)add("run_"+rn,K(`Finish the adventure course ${rn-h.runs} more time(s)`,`모험 코스 ${rn-h.runs}번 더 완주하기`));
+ return out.slice(0,3)}
+/* ---------- the HQ screen ---------- */
+function hqOpen(roomId,itemId){hqG();const fresh=hqSync();let ov=$("hqOv");
+ if(!ov){ov=document.createElement("div");ov.id="hqOv";ov.className="ov center";ov.innerHTML='<div class="card hqc" id="hqCard"></div>';document.body.appendChild(ov)}
+ const r=HQ_ROOMS.find(x=>x.id===roomId)||HQ_ROOMS.find(x=>x.id===HQS.room)||HQ_ROOMS[0];HQS.room=hqRoomOpen(r)?r.id:"living";HQS.slot=null;HQS.item=itemId||null;
+ ov.hidden=false;hqDraw();
+ const h=hqG();if(!h.intro){h.intro=1;save();setTimeout(()=>{if(!$("hqOv").hidden){const n=fresh.length;
+  hqTip(n?K(`Welcome to our HQ! You already earned ${n} treasure(s). Tap a glowing + to put one in.`,`우리 본부에 온 걸 환영해! 지금까지 보물 ${n}개를 모았어. 반짝이는 +를 눌러 놓아 봐.`)
+   :K("Welcome to our HQ! Solve cases and read books to earn treasures.","우리 본부에 온 걸 환영해! 사건을 풀고 책을 읽으면 보물을 받아.") ,true)}},400)}}
+function hqTip(t,speak){const e=$("hqTip");if(!e)return;e.textContent=t;e.hidden=!t;if(speak&&t)try{narrate([t],null,"ko",{voice:"mentor"})}catch(x){}}
+function hqDraw(){const h=hqG(),r=HQ_ROOMS.find(x=>x.id===HQS.room)||HQ_ROOMS[0],pl=h.place[r.id]||{},own=hqOwned(),bg=HQART.room&&HQART.room[r.id];
+ const placedIn=id=>{for(const rid in h.place)for(const s in h.place[rid])if(h.place[rid][s]===id)return rid;return null};
+ const others=(G.unl||[]).filter(x=>x!==G.char),heroes=[G.char,others[HQ_ROOMS.indexOf(r)%Math.max(1,others.length)]].filter(Boolean);
+ const nx=hqNext();
+ $("hqCard").innerHTML=`<div class="hqhead"><h2>🏠 ${K("Our HQ","우리 본부")}</h2><span class="hqcount">🎁 ${own.length} / ${HQ_ITEMS.length}</span><button class="btn" id="hqX">${K("Close","닫기")}</button></div>
+  <div class="hqtabs">${HQ_ROOMS.map(x=>`<button class="hqtab${x.id===r.id?" on":""}${hqRoomOpen(x)?"":" lock"}" data-r="${x.id}">${hqRoomOpen(x)?"":"🔒 "}${hqN(x.n)}${hqRoomOpen(x)?"":` <small>Lv ${x.lv}</small>`}</button>`).join("")}</div>
+  <div class="hqmain"><div class="hqroom r-${r.id}${bg?" art":""}"${bg?` style="background-image:url('${bg}')"`:""}>
+   ${bg?"":`<i class="hqdeco d1"></i><i class="hqdeco d2"></i><i class="hqdeco d3"></i>`}
+   ${heroes.map((id,i)=>`<img class="hqhero h${i}" src="${heroBody(id)}" alt="">`).join("")}
+   ${r.slots.map(([x,y,w],i)=>{const id=pl[i],it=id&&hqItem(id);return `<button class="hqslot${it?"":" empty"}${HQS.slot===i?" sel":""}${!it&&HQS.item?" want":""}" data-s="${i}" style="left:${x}%;top:${y}%;--w:${w}" aria-label="${it?hqN(it.n):K("Empty spot","빈 자리")}">${it?hqArt(it):""}</button>`}).join("")}
+   <p class="hqtip" id="hqTip" hidden></p></div>
+   <div class="hqside"><div class="hqtrayh"><b>🧰 ${K("Treasure chest","보물 상자")}</b>${HQS.slot!=null&&pl[HQS.slot]?`<button class="btn" id="hqTake">${K("Take it back","치우기")}</button>`:""}</div>
+    ${own.length?`<div class="hqtray">${own.map(it=>{const at=placedIn(it.id);return `<button class="hqit${HQS.item===it.id?" sel":""}${at?" placed":""}" data-i="${it.id}">${hqArt(it)}<small>${hqN(it.n)}</small>${!h.seen[it.id]?'<span class="new">NEW</span>':""}${at?'<span class="pin">📍</span>':""}</button>`}).join("")}</div>`
+     :`<p class="hqempty">${K("No treasures yet. Solve a case or finish today's adventure!","아직 보물이 없어요. 사건을 풀거나 오늘의 모험을 해 봐요!")}</p>`}
+    ${nx.length?`<div class="hqnext"><b>✨ ${K("Next treasures","다음 보물")}</b><ul>${nx.join("")}</ul></div>`:""}</div></div>`;
+ $("hqX").onclick=()=>{sfx("tap");hush();$("hqOv").hidden=true;renderAll()};
+ $("hqCard").querySelectorAll(".hqtab").forEach(b=>b.onclick=()=>{const x=HQ_ROOMS.find(q=>q.id===b.dataset.r);sfx("tap");
+  if(!hqRoomOpen(x)){hqTip(K(`This room opens when your hero reaches level ${x.lv}.`,`영웅 레벨 ${x.lv}이 되면 열려요.`),true);return}HQS.room=x.id;HQS.slot=null;hqDraw()});
+ $("hqCard").querySelectorAll(".hqslot").forEach(b=>b.onclick=()=>{const i=+b.dataset.s;sfx("tap");
+  if(HQS.item){hqPut(r.id,i,HQS.item);return}HQS.slot=HQS.slot===i?null:i;hqDraw();
+  if(HQS.slot!=null&&!pl[i])hqTip(K("Now pick a treasure from the chest.","이제 보물 상자에서 하나 골라요."))});
+ $("hqCard").querySelectorAll(".hqit").forEach(b=>b.onclick=()=>{const id=b.dataset.i;sfx("tap");h.seen[id]=1;save();
+  if(HQS.slot!=null){hqPut(r.id,HQS.slot,id);return}HQS.item=HQS.item===id?null:id;hqDraw();
+  if(HQS.item)hqTip(K("Tap a glowing spot in the room.","방에서 반짝이는 자리를 눌러요."))});
+ const tk=$("hqTake");if(tk)tk.onclick=()=>{sfx("tap");delete pl[HQS.slot];h.place[r.id]=pl;HQS.slot=null;save();hqDraw()};
+ if(HQS.item)hqTip(K("Tap a glowing spot in the room.","방에서 반짝이는 자리를 눌러요."))}
+function hqPut(rid,slot,id){const h=hqG();for(const r in h.place)for(const s in h.place[r])if(h.place[r][s]===id)delete h.place[r][s];
+ (h.place[rid]=h.place[rid]||{})[slot]=id;h.seen[id]=1;HQS.slot=null;HQS.item=null;save();sfx("ok");hqDraw();
+ const el=document.querySelector(`#hqCard .hqslot[data-s="${slot}"]`);if(el){el.classList.add("pop");burstAt&&burstAt(el)}}
+/* ---------- where treasures come from ---------- */
+var _kzReportH=kzReport;kzReport=function(){const c=KZ&&KZ.c;_kzReportH.apply(this,arguments);if(c&&G.cases&&G.cases[c.id])hqAward("case_"+c.id)};
+var _bFinishH=bFinish;bFinish=function(){const b=BK;_bFinishH.apply(this,arguments);if(b)hqAward("book_"+b.B.id)};
+var _pgResultH=pgResult;pgResult=function(){const S=PGS;_pgResultH.apply(this,arguments);if(S)[3,5].forEach(l=>{if(pgStars(S.g,l)>=1)hqAward(`pg_${S.g}_${l}`)})};
+var _duWinH=duWin;duWin=function(){const D=DU;_duWinH.apply(this,arguments);if(D)hqAward("duel_"+(D.boss?4:Math.max(1,Math.min(3,D.tier||1))))};
+var _clearRunH=clearRun;clearRun=function(){const done=RUN&&RUN.done;_clearRunH.apply(this,arguments);if(!done&&RUN&&RUN.done==="clear"){const h=hqG();h.runs++;save();[1,5,10].forEach(n=>{if(h.runs>=n)hqAward("run_"+n)})}};
+var _tdCelebrateH=tdCelebrate;tdCelebrate=function(){_tdCelebrateH.apply(this,arguments);if(!tdDone())return;const h=hqG();if(h.lapDay===dkey())return;
+ const it=HQ_ITEMS.find(x=>/^lap_/.test(x.src)&&!h.got[x.src]);h.lapDay=dkey();save();if(it)hqAward(it.src)};
+var _applyLvH=applyLv;applyLv=function(l){_applyLvH.apply(this,arguments);const r=HQ_ROOMS.find(x=>x.lv===l);if(r){HQQ.push({room:r});setTimeout(hqGiftNext,1600)}};
+/* ---------- the shop is gone ---------- */
+showShop=function(){hqOpen()};
+try{if(typeof STATIONS!=="undefined"&&STATIONS.shop){STATIONS.shop.n={en:"Our HQ",ko:"우리 본부"};STATIONS.shop.e="🏠"}}catch(e){}
+try{["en","ko"].forEach(k=>{if(UI[k]&&typeof UI[k].tip==="string")UI[k].tip=UI[k].tip.replace("the shop","our HQ").replace("상점","본부")})}catch(e){}
+var _renderExtrasH=renderExtras;renderExtras=function(){_renderExtrasH.apply(this,arguments);const b=document.querySelector('#extras [data-x="shop"]');if(!b)return;
+ b.dataset.x="hq";b.classList.remove("xmore");const n=HQ_ITEMS.filter(x=>hqG().got[x.src]&&!hqG().seen[x.id]).length;
+ b.innerHTML=`<span class="ic">🏠</span>${K("Our HQ","우리 본부")}${n?`<span class="new">${n}</span>`:""}`;b.onclick=()=>{if(overlayOpen())return;sfx("tap");hqOpen()};
+ const ex=$("extras"),more=ex&&ex.querySelector('[data-x="more"]');if(more&&b.nextSibling!==more)ex.insertBefore(b,more)};
+/* coins: no longer shown or earned for anything; EXP stays */
+["en","ko"].forEach(k=>{if(UI[k]){UI[k].hlv=l=>`Lv ${l} · 🎁 ${hqCount()}`;UI[k].rew=(c,e)=>`EXP +${e}`}});
+var _rewListH=rewList;rewList=function(R){return _rewListH.apply(this,arguments).filter(x=>x.ic!=="🪙")};
+coinBurst=function(from,n){const to=$("hHero");if(!from||!to)return;const a=from.getBoundingClientRect(),z=to.getBoundingClientRect();if(!a.width||!z.width)return;
+ for(let i=0;i<(n||8);i++)setTimeout(()=>{const c=document.createElement("div");c.className="cfly";c.textContent="⭐";
+  c.style.left=(a.left+a.width/2+Math.random()*90-45)+"px";c.style.top=(a.top+a.height*.6)+"px";document.body.appendChild(c);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{c.style.left=(z.left+z.width*.55)+"px";c.style.top=(z.top+z.height*.5)+"px";c.style.opacity=".15";c.style.transform="scale(.55)"}));
+  setTimeout(()=>c.remove(),950)},i*70)};
+/* the badge, the crown and the pig used to give more coins: now they give more hero EXP.
+   reward() itself still multiplies EXP by expMul() (cape/crown +25%, dog +25%), so the crown ends at ×1.2×1.25 = +50%. */
+try{EQUIP.badge.d={en:"+25% hero EXP",ko:"주인공 EXP +25%"};EQUIP.crown.d={en:"+50% hero EXP",ko:"주인공 EXP +50%"};
+ const pg=CHARS.find(c=>c.id==="pig");if(pg)pg.d={en:"+25% hero EXP.",ko:"주인공 EXP가 25% 더 많아요."}}catch(e){}
+var _rewardH=reward;reward=function(c,e,p){let m=1;if(G.eq==="badge")m+=.25;if(G.eq==="crown")m+=.2;if(G.char==="pig")m+=.25;return _rewardH.call(this,c,Math.round(e*m),p)};
+/* battle helpers used to be bought: now every battle starts with one of each */
+var _duelH=duel;duel=function(m){G.inv=G.inv||{};["potion","lens","shield"].forEach(k=>{if((G.inv[k]||0)<1)G.inv[k]=1});return _duelH.apply(this,arguments)};
+/* the page may have drawn the HUD and the extras bar before this file ran: draw them again */
+try{const _hqR=()=>{try{renderAll()}catch(e){}};if(document.readyState!=="loading")_hqR();else addEventListener("DOMContentLoaded",_hqR)}catch(e){}
+
+/* ===== v29.5 책 2~12권의 새 인물 목소리 (보호자 요청 2026-10-30):
+   새로 녹음하지 않는다. 영웅 12명·거북이 스승님·악당 고양이들은 자기 목소리(녹음, 없으면 기존 VOX 프로필) 그대로.
+   그 밖에 VOX에 없는 화자(시골 쥐, 도시 쥐, 다음 책들의 새 인물)는 기기 목소리를 돌려 쓰되
+   화자 아이디의 해시로 높낮이·속도·성별을 정해, 서로 다르게 들리고 같은 인물은 늘 같은 소리가 난다.
+   (기기에 한국어 목소리가 여럿이면 vFor가 이미 해시로 다른 목소리를 고른다. 녹음이 생기면 VAUD가 우선.) */
+function voxSeed(w){if(!w||VOX[w])return;let h=0;for(const c of String(w))h=(h*31+c.charCodeAt(0))>>>0;
+ const V=[[1.32,1.02,"f"],[.8,.9,"m"],[1.2,.94,"f"],[.9,1.06,"m"],[1.26,.88,"f"],[.96,1,"m"],[1.1,.84,"f"],[.74,.98,"m"]][h%8];
+ VOX[w]={p:V[0],r:V[1],g:V[2],gap:600}}
+var _utterV=utter;utter=function(txt,o){if(o&&o.who)voxSeed(o.who);return _utterV.call(this,txt,o||{})};
+var _narrV=narrate;narrate=function(lines,done,lang,o){if(o){if(o.voice)voxSeed(o.voice);if(o.who)voxSeed(o.who)}
+ return _narrV.apply(this,arguments)};
+
+
+/* ===== v29.5 모험 코스 다양화: 배경 5종(있는 그림 재사용), 연결 구간 6종 섞기, 스프링(S)·무너지는 다리(C) 타일.
+   글자 블록·표지판·문(게이트) 공부 구간은 이전과 완전히 같다. SOLID 문자열은 patch35가 "#B?LUSC"로 넓힌다.
+   쉬움 모드에서는 구덩이가 메워지므로(원래 규칙) 다리 구간도 그냥 땅이 된다. */
+var RUNBG=["assets/img/scene/course_forest.webp","assets/img/case/case05_dragon.webp","assets/img/case/case09_monkey.webp","assets/img/case/case10_rooster.webp","assets/img/case/case11_dog.webp"];
+buildLevel=function(word){
+ const syl=[...word.w],cols=[],ents=[],gates=[];
+ const col=(g=true)=>{const c=Array(ROWS).fill(".");if(g){c[7]="#";c[8]="#"}cols.push(c)};
+ const flat=n=>{for(let i=0;i<n;i++)col()};
+ const pit=n=>{for(let i=0;i<n;i++)col(!!G.easy)};
+ const set=(x,y,ch)=>{cols[x][y]=ch};
+ const coin=(x,y)=>ents.push({k:"coin",x:x*T+T/2,y:y*T+T/2});
+ let s=0;
+ /* intro: same as before */
+ flat(12);[6,7,8].forEach(x=>coin(x,5));set(9,4,"?");pit(2);
+ s=cols.length;flat(10);set(s+3,4,"B");set(s+4,4,"?");set(s+5,4,"B");ents.push({k:"mob",x:(s+7)*T});
+ s=cols.length;flat(6);set(s+1,6,"#");set(s+2,6,"#");set(s+2,5,"#");set(s+3,6,"#");set(s+3,5,"#");set(s+3,4,"#");coin(s+3,3);
+ pit(2);
+ /* connector pieces between letter gates — each starts and ends on flat ground */
+ const CONN=[
+  ()=>{/* the old one: mob, pit, high platform */
+   s=cols.length;flat(4);ents.push({k:"mob",x:(s+2)*T});pit(3);
+   s=cols.length;flat(7);set(s+2,4,"#");set(s+3,4,"#");set(s+4,4,"#");[s+2,s+3,s+4].forEach(x=>coin(x,3));ents.push({k:"mob",x:(s+6)*T})},
+  ()=>{/* little hill to climb */
+   s=cols.length;flat(10);for(let i=0;i<3;i++)for(let y=6-i;y<=6;y++)set(s+2+i,y,"#");
+   for(let i=0;i<3;i++)for(let y=4+i;y<=6;y++)set(s+5+i,y,"#");coin(s+3,2);coin(s+4,2);ents.push({k:"mob",x:(s+9)*T})},
+  ()=>{/* spring: a big bounce picks up the high coins; the gap is still an ordinary jump */
+   s=cols.length;flat(6);set(s+3,6,"S");coin(s+3,2);coin(s+4,1);coin(s+5,2);pit(3);
+   s=cols.length;flat(4);ents.push({k:"mob",x:(s+2)*T})},
+  ()=>{/* lily pads over a wide pit */
+   s=cols.length;flat(3);pit(7);for(let i=0;i<7;i+=2){set(s+3+i,6,"#");coin(s+3+i,4)}
+   s=cols.length;flat(4)},
+  ()=>{/* crumbling bridge: planks fall just after you step on them (ordinary ground in easy mode) */
+   s=cols.length;flat(3);pit(5);if(!G.easy)for(let i=0;i<5;i++)set(s+3+i,7,"C");
+   coin(s+4,5);coin(s+6,5);s=cols.length;flat(4)},
+  ()=>{/* bonus blocks */
+   s=cols.length;flat(8);set(s+2,4,"B");set(s+3,4,"?");set(s+4,4,"B");[s+2,s+3,s+4].forEach(x=>coin(x,2));pit(2);
+   s=cols.length;flat(3)}];
+ const order=shuffle(CONN.map((_,i)=>i));
+ syl.forEach((tg,g)=>{
+  s=cols.length;flat(14);
+  ents.push({k:"sign",x:(s+2)*T+T/2,g});
+  const opts=shuffle([tg,...distract(tg,2)]);
+  [4,6,8].forEach((dx,i)=>{set(s+dx,4,"L");ents.push({k:"lb",cx:s+dx,cy:4,s:opts[i],g})});
+  gates.push({g,cx:s+11,target:tg,opened:false,anim:0,hint:false});
+  if(g<syl.length-1)CONN[order[g%CONN.length]]();
+ });
+ s=cols.length;flat(16);for(let i=0;i<4;i++)for(let y=6-i;y<=6;y++)set(s+3+i,y,"#");
+ ents.push({k:"flag",x:(s+11)*T+T/2});
+ return {cols,ents,gates,w:cols.length*T};
+};
+/* a different backdrop each run, from pictures the game already has */
+var _startRunV=startRun;startRun=function(w){const r=_startRunV.apply(this,arguments);
+ try{if(RUN&&RUN.img){G.runBgN=((G.runBgN||0)%RUNBG.length)+1;RUN.img.land=Object.assign(new Image(),{src:RUNBG[G.runBgN-1]})}}catch(e){}
+ return r};
+/* spring bounce + crumbling planks */
+var _runUpV=runUpdate;runUpdate=function(dt){
+ _runUpV.apply(this,arguments);
+ if(!RUN||RUN.done)return;const p=RUN.p;
+ if(p.on){const fy=Math.floor((p.y+p.h+2)/T),x0=Math.floor((p.x+6)/T),x1=Math.floor((p.x+p.w-6)/T);
+  for(let cx=x0;cx<=x1;cx++){const ch=tileAt(cx,fy);
+   if(ch==="S"){p.vy=-1150;p.on=false;p.sq=.16;sfx("ok");RUN.bumps[cx+","+fy]=.16;part({x:cx*T+T/2,y:fy*T-6,txt:"💫",life:.6});break}
+   if(ch==="C"){const k2="C"+cx+","+fy;if(RUN.meta[k2]==null){RUN.meta[k2]=.55;sfx("tap")}}}}
+ for(const k2 in RUN.meta){if(k2[0]!=="C")continue;RUN.meta[k2]-=dt;
+  if(RUN.meta[k2]<=0){delete RUN.meta[k2];const q=k2.slice(1).split(","),cx=+q[0],cy=+q[1];
+   if(RUN.cols[cx]&&RUN.cols[cx][cy]==="C"){RUN.cols[cx][cy]=".";part({x:cx*T+T/2,y:cy*T+8,txt:"🪵",life:.6});sfx("hit")}}}};
+/* how the two new tiles look */
+var _drawTileV=drawTile;drawTile=function(c,ch,cx,cy){
+ if(ch==="S"){const x=cx*T,b=RUN.bumps[cx+","+cy]||0,y=cy*T-(b>0?Math.sin((1-b/.16)*Math.PI)*8:0);
+  c.fillStyle="#7A5030";c.fillRect(x+8,y+T-8,T-16,8);
+  c.strokeStyle="#9FB4D8";c.lineWidth=4;c.beginPath();
+  c.moveTo(x+12,y+T-12);c.lineTo(x+T-12,y+T-18);c.moveTo(x+12,y+T-22);c.lineTo(x+T-12,y+T-28);c.stroke();
+  c.fillStyle="#E8373A";rr(c,x+6,y+2,T-12,12,6);c.fill();
+  c.fillStyle="rgba(255,255,255,.35)";rr(c,x+8,y+4,T-16,4,2);c.fill();return}
+ if(ch==="C"){const x=cx*T,sh=RUN.meta&&RUN.meta["C"+cx+","+cy]!=null?Math.sin(RUN.t*42)*2:0,y=cy*T+sh;
+  c.fillStyle="#C89A66";rr(c,x+1,y+2,T-2,15,5);c.fill();
+  c.strokeStyle="#8A5A33";c.lineWidth=2;c.beginPath();
+  c.moveTo(x+6,y+5);c.lineTo(x+T*.5,y+13);c.moveTo(x+T-8,y+4);c.lineTo(x+T*.55,y+14);c.stroke();return}
+ return _drawTileV(c,ch,cx,cy)};
+
+/* ===== v29.5 연습 배틀 다양화 (아이가 받침 있는 글도 읽으므로 이해 문제를 더한다):
+   새 문제 3종 — oxq(짧은 문장 ⭕/❌), pic(낱말 읽고 그림 고르기), who(누가 한 말일까 — 녹음된 대사를 들려 준다).
+   악당 반칙 1개씩 — 뚱냥: 보기 글자 하나를 냠냠(가림), 흑묘: 보기 하나를 그림자로 덮음(누르면 치워짐),
+   백묘·회묘: 보기 자리를 한 번 바꿈, 호랑이냥: 10초 안에 맞히기(맞히면 칭찬만, 벌은 없음).
+   경기장: 악당마다 사건 그림을 배경으로 쓴다. */
+var DARENA={black:"assets/img/case/case11_dog.webp",gray:"assets/img/case/case01_rat.webp",tiger:"assets/img/case/case09_monkey.webp",fat:"assets/img/case/case07_horse.webp",white:"assets/img/case/case08_sheep.webp",purple:"assets/img/case/case10_rooster.webp"};
+var _duelA=duel;duel=function(m){const r=_duelA.apply(this,arguments);
+ try{DU.tricked=0;DU.roarT=0;const st=$("dStage"),bg=DARENA[DU.vil];
+  if(st){st.style.backgroundImage=bg?`linear-gradient(rgba(20,30,55,.52),rgba(20,30,55,.34)),url('${bg}')`:"";
+   st.style.backgroundSize="cover";st.style.backgroundPosition="center 65%"}}catch(e){}return r};
+function duWhoPool(){const okId=new Set([...CHARS.map(c=>c.id),"mentor","v_black","v_white","v_tiger","v_gray","v_fat","v_purple"]);
+ return (window.VOICEFILES||[]).filter(([w,t])=>okId.has(w)&&PORT[w]&&t.length>=6&&t.length<=26&&!/___|…/.test(t))}
+const duName=id=>id==="mentor"?K("Master Turtle","거북이 스승님"):id.indexOf("v_")===0?L(((VIL||{})[id.slice(2)]||{}).n||{en:id,ko:id}):L((CHARS.find(c=>c.id===id)||{n:{en:id,ko:id}}).n);
+var _duTypeA=duType;duType=function(){const T=DU.tier,i=DU.qi;let x=null;
+ if(T===2)x=["combo","word","oxq","word","pic","combo"][i%6];
+ else if(T===3)x=["sent","word","oxq","pic","sent","who"][i%6];
+ else if(T>=4)x=["combo","word","pic","sent","oxq","who","word","sent"][i%8];
+ if(!x)return _duTypeA();
+ if(x==="who"&&duWhoPool().length<4)x=T>=3?"sent":"word";
+ return x};
+var _duGenA=duGen;duGen=function(type){
+ if(type==="oxq"){const P=(G.easy?FILLS_E:FILLS),pool=P.filter(q=>!DU.used.has("ox"+q.s)),q=pick(pool.length?pool:P);DU.used.add("ox"+q.s);
+  const truth=Math.random()<.5,s=q.s.replace("___",truth?q.a:pick(q.o||[q.a]));
+  return {type,ans:truth?"O":"X",s,full:s,opts:["O","X"]}}
+ if(type==="pic"){const P=WORDS2.filter(w=>w.p&&w.w.length>=2),pool=P.filter(w=>!DU.used.has("pw"+w.w)),w=pick(pool.length?pool:P);DU.used.add("pw"+w.w);
+  const others=shuffle(P.filter(x=>x.p!==w.p&&x.w!==w.w)).slice(0,2);
+  return {type,ans:w.p,w:w.w,full:w.w,opts:shuffle([w.p,...others.map(x=>x.p)])}}
+ if(type==="who"){const all=duWhoPool(),pool=all.filter(([w,t])=>!DU.used.has("wh"+t)),e=pick(pool.length?pool:all);DU.used.add("wh"+e[1]);
+  const others=shuffle([...new Set(all.map(x=>x[0]))].filter(x=>x!==e[0])).slice(0,2);
+  return {type,ans:e[0],who:e[0],t:e[1],full:e[1],opts:shuffle([e[0],...others])}}
+ return _duGenA(type)};
+var _duNextA=duNext;duNext=function(){
+ if(!DU||DU.done)return _duNextA();
+ const ty=duType();
+ if(ty!=="oxq"&&ty!=="pic"&&ty!=="who"){_duNextA();setTimeout(duTrick,700);return}
+ DU.busy=false;DU.qw=0;const Q=DU.q=duGen(ty);DU.qi++;duHUD();
+ let p="";
+ if(ty==="oxq")p=`<div class="fsent oxs">${Q.s}</div>`;
+ else if(ty==="pic")p=`<div class="dqp"><button class="spk" id="dSay" aria-label="Hear it">🔊</button><span class="big dpw">${Q.w}</span></div>`;
+ else p=`<div class="dquote"><button class="spk" id="dSay" aria-label="Hear it">🔊</button><span>“${Q.t}”</span></div>`;
+ const ob=Q.opts.map(o=>ty==="pic"?`<button class="dop pw" data-o="${o}">${o}</button>`
+  :ty==="who"?`<button class="dop who" data-o="${o}"><img src="${PORT[o]}" alt=""><small>${duName(o)}</small></button>`
+  :`<button class="dop ox" data-o="${o}">${o==="O"?"⭕":"❌"}</button>`).join("");
+ $("dQ").innerHTML=p+`<div class="dopts${ty==="oxq"?" dox":""}">${ob}</div>`;
+ document.querySelectorAll(".dop").forEach(b=>b.onclick=()=>duAnswer(b));
+ if($("dSay"))$("dSay").onclick=duSpeak;
+ $("dMsg").textContent=ty==="oxq"?K("Read it — right or wrong?","읽어 보고 맞으면 ⭕, 틀리면 ❌!")
+  :ty==="pic"?K("Read the word, pick its picture!","낱말을 읽고 맞는 그림을 골라!")
+  :K("Listen and read — who said it?","잘 듣고 읽어 봐. 누가 한 말일까?");
+ setTimeout(()=>{if(DU&&DU.q===Q)duSpeak()},900);
+ setTimeout(duTrick,700)};
+var _duSpeakA=duSpeak;duSpeak=function(){const Q=DU&&DU.q;if(!Q)return _duSpeakA();
+ if(Q.type==="oxq")return say(Q.s);
+ if(Q.type==="pic")return say(Q.w);
+ if(Q.type==="who")return narrate([Q.t],null,"ko",{voice:Q.who});
+ return _duSpeakA()};
+/* 악당 반칙: 2단계부터, 두 번째 문제부터, 배틀마다 최대 2번 */
+function duTrick(){try{
+ if(!DU||DU.done||DU.busy||DU.tier<2||DU.qi<2)return;
+ if((DU.tricked||0)>=2||Math.random()<.5)return;
+ const v=DU.vil,Q=DU.q,ops=[...document.querySelectorAll("#dQ .dop")];if(ops.length<2)return;
+ const vn=L((VIL[v]||{}).n||{en:"the cat",ko:"악당 고양이"});let used=true;
+ if(v==="fat"){const c=ops.filter(b=>!b.classList.contains("who")&&!b.classList.contains("pw")&&!b.classList.contains("ox")&&(b.dataset.o||"").length>=2);
+  if(!c.length)return;const b=pick(c),t2=b.dataset.o,i=Math.floor(Math.random()*t2.length);
+  b.innerHTML=[...t2].map((ch,j)=>j===i?'<span class="dnom">🍽️</span>':ch).join("");
+  dBan(K(`${vn} ate a letter!`,`${vn}${batchim(vn)?"이":"가"} 글자 하나를 냠냠 먹었어!`))}
+ else if(v==="black"||v==="purple"){const b=pick(ops);b.classList.add("dshade");
+  const cov=document.createElement("span");cov.className="dsh";cov.textContent="🐾";b.appendChild(cov);
+  const o0=b.onclick;b.onclick=()=>{if(b.classList.contains("dshade")){b.classList.remove("dshade");cov.remove();sfx("tap")}else o0&&o0()};
+  dBan(K(`${vn} hid one in shadow — tap it away!`,`${vn}${batchim(vn)?"이":"가"} 그림자로 가렸어! 눌러서 치워 봐`))}
+ else if(v==="white"||v==="gray"){used=false;setTimeout(()=>{if(!DU||DU.q!==Q||DU.busy)return;
+  const box=document.querySelector("#dQ .dopts");if(!box)return;DU.tricked=(DU.tricked||0)+1;
+  [...box.children].sort(()=>Math.random()-.5).forEach(x=>box.appendChild(x));
+  box.classList.remove("dswap");void box.offsetWidth;box.classList.add("dswap");
+  dBan(K(`${vn} swapped the places!`,`${vn}${batchim(vn)?"이":"가"} 보기 자리를 바꿨어!`));sfx("tap")},1800)}
+ else{DU.roarT=performance.now()+10000;const chip=document.createElement("div");chip.className="droar";chip.textContent="⏳ 10";$("dQ").appendChild(chip);
+  dBan(K(`${vn}: "Answer in 10 seconds!"`,`${vn}: "10초 안에 맞혀 봐라냥!"`));
+  const iv=setInterval(()=>{if(!DU||DU.q!==Q||!DU.roarT){clearInterval(iv);chip.remove();return}
+   const left=Math.max(0,Math.ceil((DU.roarT-performance.now())/1000));chip.textContent="⏳ "+left;
+   if(left<=0){clearInterval(iv);chip.remove();DU.roarT=0}},300)}
+ if(used)DU.tricked=(DU.tricked||0)+1}catch(e){}}
+var _duAnswerA=duAnswer;duAnswer=function(b){
+ const live=DU&&!DU.busy&&!DU.done,Q=DU&&DU.q,good=live&&Q&&b&&b.dataset.o===Q.ans,timely=live&&DU.roarT&&performance.now()<DU.roarT;
+ _duAnswerA.apply(this,arguments);
+ if(good&&timely&&DU){DU.roarT=0;setTimeout(()=>dBan(K("Lightning fast! ⭐","번개처럼 빨랐다! ⭐")),750);try{burstAt(b)}catch(e){}}};
 /* book 2 voices (VOX is defined above; books/b2/book.js holds the story) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

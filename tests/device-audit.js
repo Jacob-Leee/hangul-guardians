@@ -32,12 +32,23 @@ function screens(info){const S=[
  S.push(['wordbook','pgStop();wbBook()',700,'#pgOv']);
  S.push(['course','pgStop();$("pgOv").hidden=true;startRun()',1600,'#runOv']);
  S.push(['duel','try{cancelAnimationFrame(RUN.raf)}catch(e){};$("runOv").hidden=true;duel({lv:1,practice:true})',1800,'#duelOv']);
+ // v29.5 new battle question types (tier 3, forced type)
+ S.push(['duel_oxq','["setOv","tdOv","hqOv","hqGiftOv"].forEach(x=>{const e=$(x);if(e)e.hidden=true});duClose();duel({lv:3,practice:true,vil:"fat"});setTimeout(()=>{const go=$("dGo");go&&go.click();DU.busy=false;const o=duType;duType=()=>"oxq";duNext();duType=o},500)',2400,'#duelOv']);
+ S.push(['duel_pic','DU.busy=false;const o1=duType;duType=()=>"pic";duNext();duType=o1',1500,'#duelOv']);
+ S.push(['duel_who','DU.busy=false;const o2=duType;duType=()=>(typeof duWhoPool==="function"&&duWhoPool().length>3)?"who":"word";duNext();duType=o2',1500,'#duelOv']);
  S.push(['cases','$("duelOv").hidden=true;openCases()',900,'#caseOv']);
  for(let i=0;i<info.cases;i++)S.push([`case${i+1}_search`,`caseStart(${i});setTimeout(()=>kzGo(1),300)`,2600,'#caseOv']);
  [0,2,3,4,5].forEach(a=>S.push([`case1_act${a}`,`caseStart(0);setTimeout(()=>kzGo(${a}),300)`,2600,'#caseOv']));
  info.books.forEach(bk=>{S.push([`${bk.id}_prologue`,`caseClose&&!$("caseOv").hidden&&caseClose();openBook(${JSON.stringify(bk.id)})`,1500,'#bookOv']);
   bk.steps.forEach((t,i)=>S.push([`${bk.id}_s${i}_${t}`,`BK.skip=true;hush();$("bPov").hidden=true;$("bPov").innerHTML="";setTimeout(()=>{BK.skip=false;goStep(${i})},200)`,2200,'#bookOv']))});
  S.push(['mission','bookClose&&BK&&bookClose();rmShow((RMS.b1||[])[0])',900,'#rmOv']);
+ // v29.5 our HQ: every room filled, the treasure tray, and the gift box
+ S.push(['hq_living','try{$("rmSkip").click()}catch(e){};["rmOv","setOv","tdOv","pgOv","caseOv","bookOv","duelOv","runOv"].forEach(x=>{const e=$(x);if(e)e.hidden=true});hush();G.lv=9;G.unl=["tiger","monkey","rabbit"];const h=hqG();HQ_ITEMS.forEach(x=>h.got[x.src]=1);h.intro=1;h.place={living:{0:"plant",1:"lamp",6:"sofa"},case:{0:"key",1:"gold"},deck:{2:"scope"},study:{0:"books"}};save();hqOpen("living")',900,'#hqOv']);
+ S.push(['hq_case','hqOpen("case")',700,'#hqOv']);
+ S.push(['hq_deck','hqOpen("deck")',700,'#hqOv']);
+ S.push(['hq_study','hqOpen("study")',700,'#hqOv']);
+ S.push(['hq_locked','G.lv=1;save();hqOpen("living")',700,'#hqOv']);
+ S.push(['hq_gift','$("hqOv").hidden=true;G.lv=9;hqG().got={};HQQ.length=0;HQGIFT=false;hqAward("case_k1")',2100,'#hqGiftOv']);
  return S}
 const AUDIT=()=>{const issues=[];const R=e=>e.getBoundingClientRect();
  const shown=e=>{for(let x=e;x&&x.nodeType===1;x=x.parentElement){const c=getComputedStyle(x);if(c.display==='none'||c.visibility==='hidden'||+c.opacity<.12||x.hidden)return false}return true};
