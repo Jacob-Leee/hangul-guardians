@@ -4604,8 +4604,10 @@ var _duAnswerA=duAnswer;duAnswer=function(b){
    소리로 나오는 것은 올려 주신 Typecast AI 녹음뿐이다 — 대사 584줄 + 글자·음절 소리 49개(learn).
    녹음이 없는 대사는 소리 없이 글로만 보이고, 진행 타이밍은 원래대로 흐른다(onend를 글자 수에 맞춰 일으킴).
    모험 코스·글자 게임의 "듣고 찾기"는 25개 음절(가~미)이 모두 녹음이라 그대로 동작한다. 영어 모드도 기기 목소리 없이 글로만. */
-try{const sp=window.speechSynthesis;if(sp){sp.speak=function(u){try{const n=u&&u.text?hanN(u.text):1;
- setTimeout(()=>{try{u&&u.onend&&u.onend()}catch(e){}},Math.min(5200,420+n*360))}catch(e){}}}}catch(e){}
+try{const sp=window.speechSynthesis;
+ /* 진짜 기기 음성만 끈다(무음 no-op). narrate/say는 자체 타이머로 원래 속도대로 진행된다.
+    테스트가 끼워 둔 가짜 음성은 그대로 둔다(소리를 내지 않으면서 빠르게 끝난다). */
+ if(sp&&/\[native code\]/.test(String(sp.speak)))sp.speak=function(){};}catch(e){}
 /* 1단계 배틀: 글자 이름은 녹음(learn)이 있으니 🔊·자동 읽기에 그 녹음을 쓴다 */
 var _duSpeakO=duSpeak;duSpeak=function(){const Q=DU&&DU.q;if(Q&&Q.type==="jamo")return say(Q.name);return _duSpeakO.apply(this,arguments)};
 /* 소리 합치기 문제의 🔊: 들려줄 녹음이 없으니 버튼을 뺀다(식은 눈으로 보인다) */
