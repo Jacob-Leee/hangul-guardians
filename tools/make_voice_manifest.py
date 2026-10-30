@@ -15,7 +15,7 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-csv_files = sys.argv[1:] or [p for p in (os.path.join(ROOT, "docs", n) for n in ("dubbing_b1.csv", "dubbing_b2.csv", "dubbing_cases.csv", "dubbing_letters.csv", "dubbing_extra.csv", os.path.join("voice_pack", "dubbing_extra.csv"))) if os.path.exists(p)] or [os.path.join(ROOT, "docs", n) for n in ("dubbing_b1.csv", "dubbing_b2.csv", "dubbing_cases.csv", "dubbing_letters.csv")
+csv_files = sys.argv[1:] or [p for p in (os.path.join(ROOT, "docs", n) for n in tuple(["dubbing_b%d.csv" % i for i in range(1, 13)] + ["dubbing_cases.csv", "dubbing_letters.csv", "dubbing_extra.csv", os.path.join("voice_pack", "dubbing_extra.csv")])) if os.path.exists(p)] or [os.path.join(ROOT, "docs", n) for n in ("dubbing_b1.csv", "dubbing_b2.csv", "dubbing_cases.csv", "dubbing_letters.csv")
                              if os.path.exists(os.path.join(ROOT, "docs", n))]
 
 entries, missing, seen = [], [], set()

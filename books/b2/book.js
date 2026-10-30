@@ -1,5 +1,5 @@
 /* 〈시골 쥐와 도시 쥐〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
-   Voices (VOX.sb_country / sb_city) and reading missions (RMS.b2) are at the end of js/app.js. */
+   Voices (VOX.sb_*) and reading missions (RMS.b2) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
 BOOKDATA.b2={dir:"books/b2/",cover:"page1.webp",bg:"spread.webp",
  actors:{
@@ -60,3 +60,6 @@ BOOKDATA.b2={dir:"books/b2/",cover:"page1.webp",bg:"spread.webp",
      {t:"도시 쥐도 시골이 좋아졌어요",e:"💛",s:[{pose:["city","proud"]},{prop:["💛",36,64]},{fx:"confetti"}]},
      {t:"다음에는 함께 도시에 놀러 가기로 했어요",e:"🤝",s:[{move:"country",to:"road2",pose:"walk",end:"happy",ms:2000,par:true},{move:"city",to:"road2",pose:"walk",end:"stand",ms:2000},{fx:"confetti"}]}]},
  fin:["이야기를 되찾았어요!","{vil} 배를 두드리며 도망쳤어요.","\"잘했구나. 이 책을 도서관에 꽂아 두자.\""]};
+/* 〈소가 된 게으름뱅이〉 — book 3. 주인 영웅: 강철 소(ox), 악당: 회색냥(gray).
+   그림: books/b3/ 임시 그림(코드 생성). 진짜 그림이 오면 같은 이름으로 교체.
+   무대: 왼쪽 집·마당 평상(0~30%), 가운데 보리밭(30~70%), 오른쪽 저녁 밥상·외양간(70~100%). */;

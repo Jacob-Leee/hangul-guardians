@@ -138,3 +138,32 @@ Canvas 1024x1024.
 ## 6. 아직 정하지 않은 것
 
 - 한글 놀이터 게임(글자 낚시, 두더지 등)의 무대를 사건 배경처럼 그림으로 바꿀지: 보호자가 정하면 목록과 프롬프트를 여기에 적습니다.
+
+## 6. 동화책 3~12권 그림 (v30 — 지금은 임시 그림으로 플레이 중)
+
+열 권 모두 임시 그림(코드 생성)으로 이미 플레이됩니다. 아래 그림이 오면 같은 파일 이름으로 갈아끼워져요. **권마다**: 무대 1장(`spread.png`, 1536×1024), 이야기 그림 3장(`page1~3.png`, 1536×1024), 인물 포즈(투명 PNG 1024×1024). 올릴 때는 `incoming/<책id>_<파일명>` (예: `incoming/b3_spread.png`, `incoming/b3_boy_stand.png`).
+
+공통 프롬프트 (모든 책 그림에 같은 틀):
+
+```
+A [spread: wide stage background / pageN: full storybook illustration / pose: single character, transparent background] for a cute 3D animated children's game, matching the attached reference art style (soft, warm, slightly painterly 3D; reference: assets/img/case/case01_rat.webp).
+Scene: [아래 표의 장면 설명]
+Spread only: straight-on doll-house stage view, floor on the lower 30%, left/middle/right zones as described, low contrast so characters placed on top stand out. No characters in the spread.
+Pose only: whole body visible, facing slightly left, no floor or shadow outside the character, transparent PNG.
+No text, letters, numbers, logos or watermark. Friendly for a 5-year-old. Canvas [1536x1024 / 1024x1024].
+```
+
+| 책 | spread 무대 | page1 / page2 / page3 | 포즈(파일 이름) |
+|---|---|---|---|
+| b3 소가 된 게으름뱅이 | 시골 마당(왼쪽 초가집·평상) + 가운데 보리밭 + 오른쪽 저녁 밥상·외양간 | 평상에서 낮잠 자는 소년 / 소 모자를 쓰고 펑! 소가 된 소년과 할아버지 / 땀 닦으며 저녁밥 먹는 소년 | boy_stand·boy_sleep·boy_happy(게으른 소년), oxboy_stand·oxboy_walk(소가 된 소년), old_stand(탈 할아버지) |
+| b4 해와 달이 된 오누이 | 밤 산골(왼쪽 초가집 문) + 가운데 큰 나무(위로 하늘) + 오른쪽 언덕 | 문틈으로 보이는 호랑이 꼬리와 오누이 / 나무 위 오누이와 하늘에서 내려오는 동아줄 / 해와 달이 된 오누이 | sis_stand·sis_scared(누나), bro_stand·bro_scared(동생), tig_stand·tig_prowl(호랑이) |
+| b5 비를 잃어버린 꼬마 용 | 하늘 마을(왼쪽 주문 책상) + 가운데 꽃밭 마을 + 오른쪽 구름 언덕 | 구름 할머니에게 주문 배우는 꼬마 용 / 시든 꽃밭과 풀 죽은 꼬마 용 / 단비와 무지개, 활짝 핀 꽃밭 | yong_stand·yong_sad·yong_fly(꼬마 용), cloud_stand(구름 할머니) |
+| b6 뱀의 숲속 우체국 | 숲속(왼쪽 우체국·가방) + 가운데 우체통 숲길 + 오른쪽 부엉이네 큰 나무 | 우체통에 편지 넣는 숲 친구들 / 그림자에 가려 뒤죽박죽된 편지들 / 초대장 받고 기뻐하는 부엉이 | post_stand·post_slide(우체부 뱀), owl_stand·owl_happy(부엉이) |
+| b7 바람을 배달하는 말 | 왼쪽 마구간·지도 + 가운데 들길 + 오른쪽 풍차 마을(산꼭대기는 멀리) | 수레에 바람 담는 말 / 멈춘 풍차와 더워하는 마을 / 바람 도착, 씽씽 도는 풍차 | dal_stand·dal_run(배달 말), mill_stand(풍차 아저씨) |
+| b8 양치기 소년 | 푸른 언덕(왼쪽 약속 바위) + 가운데 양 떼 풀밭 + 오른쪽 마을·종 | 거짓말로 외치는 소년과 달려온 친구들 / 진짜 늑대와 숨은 아기 양 / 참말로 외쳐 친구들이 돌아온 장면 | shep_stand·shep_shout(소년), lamb_stand(아기 양), wolf_stand·wolf_run(늑대) |
+| b9 원숭이의 뒤죽박죽 도서관 | 나무 속 도서관(왼쪽 ㄱㄴㄷ 책꽂이, 가운데 수레·사다리, 오른쪽 읽기 자리) | 가지런한 글자 칸 책꽂이 / 뒤죽박죽 책과 울상 판다 / 공룡책 찾고 기뻐하는 판다 | mon_stand·mon_hang(사서 원숭이), pand_stand·pand_happy(꼬마 판다) |
+| b10 빨간 암탉 | 농장(왼쪽 밀밭, 가운데 마당·반죽대, 오른쪽 가마·식탁) | 혼자 밀 심는 암탉 / 빵 굽는 암탉과 침 흘리는 친구들 / 셋이 함께 빵 나눠 먹는 식탁 | hen_stand·hen_work(암탉), duck_stand(오리), bird_stand(참새) |
+| b11 개와 그림자 | 왼쪽 산책길 + 가운데 개울·외나무다리 + 오른쪽 집 마당 | 뼈다귀 물고 다리 오르는 콩이 / 물속 그림자를 보는 콩이 / 뼈다귀 물고 집에서 행복한 콩이 | pup_stand·pup_look·pup_happy(강아지) |
+| b12 아기 돼지 삼 형제 | 왼쪽 지푸라기 집 + 가운데 나무 집 + 오른쪽 벽돌집 | 집 짓는 삼 형제 / 후후 부는 늑대와 날아가는 집 / 벽돌집에 모인 삼 형제 | p1_stand·p2_stand·p3_stand·pig_scared(돼지들), wolf_stand·wolf_blow(늑대) |
+
+표지(cover)는 page1을 그대로 씁니다(따로 만들지 않아도 됩니다).

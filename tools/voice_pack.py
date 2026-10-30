@@ -88,7 +88,7 @@ def short_name(rid, rows):
 def load_roles():
     """Every role with its lines in script order: {id: {"name", "group", "voice", "prio", "dir", "rows"}}."""
     chars = read_csv("dubbing_characters.csv")
-    story = read_csv("dubbing_b1.csv") + read_csv("dubbing_b2.csv") + read_csv("dubbing_cases.csv")
+    story = sum((read_csv("dubbing_b%d.csv" % _i) for _i in range(1, 13)), []) + read_csv("dubbing_cases.csv")
     letters = read_csv("dubbing_letters.csv") + read_csv("dubbing_extra.csv")
     rows_of = {}
     for r in chars:
@@ -144,7 +144,7 @@ def make(out):
     with open(os.path.join(sdir, "00_all_characters.txt"), "w", encoding="utf-8") as f:
         f.write("\n\n".join(every) + "\n")
     story, seen_t = [], set()   # the story narrator (not in the roles above: the letters are the narrator role there)
-    for r in read_csv("dubbing_b1.csv") + read_csv("dubbing_b2.csv") + read_csv("dubbing_cases.csv"):
+    for r in sum((read_csv("dubbing_b%d.csv" % _i) for _i in range(1, 13)), []) + read_csv("dubbing_cases.csv"):
         t = r["대사"].strip()
         if r["화자ID"].strip() == "narrator" and t not in seen_t:
             seen_t.add(t)
@@ -521,7 +521,7 @@ def split_srt(audio, srt, out=None, dry=False, small=True):
         for r in role["rows"]:
             index.setdefault(loose_key(r["대사"]), {}).setdefault(rid, []).append(r)
     seen = set()
-    for r in read_csv("dubbing_b1.csv") + read_csv("dubbing_b2.csv") + read_csv("dubbing_cases.csv"):
+    for r in sum((read_csv("dubbing_b%d.csv" % _i) for _i in range(1, 13)), []) + read_csv("dubbing_cases.csv"):
         if r["화자ID"].strip() == "narrator" and r["파일명"] not in seen:   # the story narrator (letters are already in roles)
             seen.add(r["파일명"])
             index.setdefault(loose_key(r["대사"]), {}).setdefault("narrator", []).append(r)

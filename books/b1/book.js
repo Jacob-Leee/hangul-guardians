@@ -1,4 +1,5 @@
-/* 〈토끼와 거북이〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식". */
+/* 〈토끼와 거북이〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
+   Voices (VOX.sb_*) and reading missions (RMS.b1) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
 BOOKDATA.b1={dir:"books/b1/",cover:"cover.webp",bg:"spread.webp",
  actors:{rabbit:{n:"토끼",voice:"sb_rabbit",h:46,poses:{stand:["rabbit_stand.webp",1],run:["rabbit_run.webp",.95],sleep:["rabbit_sleep.webp",.72],surprise:["rabbit_surprise.webp",1]}},
@@ -55,3 +56,14 @@ BOOKDATA.b1={dir:"books/b1/",cover:"cover.webp",bg:"spread.webp",
      {t:"둘이 함께 결승점에 도착했어요",e:"🫱",s:[{move:"turtle",to:"finish",pose:"walk",end:"win",ms:2600,par:true},{move:"rabbit",to:"claim",pose:"run",end:"stand",ms:2600},{fx:"confetti"}]},
      {t:"모두 함께 당근 파티를 했어요",e:"🥕",s:[{move:"turtle",to:"finish",pose:"walk",end:"win",ms:2400,par:true},{move:"rabbit",to:"claim",pose:"run",end:"stand",ms:2400},{prop:["🥕",75,70]},{prop:["🎉",92,64]},{fx:"confetti"}]}]},
  fin:["이야기를 되찾았어요!","{vil} 꼬리를 감추고 도망쳤어요.","\"잘했구나. 이 책을 도서관에 꽂아 두자.\""]};
+/* 〈시골 쥐와 도시 쥐〉 — book 2 data (v29.3: in the game, pictures made with ChatGPT on 2026-10-30).
+   Pictures in books/b2/: spread, page1, page2, country_stand, country_scared, city_stand, city_scared, cat_prowl (.webp)
+   and page3.webp, which for now is a stand-in made from the stage picture + country_stand (replace it with the painted one).
+   The other poses and the cover reuse those pictures until the optional ones exist; then only the file name changes:
+     walk/happy (country) -> country_walk / country_happy, walk/proud (city) -> city_walk / city_proud,
+     pounce (cat) -> cat_pounce, cover -> cover.webp.
+   Positions (at/records) follow the painted spread (1536×864): oak-root home with its round door at 10–16%, the path along
+   the front at about 75% height, stone bridge 38–55%, the dining room from 57%: table top at about 36%, mouse hole at 94%.
+   The dining room is drawn at a person's scale and the stage is short on wide screens (only about the lower 58% shows), so the
+   mice stay on the floor by the table instead of on its top (like page2.webp), mice h 26, cat h 30.
+   To load it in the project folder see docs/HANDOVER.md → "새 책 추가 체크리스트" (BD.b2 → BOOKDATA.b2; VOX/RMS lines go to app.js). */;
