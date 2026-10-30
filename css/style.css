@@ -1959,3 +1959,5 @@ textarea,input,select{-webkit-user-select:text;user-select:text;-webkit-touch-ca
 .droar{position:absolute;top:-16px;right:6px;background:#E8373A;color:#fff;font-weight:800;border-radius:99px;padding:4px 12px;border:3px solid var(--ink);z-index:3}
 @media (max-width:640px){.dop.who{min-width:88px;min-height:86px}.dop.who img{width:48px;height:48px}.dop.ox{min-width:92px}}
 @media (prefers-reduced-motion:reduce){.dnom,.dopts.dswap .dop{animation:none}}
+
+.stardim{display:inline-block;filter:grayscale(1);opacity:.4}

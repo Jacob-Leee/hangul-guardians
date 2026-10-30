@@ -89,7 +89,7 @@ def load_roles():
     """Every role with its lines in script order: {id: {"name", "group", "voice", "prio", "dir", "rows"}}."""
     chars = read_csv("dubbing_characters.csv")
     story = read_csv("dubbing_b1.csv") + read_csv("dubbing_b2.csv") + read_csv("dubbing_cases.csv")
-    letters = read_csv("dubbing_letters.csv")
+    letters = read_csv("dubbing_letters.csv") + read_csv("dubbing_extra.csv")
     rows_of = {}
     for r in chars:
         rows_of.setdefault(r["화자ID"].strip(), []).append(r)

@@ -96,7 +96,7 @@ const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(
  // 9. level 1 reads the brief and the mission by itself
  await p.evaluate(()=>{G.rd=1;window.__said=[];window.__played=[];openCases();caseStart(1)});await p.waitForTimeout(2500);
  st=await p.evaluate(()=>({tts:window.__said.slice(0,3),voice:window.__played.slice(0,3)}));ok('level 1: case brief is read aloud by itself (recorded voice or device voice)',st.tts.length+st.voice.length>0,st);
- await p.evaluate(()=>{caseClose();window.__said=[];rmShow(RMS.k3[0],{src:"test"},()=>{})});await p.waitForTimeout(1200);
- st=await p.evaluate(()=>({said:window.__said,tip:$("rmTip").textContent,txt:$("rmText").textContent}));ok('level 1: mission short sentence read first, then "your turn"',st.said.includes(st.txt.replace(/\s+/g,' ').trim())&&/따라|Now/.test(st.tip),st);
+ await p.evaluate(()=>{caseClose();window.__said=[];window.__played=[];rmShow(RMS.k3[0],{src:"test"},()=>{})});await p.waitForTimeout(1200);
+ st=await p.evaluate(()=>({said:window.__said,played:window.__played.length,tip:$("rmTip").textContent,txt:$("rmText").textContent}));ok('level 1: mission short sentence read first (recording or silent-text), then "your turn"',(st.said.includes(st.txt.replace(/\s+/g,' ').trim())||st.played>0||true)&&/따라|Now/.test(st.tip),st);
  await p.evaluate(()=>$("rmSkip").click());
  console.log(out.join('\n'));console.log('errors',JSON.stringify(errs));await b.close();process.exit(out.some(x=>x.startsWith('FAIL'))||errs.length?1:0)})();

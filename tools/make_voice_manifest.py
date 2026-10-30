@@ -15,7 +15,7 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-csv_files = sys.argv[1:] or [os.path.join(ROOT, "docs", n) for n in ("dubbing_b1.csv", "dubbing_b2.csv", "dubbing_cases.csv", "dubbing_letters.csv")
+csv_files = sys.argv[1:] or [p for p in (os.path.join(ROOT, "docs", n) for n in ("dubbing_b1.csv", "dubbing_b2.csv", "dubbing_cases.csv", "dubbing_letters.csv", "dubbing_extra.csv", os.path.join("voice_pack", "dubbing_extra.csv"))) if os.path.exists(p)] or [os.path.join(ROOT, "docs", n) for n in ("dubbing_b1.csv", "dubbing_b2.csv", "dubbing_cases.csv", "dubbing_letters.csv")
                              if os.path.exists(os.path.join(ROOT, "docs", n))]
 
 entries, missing, seen = [], [], set()
@@ -36,4 +36,4 @@ with open(os.path.join(ROOT, "audio", "voices.js"), "w", encoding="utf-8") as f:
     f.write("/* Recorded voice files. Each entry: [voice id, line text exactly as in the dubbing CSV, file path].\n"
             "   Lines without a file are read by the device voice. Regenerate with: python tools/make_voice_manifest.py */\n"
             "window.VOICEFILES=[\n" + lines + ("\n" if lines else "") + "];\n")
-print(f"linked {len(entries)} file(s); {len(missing)} line(s) still use the device voice")
+print(f"linked {len(entries)} file(s); {len(missing)} line(s) have no recording yet (text only)")
