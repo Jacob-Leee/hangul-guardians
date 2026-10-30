@@ -4116,5 +4116,138 @@ drawTile=function(c,ch,cx,cy){
 /* the finish: the hero walks into the book gate (the run ends at the same spot as the old flag) */
 function drawGoal(c,x){if(!cpReady(CPROP.gate))return false;const h=5.3*T,w=h*CPROP.gate.naturalWidth/CPROP.gate.naturalHeight;
  c.save();c.shadowColor="rgba(150,255,200,.55)";c.shadowBlur=12+6*Math.sin(RUN.t*3);c.drawImage(CPROP.gate,x+T*.6-w/2,7*T-h+2,w,h);c.restore();return true}
+
+
+/* ===== v29.4 entering a book (3D) — replaces the flat purple portal.
+   bookDive(b,art) puts a full-screen layer over everything: a 3D book rises out of a starry sky, the cover opens,
+   pages flip, Hangul letters fly out of the pages, the heroes jump in and the camera dives into the spread.
+   peak resolves when the screen is covered by the gold flash (the stage is set up underneath), end() fades it away. ===== */
+function bookDive(b,art){
+ const B=b.B,D=b.D,team=[B.owner,...(G.char!==B.owner?[G.char]:[])];
+ let calm=false;try{calm=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
+ const u=f=>"url('"+String(f).replace(/'/g,"%27")+"')",spread=D.dir+D.bg,cover=D.dir+(D.cover||D.bg);
+ const gl="가나다라마바사아자차카타파하한글ㄱㄴㅁㅇ".split("");
+ const burst=gl.map((g,i)=>{const a=i/gl.length*Math.PI*2+Math.random()*.4,r=.22+Math.random()*.3;
+  return `<span style="--dx:${(Math.cos(a)*r).toFixed(3)};--dy:${(Math.sin(a)*r*.7).toFixed(3)};--dz:${Math.round(160+Math.random()*260)}px;--r:${Math.round(Math.random()*120-60)}deg;--d:${(1.25+i*.045).toFixed(2)}s">${g}</span>`}).join("");
+ const xs=team.length>1?[24,76]:[50];
+ const el=document.createElement("div");el.className="bdive"+(calm?" calm":"");el.setAttribute("aria-hidden","true");
+ el.innerHTML=`<div class="bd-sky"></div><div class="bd-sky2"></div><div class="bd-glow"></div>
+  <div class="bd-cam"><div class="bd-book">
+   <div class="bd-back"></div><div class="bd-edge"></div>
+   <div class="bd-pg" style="background-image:${u(spread)}"></div>
+   ${[0,1,2].map(i=>`<div class="bd-leaf" style="--i:${i}"><i class="f"></i><i class="b" style="background-image:${u(spread)}"></i></div>`).join("")}
+   <div class="bd-cover"><i class="f" style="background-image:${u(cover)}"></i><i class="b"></i></div>
+   <div class="bd-burst">${burst}</div>
+  </div></div>
+  <div class="bd-team">${team.map((id,i)=>`<img src="${ownerImg(id)}" alt="" style="--i:${i};--x0:${xs[i]}vw;--r0:${i?8:-8}deg;--r1:${i?320:-320}deg">`).join("")}</div>
+  ${art?`<img class="bd-artbg" src="${D.dir+art}" alt=""><img class="bd-art" src="${D.dir+art}" alt="">`:""}
+  <div class="bd-flash"></div><div class="bd-say">✨ ${K("Into the book…","책 속으로…")}</div>`;
+ document.body.appendChild(el);
+ const T=[];const at=(ms,f)=>T.push(setTimeout(f,ms));
+ if(!calm){at(1000,()=>sfx("tap"));at(1170,()=>sfx("tap"));at(1340,()=>sfx("tap"));at(2380,()=>sfx("star"))}
+ const peakMs=calm?850:2900;
+ const peak=new Promise(r=>at(peakMs,()=>{if(!art)return r();el.classList.add("art");at(1500,r)}));
+ let gone=false;
+ return {el,peak,end(){if(gone)return;gone=true;T.forEach(clearTimeout);el.classList.add("out");setTimeout(()=>el.remove(),600)}}}
+/* the v29 block wraps bookEnter (reading mission 1 first) and then calls the original kept in _bookEnter0,
+   so the 3D entrance replaces that original, not the wrapper */
+var bookEnter3D=async function(){const b=BK,B=b.B,D=b.D;capt(null);hush();sfx("evo");
+ const art=D.enterArt&&(G.char===B.owner||(D.enterWith||[]).includes(G.char))?D.enterArt:null;
+ const dv=bookDive(b,art);
+ $("bQ").innerHTML=`<p class="endq">✨ ${K("Into the book…","책 속으로…")}</p>`;$("bkMsg").textContent="";
+ try{await Promise.all([bSpeak(D.enterLine,"@"+B.owner,true),b.ready,dv.peak])}catch(e){}
+ if(!bAlive(b)){dv.end();return}
+ b.vt++;$("bStage").classList.remove("gloom","cine","slow");setState("broken");actMark("turtle","?");claimShow(true);camSet({x:30,y:100,z:1.3},0);
+ const p=$("bPov");p.hidden=true;p.innerHTML="";
+ dv.end();await wait(420);if(!bAlive(b))return;camSet(null,1600);
+ await runScript(D.enter||[]);if(!bAlive(b))return;goStep(0)};
+if(typeof _bookEnter0==="function")_bookEnter0=bookEnter3D;else bookEnter=bookEnter3D;
+
+/* ===== v29.4 iPhone + iPad: in the explore step every glowing scroll is framed by the camera and scrolls that would
+   cover each other (small phone screens) are pulled apart, so none is hidden or hard to tap. ===== */
+function bFitCam(pts){const st=$("bStage");if(!st||!pts.length)return null;const W=st.clientWidth,H=st.clientHeight;if(!W||!H)return null;
+ const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+ return {x:(Math.min(...xs)+Math.max(...xs))/2,y:(Math.min(...ys)-14+Math.max(...ys)+8)/2,z:1}}
+function bHotsFit(){const b=BK;if(!b||$("bookOv").hidden)return;const box=$("bHots"),st=$("bStage"),w=$("bWorld");if(!box||!st||!w)return;
+ if(typeof layOn==="function"&&layOn())return;
+ const hs=[...box.querySelectorAll(".bhot")];if(!hs.length)return;
+ hs.forEach(h=>{const r=b.D.records.find(x=>x.k===h.dataset.h);if(r){h.style.left=r.at[0]+"%";h.style.top=r.at[1]+"%"}});
+ const wr=w.getBoundingClientRect(),sr=st.getBoundingClientRect();if(!wr.width||!wr.height)return;
+ const R=hs.map(h=>{const a=h.getBoundingClientRect(),g=h.querySelector(".ring"),c=g?g.getBoundingClientRect():a;
+  const l=Math.min(a.left,c.left),t=Math.min(a.top,c.top),r=Math.max(a.right,c.right),bt=Math.max(a.bottom,c.bottom);
+  const r0=b.D.records.find(x=>x.k===h.dataset.h);return {h,l,t,r,b:bt,x:r0.at[0],y:r0.at[1]}});
+ const px2x=wr.width/100,px2y=wr.height/100,G=4;let moved=false;
+ for(let it=0;it<40;it++){let any=false;
+  for(let i=0;i<R.length;i++)for(let j=i+1;j<R.length;j++){const A=R[i],B=R[j];
+   const ox=Math.min(A.r,B.r)-Math.max(A.l,B.l)+G,oy=Math.min(A.b,B.b)-Math.max(A.t,B.t)+G;if(ox<=0||oy<=0)continue;any=true;
+   if(ox<oy){const s=(A.l+A.r<B.l+B.r)?-1:1,d=ox/2;[[A,s],[B,-s]].forEach(([Q,k])=>{Q.l+=k*d;Q.r+=k*d;Q.x+=k*d/px2x})}
+   else{const s=(A.t+A.b<B.t+B.b)?-1:1,d=oy/2;[[A,s],[B,-s]].forEach(([Q,k])=>{Q.t+=k*d;Q.b+=k*d;Q.y+=k*d/px2y})}}
+  // keep each scroll inside the visible picture
+  R.forEach(Q=>{const m=3;let dx=0,dy=0;if(Q.l<sr.left+m)dx=sr.left+m-Q.l;else if(Q.r>sr.right-m)dx=sr.right-m-Q.r;if(Q.t<sr.top+m)dy=sr.top+m-Q.t;else if(Q.b>sr.bottom-m)dy=sr.bottom-m-Q.b;
+   if(dx||dy){any=true;Q.l+=dx;Q.r+=dx;Q.t+=dy;Q.b+=dy;Q.x+=dx/px2x;Q.y+=dy/px2y}});
+  if(!any)break;moved=true}
+ if(moved)R.forEach(Q=>{Q.h.style.left=Q.x.toFixed(2)+"%";Q.h.style.top=Q.y.toFixed(2)+"%"})}
+var _stExplore0=stExplore;
+stExplore=function(S){_stExplore0.apply(this,arguments);const b=BK;if(!b)return;
+ const c=bFitCam(b.D.records.map(r=>r.at));if(c){camSet(c,700);setTimeout(()=>{if(BK===b)bHotsFit()},760)}else bHotsFit()};
+window.addEventListener("resize",()=>{clearTimeout(window.__bhf);window.__bhf=setTimeout(()=>{if(BK&&!$("bookOv").hidden&&$("bHots")&&$("bHots").children.length){
+ const S=BK.D.steps[BK.si];if(S&&S.type==="explore"&&!BK.busy){const c=bFitCam(BK.D.records.map(r=>r.at));if(c)camSet(c,0)}bHotsFit()}},250)});
+/* case squad on phones: sparkles that would overlap are pushed apart (still inside the visible picture) */
+function kzSpotsApart(){if(!KZ||(typeof layOn==="function"&&layOn()))return;const st=$("kzStage"),w=$("kzWorld"),sp=$("kzSpots");if(!st||!w||!sp)return;
+ const W=st.clientWidth,H=st.clientHeight,ww=w.offsetWidth,wh=w.offsetHeight,L=parseFloat(w.style.left)||0,T=parseFloat(w.style.top)||0;if(!ww||!wh)return;
+ const vx0=-L/ww*100,vx1=(W-L)/ww*100,vy0=-T/wh*100,vy1=(H-T)/wh*100;
+ const P=[...sp.querySelectorAll(".kzspot")].map(b=>({b,x:parseFloat(b.style.left),y:parseFloat(b.style.top),r:b.offsetWidth/2})).filter(q=>isFinite(q.x)&&isFinite(q.y)&&q.r>0);
+ let moved=false;
+ for(let it=0;it<40;it++){let any=false;
+  for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const A=P[i],B=P[j],dx=(B.x-A.x)/100*ww,dy=(B.y-A.y)/100*wh,d=Math.hypot(dx,dy),need=A.r+B.r+8;if(d>=need)continue;any=true;
+   const ux=d>.01?dx/d:1,uy=d>.01?dy/d:0,p=(need-d)/2;A.x-=ux*p/ww*100;A.y-=uy*p/wh*100;B.x+=ux*p/ww*100;B.y+=uy*p/wh*100}
+  P.forEach(Q=>{const mx=(Q.r+6)/ww*100,my=(Q.r+6)/wh*100;Q.x=Math.min(Math.max(Q.x,vx0+mx),vx1-mx);Q.y=Math.min(Math.max(Q.y,vy0+my),vy1-my)});
+  if(!any)break;moved=true}
+ if(moved)P.forEach(Q=>{Q.b.style.left=Q.x.toFixed(2)+"%";Q.b.style.top=Q.y.toFixed(2)+"%"})}
+var _kzSpotsFit1=kzSpotsFit;kzSpotsFit=function(){_kzSpotsFit1();kzSpotsApart();kzHeroAvoid()};
+/* in the phone-landscape layout the grid sizes the picture, so the search-time stretch is not used */
+var _kzStageSize1=kzStageSize;kzStageSize=function(){let land=false;try{land=matchMedia("(orientation:landscape) and (max-height:520px)").matches}catch(e){}
+ if(land){const st=$("kzStage");if(st&&st.style.height)st.style.height="";return}return _kzStageSize1()};
+
+/* ===== v29.4 case squad: one painted picture per case, a different look for every act (kzMood) =====
+   The camera moves the whole world (picture, overlays, sparkles) so the hut / fixed-picture overlays stay in place.
+   During the search the camera is always at rest, so the sparkles line up with the objects in the picture. */
+var KZHC={rat:"155,92,255",ox:"78,139,217",tiger:"47,107,255",rabbit:"255,111,174",dragon:"47,197,155",snake:"95,209,232",horse:"255,90,78",sheep:"183,166,255",monkey:"255,201,61",rooster:"255,138,61",dog:"79,163,255",pig:"255,157,184"};
+function kzMoodEnsure(){const w=$("kzWorld"),st=$("kzStage");if(!w||!st)return;
+ if(!w.querySelector(".kzmood"))w.insertAdjacentHTML("beforeend",'<div class="kzmood"></div>');
+ if(!$("kzBoard"))st.insertAdjacentHTML("afterbegin",'<div class="kzboard" id="kzBoard" aria-hidden="true"></div>')}
+function kzFocus(n){if(!KZ)return null;const c=KZ.c,sp=c.spots||[],real=sp.filter(s=>!s.decoy),dec=sp.filter(s=>s.decoy);
+ if(n===0)return {x:64,y:56,z:1.22};
+ if(n===2){const s=dec[0]||sp[sp.length-1]||{x:40,y:50};return {x:s.x,y:s.y,z:1.6}}
+ if(n===3){if(c.sk&&c.sk.skin==="build")return null;const k=(KZ.nb&&KZ.nb.clues&&KZ.nb.clues[0]||{}).k;const s=sp.find(q=>q.k===k)||real[0]||{x:50,y:55};return {x:s.x,y:s.y,z:1.38}}
+ if(n===4)return {x:50,y:50,z:1.08};
+ return null}
+function kzCamApply(){const w=$("kzWorld"),st=$("kzStage");if(!w||!st||!KZ)return;const f=kzFocus(KZ.act);
+ if(!f||f.z<=1){w.style.transform="";return}
+ const W=st.clientWidth,H=st.clientHeight,ww=w.offsetWidth,wh=w.offsetHeight,L=parseFloat(w.style.left)||0,T=parseFloat(w.style.top)||0;if(!ww||!wh)return;
+ let tx=W/2-L-f.z*f.x/100*ww,ty=H/2-T-f.z*f.y/100*wh;tx=Math.min(-L,Math.max(W-L-f.z*ww,tx));ty=Math.min(-T,Math.max(H-T-f.z*wh,ty));
+ w.style.transform=`translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px) scale(${f.z})`}
+function kzBoard(on){const b=$("kzBoard");if(!b||!KZ)return;
+ if(!on){b.classList.remove("on");clearTimeout(b._t);b._t=setTimeout(()=>{if(b.isConnected&&!b.classList.contains("on"))b.innerHTML=""},750);return}
+ const c=KZ.c,src=KASSET.bg[c.id],cl=((KZ.nb&&KZ.nb.clues)||[]).slice(0,3),P=[[31,42,-7],[50,35,4],[69,43,-4]];
+ const cw=.26,ch=cw*1.5*.75;   // the photo shows 26% of the picture width (photo 4:3, picture 3:2)
+ const pol=cl.map((s,i)=>{const sp=(c.spots||[]).find(q=>q.k===s.k)||{x:50,y:50},[x,y,r]=P[i];let ph;
+  if(src){const x0=Math.min(Math.max(sp.x/100-cw/2,0),1-cw),y0=Math.min(Math.max(sp.y/100-ch/2,0),1-ch);
+   ph=`<i style="background-image:url('${src}');background-size:${(100/cw).toFixed(1)}% auto;background-position:${(x0/(1-cw)*100).toFixed(1)}% ${(y0/(1-ch)*100).toFixed(1)}%"></i>`}
+  else ph=`<i>${kzIco(c.id+"_"+s.k,s.ic||"🔍")}</i>`;
+  return `<figure class="kzpol" style="--px:${x}%;--py:${y}%;--r:${r}deg;--d:${(i*.2).toFixed(2)}s">${ph}<figcaption>${escH(s.n)}</figcaption></figure>`}).join("");
+ b.innerHTML=(cl.length>1?`<svg class="kzstr"><polyline points=""/></svg>`:"")+pol;
+ clearTimeout(b._t);requestAnimationFrame(()=>b.classList.add("on"));
+ // red string through the pins, measured once the photos have landed
+ clearTimeout(b._s);b._s=setTimeout(kzString,cl.length*200+650)}
+function kzString(){const b=$("kzBoard"),sv=b&&b.querySelector(".kzstr");if(!sv||!b.classList.contains("on"))return;const R=b.getBoundingClientRect();if(!R.width)return;
+ const pts=[...b.querySelectorAll(".kzpol")].map(f=>{const r=f.getBoundingClientRect();return (r.left+r.width/2-R.left).toFixed(1)+","+(r.top-R.top+6).toFixed(1)});
+ sv.setAttribute("viewBox",`0 0 ${R.width.toFixed(1)} ${R.height.toFixed(1)}`);sv.querySelector("polyline").setAttribute("points",pts.join(" "));sv.classList.add("on")}
+function kzMood(n){const w=$("kzWorld");if(!w||!KZ)return;kzMoodEnsure();
+ w.classList.remove("a0","a1","a2","a3","a4","a5");w.classList.add("a"+n);const st=$("kzStage");if(st)st.classList.toggle("kzded4",n===4);w.style.setProperty("--hcA","rgba("+(KZHC[KZ.c.h]||"255,211,77")+",.55)");
+ if(n===0){w.style.transition="none";w.style.transform="";void w.offsetWidth;w.style.transition=""}
+ requestAnimationFrame(()=>requestAnimationFrame(kzCamApply));kzBoard(n===4)}
+var _kzGo3=kzGo;kzGo=function(n){_kzGo3(n);if(KZ)kzMood(n)};
+var _kzFit3=kzFit;kzFit=function(){_kzFit3();kzCamApply();if(KZ&&KZ.act===4)setTimeout(kzString,60)};
 /* book 2 voices (VOX is defined above; books/b2/book.js holds the story) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

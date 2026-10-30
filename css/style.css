@@ -1666,3 +1666,168 @@ textarea,input,select{-webkit-user-select:text;user-select:text;-webkit-touch-ca
 @keyframes pgrHop{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px) rotate(-4deg)}}
 @media (max-width:560px){.pgrhero{width:70px;left:-8px;bottom:-8px}}
 .cfly{position:fixed;z-index:130;font-size:28px;pointer-events:none;transition:left .75s cubic-bezier(.5,-.3,.6,1),top .75s cubic-bezier(.3,.6,.4,1),opacity .75s,transform .75s;transform:translate(-50%,-50%)}
+
+/* ===== v29.4 entering a book: a 3D book rises, opens, pages flip, letters fly out, the heroes jump in and the camera dives ===== */
+.bdive{--bw:min(94vw,104vh,980px);position:fixed;inset:0;z-index:400;overflow:hidden;background:#07051A;perspective:1000px;perspective-origin:50% 42%;animation:bdIn .35s ease-out both;touch-action:none;user-select:none;-webkit-user-select:none}
+.bdive.out{animation:bdOut .55s ease-in forwards;pointer-events:none}
+@keyframes bdIn{from{opacity:0}to{opacity:1}}
+@keyframes bdOut{to{opacity:0}}
+.bd-sky,.bd-sky2{position:absolute;inset:-25%;pointer-events:none}
+.bd-sky{background:radial-gradient(ellipse at 50% 58%,rgba(132,96,232,.62),rgba(40,22,96,.35) 38%,transparent 62%),
+ radial-gradient(1.6px 1.6px at 18px 26px,#fff 55%,transparent 60%),radial-gradient(1.2px 1.2px at 92px 140px,#FFF3C4 55%,transparent 60%),
+ radial-gradient(1.8px 1.8px at 150px 70px,#fff 55%,transparent 60%),radial-gradient(1px 1px at 60px 96px,#cfe1ff 55%,transparent 60%);
+ background-size:100% 100%,180px 180px,180px 180px,180px 180px,180px 180px;animation:bdSky 3.4s cubic-bezier(.5,0,.6,1) both}
+.bd-sky2{background:radial-gradient(2.2px 2.2px at 40px 50px,#fff 55%,transparent 60%),radial-gradient(1.6px 1.6px at 230px 180px,#FFE08A 55%,transparent 60%),radial-gradient(1.4px 1.4px at 300px 40px,#fff 55%,transparent 60%);
+ background-size:330px 330px;opacity:.8;animation:bdSky2 3.4s cubic-bezier(.6,0,.7,1) both}
+@keyframes bdSky{from{transform:scale(1)}to{transform:scale(1.35)}}
+@keyframes bdSky2{from{transform:scale(1)}to{transform:scale(2.1)}}
+.bd-glow{position:absolute;left:50%;top:46%;width:calc(var(--bw)*1.3);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,226,140,.5),rgba(255,180,90,.12) 45%,transparent 68%);animation:bdGlow 2.9s ease-in-out both;pointer-events:none}
+@keyframes bdGlow{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}35%{opacity:.7}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:1;transform:translate(-50%,-50%) scale(2.4)}}
+.bd-cam{position:absolute;left:50%;top:47%;width:var(--bw);height:calc(var(--bw)*.5625);margin:calc(var(--bw)*-.28125) 0 0 calc(var(--bw)*-.5);transform-style:preserve-3d;animation:bdCam 2.9s cubic-bezier(.45,.05,.35,1) both}
+@keyframes bdCam{
+ 0%{transform:translateY(55%) translateZ(-700px) rotateX(72deg) rotateZ(-14deg)}
+ 24%{transform:translateY(4%) translateZ(-80px) rotateX(34deg) rotateZ(-5deg)}
+ 52%{transform:translateY(0) translateZ(-30px) rotateX(28deg) rotateZ(0deg)}
+ 74%{transform:translateY(-2%) translateZ(30px) rotateX(20deg) rotateZ(0deg)}
+ 100%{transform:translateY(0) translateZ(860px) rotateX(0deg) rotateZ(0deg)}}
+.bd-book{position:absolute;inset:0;transform-style:preserve-3d;animation:bdSlide .85s cubic-bezier(.5,0,.3,1) .6s both}
+@keyframes bdSlide{from{transform:translateX(-25%)}to{transform:translateX(0)}}
+.bd-back{position:absolute;left:50%;top:-2.2%;width:51.5%;height:104.4%;border-radius:2px 10px 10px 2px;background:linear-gradient(90deg,#4A2A12,#7A4A22 12%,#6A3C1A);transform:translateZ(-6px);box-shadow:0 18px 40px rgba(0,0,0,.6)}
+.bd-edge{position:absolute;left:calc(100% - 5px);top:0;width:10px;height:100%;transform-origin:50% 50%;transform:translateZ(-3px) rotateY(90deg);background:repeating-linear-gradient(90deg,#F4E9CF 0 1px,#D9C9A4 1px 2px)}
+.bd-pg,.bd-leaf,.bd-cover{position:absolute;left:50%;top:0;width:50%;height:100%;transform-origin:0 50%;transform-style:preserve-3d}
+.bd-pg{background-size:200% 100%;background-position:100% 50%;transform:translateZ(0);box-shadow:inset 18px 0 22px -12px rgba(60,30,0,.45)}
+.bd-leaf{transform:translateZ(calc(1px + var(--i)*1px));animation:bdFlip .62s cubic-bezier(.55,.05,.4,1) both;animation-delay:calc(1.32s - var(--i)*.17s)}
+.bd-leaf i,.bd-cover i{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.bd-leaf .f{background:linear-gradient(90deg,rgba(120,80,30,.28),transparent 14%),repeating-linear-gradient(180deg,transparent 0 13%,rgba(120,90,50,.16) 13% 14%),#FBF3DF;background-clip:padding-box}
+.bd-leaf .b,.bd-cover .b{transform:rotateY(180deg);background-size:200% 100%;background-position:0 50%;box-shadow:inset -18px 0 22px -12px rgba(60,30,0,.45)}
+.bd-cover{transform:translateZ(5px);animation:bdFlip .85s cubic-bezier(.6,0,.35,1) .55s both}
+.bd-cover .f{border-radius:2px 10px 10px 2px;background-size:cover;background-position:center;box-shadow:inset 10px 0 14px -6px rgba(0,0,0,.55),inset 0 0 0 5px rgba(255,214,120,.75),inset 0 0 0 8px rgba(90,50,20,.6)}
+.bd-cover .b{background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.18) 0 2px,transparent 3px) 0 0/22px 22px,linear-gradient(135deg,#3B5BA8,#6A3FA0);border-radius:10px 2px 2px 10px}
+@keyframes bdFlip{from{transform:rotateY(0deg) translateZ(var(--z0,5px))}to{transform:rotateY(-179.5deg) translateZ(var(--z0,5px))}}
+.bd-leaf{--z0:calc(1px + var(--i)*1px)}
+.bd-burst{position:absolute;left:50%;top:50%;transform-style:preserve-3d;pointer-events:none}
+.bd-burst span{position:absolute;left:0;top:0;font-family:Jua,system-ui,sans-serif;font-size:calc(var(--bw)*.075);line-height:1;color:#FFE9A8;text-shadow:0 0 10px rgba(255,210,90,.95),0 0 2px #fff;opacity:0;animation:bdGlyph 1.25s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d)}
+@keyframes bdGlyph{0%{opacity:0;transform:translate(-50%,-50%) translate3d(0,0,6px) scale(.2)}
+ 18%{opacity:1}
+ 100%{opacity:0;transform:translate(-50%,-50%) translate3d(calc(var(--dx)*var(--bw)),calc(var(--dy)*var(--bw)),var(--dz)) scale(1.3) rotate(var(--r))}}
+.bd-team img{position:absolute;left:var(--x0);top:84%;width:min(34vw,32vh,260px);aspect-ratio:1;object-fit:contain;transform:translate(-50%,-50%);opacity:0;filter:drop-shadow(0 0 14px rgba(255,224,130,.95));animation:bdHero 1.05s cubic-bezier(.55,0,.8,.3) both;animation-delay:calc(1.5s + var(--i)*.16s)}
+@keyframes bdHero{0%{opacity:0;transform:translate(-50%,-50%) translateY(30vh) scale(.9) rotate(0deg)}
+ 30%{opacity:1;transform:translate(-50%,-50%) translateY(-4vh) scale(1.08) rotate(var(--r0))}
+ 100%{opacity:0;transform:translate(-50%,-50%) translate(calc(50vw - var(--x0)),-38vh) scale(.06) rotate(var(--r1))}}
+.bd-flash{position:absolute;inset:-30%;background:radial-gradient(circle at 50% 50%,#fff 0%,#FFF6D6 30%,#FFE29A 52%,rgba(255,214,120,0) 72%);opacity:0;transform:scale(.3);animation:bdFlash .55s ease-in 2.38s forwards;pointer-events:none}
+@keyframes bdFlash{to{opacity:1;transform:scale(2.6)}}
+.bd-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .45s ease-out}
+.bd-artbg{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;filter:blur(18px) brightness(.72);opacity:0;transition:opacity .45s ease-out}
+.bdive.art .bd-artbg{opacity:1}
+@media (orientation:portrait){.bd-art{object-fit:contain}}
+.bdive.art .bd-art{opacity:1;animation:bdArt 2.6s ease-out both}
+.bdive.art .bd-flash{animation:bdFlashOut .5s ease-out forwards}
+@keyframes bdArt{from{transform:scale(1.16)}to{transform:scale(1)}}
+@keyframes bdFlashOut{from{opacity:1;transform:scale(2.6)}to{opacity:0;transform:scale(2.6)}}
+.bd-say{position:absolute;left:50%;bottom:max(7%,calc(env(safe-area-inset-bottom,0px) + 18px));transform:translateX(-50%);font-family:Jua,system-ui,sans-serif;font-size:clamp(20px,4.4vmin,34px);color:#FFF4CF;text-shadow:0 2px 8px rgba(0,0,0,.7);white-space:nowrap;animation:bdSay 2.2s ease-out .25s both;pointer-events:none}
+@keyframes bdSay{0%{opacity:0;transform:translate(-50%,12px)}20%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+/* reduced motion: no 3D flight, just the open book and a soft flash */
+.bdive.calm .bd-cam{animation:none;transform:none}
+.bdive.calm .bd-book{animation:none}
+.bdive.calm .bd-cover,.bdive.calm .bd-leaf,.bdive.calm .bd-burst,.bdive.calm .bd-team,.bdive.calm .bd-edge{display:none}
+.bdive.calm .bd-pg{left:0;width:100%;background-size:100% 100%;background-position:center}
+.bdive.calm .bd-sky,.bdive.calm .bd-sky2,.bdive.calm .bd-glow{animation:none}
+.bdive.calm .bd-flash{animation:bdFlash .4s ease-in .45s forwards}
+
+/* ===== v29.4 iPhone + iPad layout ===== */
+/* A card's sections never shrink. Before, a long panel (record cards, page cards) was squeezed to its min-height and
+   spilled over the 🔊/help/leave buttons; now the card scrolls instead. */
+.bookc>*,.setc>*{flex-shrink:0}
+@supports (height:100dvh){.bookc,.duel{max-height:96dvh}.setc{max-height:92dvh}}
+/* phones, portrait */
+@media (max-width:640px){
+ #bookOv{padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px))}
+ .bookc{padding:10px 10px 0;gap:8px;scroll-padding:10px 0 110px}
+ .bookc .bstage{aspect-ratio:16/9;min-height:0;max-height:none}
+ .bookc>.dfoot{position:sticky;bottom:0;z-index:40;margin:0 -10px;padding:8px 10px max(10px,env(safe-area-inset-bottom,0px));background:var(--panel);border-top:2px solid rgba(30,40,60,.1);flex-wrap:wrap;gap:6px}
+ .bookc>.dfoot p{flex:1 1 100%;font-size:14px;line-height:1.35}
+ .bookc>.dfoot p:empty{display:none}
+ .bookc>.dfoot .acts{margin-left:auto}
+ .bookc .rec{flex-basis:100%;min-height:0;padding:7px 10px;font-size:15px}
+}
+/* phones, landscape: the picture on the left at full 16:9 (nothing cropped), the questions on the right */
+@media (orientation:landscape) and (max-height:520px){
+ #bookOv{padding:max(6px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(6px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+ .bookc{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"st hd" "st sp" "st q" "st ft";column-gap:12px;row-gap:6px;width:100%;max-width:none;height:100%;max-height:100%;overflow:hidden;padding:8px}
+ .bookc>.dhud{grid-area:hd;gap:6px;grid-template-columns:auto minmax(0,1fr) auto}
+ .bookc .dside .info{display:none}
+ .bookc .dside .face{width:34px;height:34px;border-radius:9px}
+ .bookc .dtier{font-size:12px;padding:4px 8px;overflow:hidden;text-overflow:ellipsis;min-width:0}
+ .bookc>.bsteps{grid-area:sp}
+ .bookc>.bstage{grid-area:st;align-self:center;aspect-ratio:16/9;width:min(58vw,calc((100vh - 48px)*16/9));height:auto;min-height:0;max-height:none}
+ .bookc>.bq{grid-area:q;overflow:auto;min-height:0;justify-content:flex-start;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+ .bookc>.dfoot{grid-area:ft;flex-wrap:wrap;gap:4px 6px}
+ .bookc>.dfoot p{flex:1 1 100%;font-size:13px;line-height:1.3}
+ .bookc>.dfoot p:empty{display:none}
+ .bookc>.dfoot .acts{margin-left:auto;gap:6px}
+ .bookc>.dfoot .btn{padding:6px 12px;min-height:40px}
+ .bookc .rec{flex-basis:100%;min-height:0;font-size:14px;padding:6px 10px}
+ .bookc .bsteps span{font-size:11px;padding:3px 7px}
+}
+@supports (height:100dvh){@media (orientation:landscape) and (max-height:520px){.bookc>.bstage{width:min(58vw,calc((100dvh - 48px)*16/9))}}}
+/* the battle card had the same squeeze: the question panel spilled under the buttons */
+.duel>*{flex-shrink:0}
+/* "범인은 바로 너야!" stamp above the characters */
+.kzstamp{z-index:6}
+/* phones, landscape: battle and case squad side by side (the picture left, the questions right) */
+@media (orientation:landscape) and (max-height:520px){
+ #duelOv,#caseOv{padding:max(4px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(4px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+ #duelOv .duel{display:grid;grid-template-columns:minmax(0,52fr) minmax(0,48fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"hd hd" "st q" "st ft";gap:6px 10px;width:100%;max-width:none;height:100%;max-height:100%;overflow:hidden;padding:8px}
+ #duelOv .dhud{grid-area:hd}
+ #duelOv .dstage{grid-area:st;height:auto;min-height:0}
+ #duelOv .dq{grid-area:q;overflow:auto;min-height:0;justify-content:flex-start;-webkit-overflow-scrolling:touch}
+ #duelOv .dfoot{grid-area:ft;flex-wrap:wrap}
+ #caseCard.kzc.play{height:100%;max-height:none;max-width:none;width:100%;padding:6px 8px}
+ .kzwrap{display:grid;grid-template-columns:minmax(0,56fr) minmax(0,44fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"hd hd" "st pn" "st ft";gap:6px 10px}
+ .kzhead{grid-area:hd}
+ .kzstage{grid-area:st;height:auto!important;min-height:0}
+ .kzpanel{grid-area:pn}
+ .kzfoot{grid-area:ft;flex-wrap:wrap}
+ .kzfoot p{flex:1 1 100%;font-size:13px}
+ .kzfoot p:empty{display:none}
+ .kzfoot .acts{margin-left:auto}
+ .kzsteps li{min-width:38px;padding:2px 3px}
+ .kzsteps li span{display:none}
+}
+
+/* ===== v29.4 case squad: the same painted picture looks different in every act
+   0 request: slow push-in, morning light · 1 search: the full picture (sparkles line up) · 2 witnesses: close-up, blurred, spotlight
+   3 skill: close-up on a clue with the hero's colour and light rays · 4 deduce: cork board with photos cut from the picture
+   5 solved: the full picture, bright and warm, twinkles ===== */
+.kzworld{transform-origin:0 0;transition:transform 1.3s cubic-bezier(.4,0,.2,1)}
+.kzworld.a0{transition-duration:7s;transition-timing-function:cubic-bezier(.3,.1,.3,1)}
+.kzworld.a1{transition-duration:.45s}
+.kzmood{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity 1s;overflow:hidden}
+.kzworld.a0 .kzmood{opacity:1;background:linear-gradient(180deg,rgba(255,236,190,.26),transparent 46%),radial-gradient(ellipse at 72% 26%,rgba(255,242,205,.32),transparent 58%)}
+.kzworld.a2 .kzscene{filter:blur(2.5px) saturate(.55) brightness(.66)}
+.kzworld.a2 .kzmood{opacity:1;background:radial-gradient(ellipse at 50% 42%,transparent 28%,rgba(18,14,48,.66) 80%),linear-gradient(0deg,rgba(40,30,96,.36),transparent 56%)}
+.kzworld.a3 .kzscene{filter:saturate(1.08) brightness(.86)}
+.kzworld.a3 .kzmood{opacity:1;background:radial-gradient(circle at 50% 56%,var(--hcA,rgba(255,211,77,.55)),transparent 64%)}
+.kzworld.a3 .kzmood::before{content:"";position:absolute;inset:-60%;background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,255,255,.17) 0 5deg,transparent 5deg 16deg);animation:kzRays 16s linear infinite}
+@keyframes kzRays{to{transform:rotate(360deg)}}
+.kzworld.a4 .kzscene{filter:blur(7px) brightness(.42) saturate(.6)}
+.kzworld.a5 .kzscene{filter:saturate(1.18) brightness(1.06)}
+.kzworld.a5 .kzmood{opacity:1;background:linear-gradient(180deg,rgba(255,214,140,.3),transparent 52%),radial-gradient(ellipse at 50% 16%,rgba(255,250,222,.5),transparent 56%)}
+.kzworld.a5 .kzmood::after{content:"";position:absolute;inset:0;background-image:radial-gradient(2.4px 2.4px at 18% 28%,#fff 50%,transparent 55%),radial-gradient(3px 3px at 68% 18%,#FFF3B0 50%,transparent 55%),radial-gradient(2.2px 2.2px at 44% 58%,#fff 50%,transparent 55%),radial-gradient(2px 2px at 86% 52%,#fff 50%,transparent 55%),radial-gradient(2.6px 2.6px at 10% 72%,#FFF3B0 50%,transparent 55%),radial-gradient(2px 2px at 58% 82%,#fff 50%,transparent 55%);animation:kzTwinkle 1.8s ease-in-out infinite alternate}
+@keyframes kzTwinkle{from{opacity:.3}to{opacity:1}}
+.kzboard{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .7s;
+ background:radial-gradient(circle at 30% 30%,rgba(60,30,10,.16) 0 1.4px,transparent 2.2px) 0 0/15px 15px,radial-gradient(circle at 70% 60%,rgba(255,240,210,.12) 0 1.2px,transparent 2px) 0 0/11px 11px,linear-gradient(135deg,#BE8752,#A46E3E 52%,#B98049);
+ box-shadow:inset 0 0 0 7px #6E4524,inset 0 0 0 9px #4E2F17,inset 0 0 34px rgba(0,0,0,.5)}
+.kzboard.on{opacity:1}
+.kzboard .kzstr{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.kzboard .kzstr polyline{fill:none;stroke:#D32F2F;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35));opacity:0;transition:opacity .4s}
+.kzboard .kzstr.on polyline{opacity:1}
+.kzpol{position:absolute;left:var(--px);top:var(--py);width:clamp(74px,17%,150px);margin:0;padding:5% 5% 0;background:#FDFBF4;box-shadow:0 7px 14px rgba(0,0,0,.38);transform:translate(-50%,-50%) rotate(var(--r));animation:kzPin .55s cubic-bezier(.3,1.5,.5,1) both;animation-delay:var(--d)}
+.kzpol i{display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;background-color:#E9E2D2;background-repeat:no-repeat;font-style:normal;font-size:clamp(22px,4vw,44px);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.kzpol i img{width:62%;height:auto}
+.kzpol figcaption{font-family:var(--f-k,Jua),system-ui,sans-serif;font-size:clamp(10px,1.5vw,17px);line-height:1.2;text-align:center;padding:5% 0 7%;color:#3A2E25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kzpol::before{content:"";position:absolute;left:50%;top:-7px;width:15px;height:15px;margin-left:-7.5px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FF9C9C,#C62828 70%);box-shadow:0 2px 3px rgba(0,0,0,.45);z-index:1}
+@keyframes kzPin{from{opacity:0;transform:translate(-50%,-85%) rotate(calc(var(--r) - 14deg)) scale(.7)}to{opacity:1;transform:translate(-50%,-50%) rotate(var(--r))}}
+/* small screens: the detectives step back a little so the photos on the board show */
+@media (max-width:640px),(orientation:landscape) and (max-height:520px){.kzstage.kzded4 .kzact{height:56%}.kzstage.kzded4 .kzpol{top:calc(var(--py) - 11%)}}
+@media (prefers-reduced-motion:reduce){.kzworld,.kzworld.a0{transition-duration:.01s}.kzworld.a3 .kzmood::before,.kzworld.a5 .kzmood::after{animation:none}.kzpol{animation:none}}

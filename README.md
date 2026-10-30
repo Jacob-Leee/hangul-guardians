@@ -6,9 +6,11 @@
   - GitHub 저장소 Settings → Pages에서 배포를 켠 뒤에 열립니다.
 - **설치형 웹 앱(PWA)입니다.** 홈 화면 아이콘으로 설치할 수 있고, 전체 화면으로 열리며, 처음 한 번 연 뒤에는 인터넷 없이도 실행됩니다.
 
-## 아이패드에 앱처럼 설치하기
+## 아이패드·아이폰에 앱처럼 설치하기
 
-1. 아이패드 **Safari**에서 위 주소를 엽니다. Chrome 등 다른 브라우저는 iPad에서 홈 화면 앱 설치가 제한될 수 있습니다.
+아이패드와 아이폰 모두 같은 방법입니다. 화면 크기에 맞춰 배치가 바뀌고, 휴대폰을 가로로 눕히면 그림 왼쪽·질문 오른쪽으로 보입니다.
+
+1. 아이패드·아이폰 **Safari**에서 위 주소를 엽니다. Chrome 등 다른 브라우저는 홈 화면 앱 설치가 제한될 수 있습니다.
 2. 첫 화면이 나오면 1~2분 기다립니다. 그림과 음악 약 28MB가 기기에 저장되는 시간입니다. 진행 상황은 설정 → 📲 앱에서 "오프라인 사용 준비 완료 ✓"가 뜨는지로 확인합니다.
 3. 주소창 옆 **공유 버튼(□↑)** → **홈 화면에 추가** → 추가를 누릅니다.
 4. 홈 화면의 **한글 수비대** 아이콘으로 실행합니다. 주소창 없이 전체 화면으로 열립니다.
@@ -16,7 +18,7 @@
 **알아 둘 점**
 - Safari 탭과 홈 화면 앱은 진행 기록을 따로 저장합니다. Safari에서 하던 기록을 옮기려면 설정 → 진행 백업 → **백업 코드 만들기**로 코드를 복사한 다음, 앱에서 **코드로 불러오기**를 하세요.
 - 새 버전을 올리면 앱을 다음에 열 때 "새 버전이 준비됐어요" 안내가 나옵니다. **업데이트**를 누르면 바뀝니다.
-- 진행 기록은 아이패드 안에만 있습니다. 서버로 보내지 않습니다.
+- 진행 기록은 그 기기 안에만 있습니다. 서버로 보내지 않습니다. 아이패드와 아이폰의 기록은 서로 따로이며, 옮기려면 백업 코드를 씁니다.
 
 ## 새 버전 올리는 법
 
@@ -32,11 +34,12 @@
 
 - 인수인계(개발자·AI용): `docs/HANDOVER.md` ← 먼저 읽기
 - ChatGPT(그림 담당)에게 처음 보낼 메시지: `docs/CHATGPT_START.md` · 그림 요청서: `docs/IMAGE_REQUESTS.md`
-- AI 녹음 대본: `docs/voice_pack/`
-- 아이패드 실기기 점검표: `docs/IPAD_CHECKLIST.md`
-- 더빙 대본: `docs/dubbing_characters.md`(녹음할 캐릭터 대사 155줄), 전체 대본 `docs/dubbing_b1.*`, `docs/dubbing_cases.*`
+- AI 녹음: 타입캐스트 녹음 키트 `tools/typecast/`(Windows, `README_KO.txt`), 사람이 녹음할 때 대본 `docs/voice_pack/`
+- 아이패드·아이폰 실기기 점검표: `docs/IPAD_CHECKLIST.md`
+- 다음 기능 설계안(본부 꾸미기, 배틀·코스 다양화, 확정 전): `docs/HQ_PLAN.md`
+- 더빙 대본: `docs/dubbing_characters.md`(녹음할 캐릭터 대사 155줄), 전체 대본 `docs/dubbing_b1.*`, `docs/dubbing_b2.*`, `docs/dubbing_cases.*`
 
 ## 실행·테스트 (개발용)
 
 - **로컬 실행:** `python -m http.server`를 실행한 뒤 http://localhost:8000 에서 엽니다. `index.html`을 파일로 바로 열어도 되지만, 이 경우 배경음악과 오프라인 기능은 동작하지 않습니다.
-- **테스트:** `node tests/book1-playthrough.js`, `node tests/case-autoplay.js`, `node tests/playground-autoplay.js`, `node tests/v29-features.js`, `node tests/spot-overlap.js`, `node tests/today-lap.js`, `node tests/book-auto.js index.html b2`, `node tests/chaos-sim.js`, `node tests/app-offline.js`(로컬 서버 필요). 모두 Playwright가 필요합니다.
+- **테스트:** `node tests/book1-playthrough.js`, `node tests/case-autoplay.js`, `node tests/playground-autoplay.js`, `node tests/v29-features.js`, `node tests/spot-overlap.js`, `node tests/today-lap.js`, `node tests/book-auto.js index.html b2`, `node tests/chaos-sim.js`, `node tests/device-audit.js`(아이폰·아이패드 화면 겹침 검사), `node tests/app-offline.js`(로컬 서버 필요). 모두 Playwright가 필요합니다.

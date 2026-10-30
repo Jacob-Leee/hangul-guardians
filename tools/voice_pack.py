@@ -3,6 +3,8 @@
     python tools/voice_pack.py make                 # writes docs/voice_pack/ (one script per role + casting sheet)
     python tools/voice_pack.py split <folder>       # cuts the recordings in <folder> into audio/<file name from the CSV>
     python tools/voice_pack.py split <folder> --dry # only checks the recordings, writes nothing
+    python tools/voice_pack.py split-one <file> [--order order.txt] [--roles rat,ox,rabbit] [--dry]
+                                                    # ONE recording with many roles (one project in the voice website)
     python tools/make_voice_manifest.py             # connects the new files to the game
 
 The recordings: one audio file per role, made from that role's script (docs/voice_pack/scripts/NN_id_name.txt) with
@@ -11,6 +13,10 @@ The cuts go into the pauses between paragraphs; among all pauses the tool picks 
 that fits its line, so a short pause inside a two-sentence line is not cut. A role can also come as one file per line
 (01_rat_번개쥐_1.mp3, _2, ...); those are only trimmed and converted. All lines of one role get the same volume change,
 so every role ends up about equally loud. Needs ffmpeg on the PATH and numpy.
+
+split-one: many roles in one recording, every line its own paragraph. The tool needs the lines in the order they were
+read: --order with the text copied from the voice website's editor (Ctrl+A, Ctrl+C, paste into a .txt), or --roles with
+the role ids in the order of scripts/00_all_characters.txt (default: that whole file). Each role gets its own volume.
 """
 import argparse
 import csv
@@ -53,6 +59,8 @@ ROLES = [
     ("v_purple", "고양이 악당", "높고 가벼운 목소리 · 킥킥 장난", 2),
     ("sb_rabbit", "동화 속 인물", "남자아이 · 높고 빠르게 뽐냄", 2),
     ("sb_turtle", "동화 속 인물", "남자아이 · 느리고 순함", 2),
+    ("sb_country", "동화 속 인물", "남자아이 · 소박하고 순함, 조금 느리게 (2권 시골 쥐)", 2),
+    ("sb_city", "동화 속 인물", "남자아이 · 빠르고 자신만만, 뽐냄 (2권 도시 쥐)", 2),
     ("mentor", "선택", "할아버지 · 낮고 느리고 따뜻함", 3),
     ("narrator", "선택", "30대 여자 선생님 · 또박또박", 3),
 ]
@@ -77,7 +85,7 @@ def short_name(rid, rows):
 def load_roles():
     """Every role with its lines in script order: {id: {"name", "group", "voice", "prio", "dir", "rows"}}."""
     chars = read_csv("dubbing_characters.csv")
-    story = read_csv("dubbing_b1.csv") + read_csv("dubbing_cases.csv")
+    story = read_csv("dubbing_b1.csv") + read_csv("dubbing_b2.csv") + read_csv("dubbing_cases.csv")
     letters = read_csv("dubbing_letters.csv")
     rows_of = {}
     for r in chars:
@@ -114,7 +122,7 @@ def make(out):
     for fn in os.listdir(sdir):
         if fn.endswith(".txt"):
             os.remove(os.path.join(sdir, fn))
-    sheet = []
+    sheet, every = [], []
     for rid, role in roles.items():
         lines = [r["대사"].strip() for r in role["rows"]]
         if rid == "narrator":
@@ -122,12 +130,16 @@ def make(out):
         name = script_name(rid, role)
         with open(os.path.join(sdir, name + ".txt"), "w", encoding="utf-8") as f:
             f.write("\n\n".join(lines) + "\n")
+        if role["prio"] < 3:
+            every += lines
         sheet.append({
             "순서": role["no"], "우선순위": role["prio"], "묶음": role["group"], "화자ID": rid, "캐릭터": role["name"],
             "대본 파일": f"scripts/{name}.txt", "저장할 파일 이름": name + ".mp3", "줄 수": len(lines),
             "크레딧(글자 수)": sum(len(t) for t in lines), "목소리": role["voice"], "연기 방향": role["dir"],
             "오디션 문장": max(lines, key=len), "고른 목소리": "",
         })
+    with open(os.path.join(sdir, "00_all_characters.txt"), "w", encoding="utf-8") as f:
+        f.write("\n\n".join(every) + "\n")
     with open(os.path.join(out, "casting.csv"), "w", encoding="utf-8-sig", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(sheet[0].keys()))
         w.writeheader()
@@ -146,6 +158,8 @@ def make(out):
 3. 배역마다 새 프로젝트를 만들고 `scripts/`의 대본을 통째로 붙여 넣습니다(한 줄 = 한 문단). 줄 사이 쉼은 1초 정도로 둡니다.
 4. 전체를 들어 보고 이상한 줄만 다시 만든 뒤 파일 1개(MP3)로 내려받습니다. 파일 이름은 대본 이름과 같게 합니다(예: `01_rat_번개쥐.mp3`, 영어 ID만 있어도 됨: `rat.mp3`).
 5. 파일을 Claude 대화에 올리면 자르고 게임에 연결합니다. 직접 하려면: `python tools/voice_pack.py split <폴더>` → `python tools/make_voice_manifest.py` → `python tools/make_app.py`.
+
+**한 프로젝트에 여러 배역을 넣어도 됩니다.** `scripts/00_all_characters.txt`(캐릭터 대사 전부, 배역 순서대로)를 붙여 넣거나 배역 대본을 이어 붙이고, 배역이 바뀌는 문단에서 목소리를 바꿉니다. 한 줄 = 한 문단, '무음 줄이기'는 끄고, 파일 1개로 내려받습니다. Claude에게 올릴 때 편집기 글자 전체(Ctrl+A → Ctrl+C)를 함께 붙여 넣으면 그 순서대로 자릅니다. 직접 하려면: `python tools/voice_pack.py split-one <파일> --order <글자.txt>`.
 
 ## 크레딧 (1글자 = 1크레딧, 다운로드할 때만 차감)
 - 1순위(영웅·사건 친구) {total[1]:,} · 2순위(고양이 악당·동화 속 인물) {total[2]:,} · 선택 {total[3]:,} · 전부 {sum(total.values()):,}
@@ -372,6 +386,90 @@ def split(folder, out, dry=False):
     return problems
 
 
+# ---------------------------------------------------------------- split-one (many roles in one recording)
+def line_key(t):
+    t = str(t).replace("\u201c", '"').replace("\u201d", '"').replace("\u2018", "'").replace("\u2019", "'")
+    return re.sub(r"[\s.]+$", "", re.sub(r"\s+", " ", t).strip())
+
+
+def resolve_lines(texts, roles):
+    """[(role id, row) or None] for each text; a line that several roles say goes to the role of its neighbours."""
+    index = {}
+    for rid, role in roles.items():
+        for r in role["rows"]:
+            index.setdefault(line_key(r["대사"]), []).append((rid, r))
+    cand = [index.get(line_key(t)) for t in texts]
+    res = []
+    for i, c in enumerate(cand):
+        if not c:
+            res.append(None)
+            continue
+        if len(c) == 1:
+            res.append(c[0])
+            continue
+        prev = next((res[j][0] for j in range(i - 1, -1, -1) if res[j]), None)
+        nxt = next((cand[j][0][0] for j in range(i + 1, len(cand)) if cand[j] and len(cand[j]) == 1), None)
+        res.append(next((x for x in c if x[0] == prev), None) or next((x for x in c if x[0] == nxt), None) or c[0])
+    return res
+
+
+def split_one(path, order=None, role_ids=None, out=None, dry=False):
+    import numpy as np
+    roles = load_roles()
+    if order:
+        with open(order, encoding="utf-8-sig") as f:
+            texts = [t.strip() for t in f.read().splitlines() if t.strip()]
+    else:
+        ids = [r.strip() for r in (role_ids or "").split(",") if r.strip()] or [r for r in roles if roles[r]["prio"] < 3]
+        bad = [r for r in ids if r not in roles]
+        if bad:
+            sys.exit("unknown role id: " + ", ".join(bad) + "  (ids: " + ", ".join(roles) + ")")
+        texts = [r["대사"].strip() for rid in ids for r in roles[rid]["rows"]]
+    who = resolve_lines(texts, roles)
+    plan, err = plan_file(path, texts)
+    if err:
+        sys.exit(f"{os.path.basename(path)}: {err}")
+    pieces = plan["pieces"]
+    x = decode(path)
+    gains = {}
+    for rid in {w[0] for w in who if w}:
+        seg = [x[int(s * SR):int(e * SR)] for (s, e), w in zip(pieces, who) if w and w[0] == rid]
+        xr = np.concatenate(seg) if seg else x
+        db, thr, _, _ = analyse(xr)
+        gains[rid] = gain_for(xr, db, thr)
+    if not dry:
+        os.makedirs(out, exist_ok=True)
+    rate = [(e - s) / weight(t) for (s, e), t in zip(pieces, texts)]
+    problems, made, lines = [], 0, []
+    for k, ((s, e), t, w) in enumerate(zip(pieces, texts, who)):
+        rid = w[0] if w else None
+        same = [rate[j] for j in range(len(texts)) if (who[j][0] if who[j] else None) == rid] or rate
+        med = float(np.median(same))
+        flag = "long" if rate[k] > med * 1.9 else "short" if rate[k] < med / 1.9 else ""
+        name = w[1]["파일명"].strip() if w else f"unknown_{k + 1:03d}.mp3"
+        if not w:
+            problems.append(f"line {k + 1} is not in any script (text changed?): \"{t[:40]}\" -> saved as {name} for checking")
+        if flag:
+            problems.append(f"{name} (line {k + 1}): {e - s:.1f}s for \"{t[:30]}\" looks too {flag}, please listen")
+        lines.append(f"   {k + 1:>3}. {name:<22} {rid or '?':<10} {e - s:5.2f}s  {t[:34]}{'  <- ' + flag if flag else ''}")
+        if not dry:
+            cut(path, s, e, gains.get(rid, plan["gain"]), os.path.join(out, name))
+            made += 1
+    print("\n".join(lines))
+    print("volume per role: " + ", ".join(f"{r} {g:+.1f} dB" for r, g in sorted(gains.items())))
+    if plan["unclear"]:
+        problems.append("the pauses between lines are about as long as pauses inside lines; listen to the pieces, "
+                        "or download again with longer pauses (about 1 second)")
+    print(f"\n{made} file(s) written to {out}" if not dry else "\n(dry run: nothing written)")
+    if problems:
+        print("\nCheck these:")
+        for p in problems:
+            print(" -", p)
+    if made:
+        print("Next: python tools/make_voice_manifest.py")
+    return problems
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -381,9 +479,17 @@ def main():
     s.add_argument("folder")
     s.add_argument("--out", default=os.path.join(ROOT, "audio"))
     s.add_argument("--dry", action="store_true")
+    o = sub.add_parser("split-one")
+    o.add_argument("file")
+    o.add_argument("--order", help="text file: the lines in the order they were read (copied from the editor)")
+    o.add_argument("--roles", help="role ids in reading order, e.g. rat,ox,rabbit (default: scripts/00_all_characters.txt)")
+    o.add_argument("--out", default=os.path.join(ROOT, "audio"))
+    o.add_argument("--dry", action="store_true")
     a = ap.parse_args()
     if a.cmd == "make":
         make(a.out)
+    elif a.cmd == "split-one":
+        split_one(a.file, a.order, a.roles, a.out, a.dry)
     else:
         split(a.folder, a.out, a.dry)
 

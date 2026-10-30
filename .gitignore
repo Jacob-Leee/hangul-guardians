@@ -3,3 +3,10 @@ node_modules/
 .DS_Store
 __pycache__/
 .cache/
+# Typecast kit: the API key and generated files stay on the PC
+tools/typecast/key.txt
+tools/typecast/out/
+tools/typecast/data/
+tools/typecast/casting.csv
+tools/typecast/voices.csv
+tools/typecast/*.zip

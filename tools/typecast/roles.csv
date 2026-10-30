@@ -1,0 +1,30 @@
+﻿화자ID,캐릭터,그룹,성별,나이,속도,높낮이,감정,설명
+narrator,내레이터,이야기,female,"young_adult,middle_age",0.92,0,smart,"30대 여성 동화 구연가. 따뜻하고 차분하게, 또박또박, 조금 느리게."
+mentor,거북이 스승님,이야기,male,"elder,middle_age",0.9,0,smart,"다정한 할아버지 거북이. 낮고 느긋하게, 웃음 섞인 목소리."
+rat,번개 쥐,수비대 영웅,female,"child,teenager",1.05,1,smart,호기심 많은 여자아이. 높고 빠르고 경쾌하게.
+ox,강철 소,수비대 영웅,male,"child,teenager",0.92,-1,smart,든든한 남자아이. 낮고 느리고 묵직하게.
+tiger,대장 호랑이,수비대 영웅,male,"child,teenager",1.0,0,smart,씩씩한 대장 남자아이. 자신감 있고 힘차게.
+rabbit,달빛 토끼,수비대 영웅,female,"child,teenager",1.0,1,smart,밝고 상냥한 여자아이 영웅. 통통 튀게.
+dragon,하늘 용,수비대 영웅,male,"teenager,young_adult",0.95,0,smart,차분하고 지혜로운 형. 부드럽고 깊게.
+snake,바람 뱀,수비대 영웅,female,"teenager,young_adult",0.95,0,smart,차분하고 신비로운 누나. 낮고 조용하게.
+horse,질주 말,수비대 영웅,male,"child,teenager",1.08,0,smart,에너지 넘치는 남자아이. 신나고 빠르게.
+sheep,구름 양,수비대 영웅,female,"child,teenager",0.9,0,smart,포근한 여자아이. 아주 부드럽고 천천히.
+monkey,재주 원숭이,수비대 영웅,female,"child,teenager",1.06,2,smart,장난꾸러기 여자아이. 높고 까불까불하게.
+rooster,새벽 닭,수비대 영웅,female,"child,teenager",1.0,0,smart,또랑또랑한 여자아이. 맑고 정확하게.
+dog,용감한 개,수비대 영웅,male,"child,teenager",1.04,0,smart,반가움 가득한 남자아이. 활발하고 다정하게.
+pig,든든 돼지,수비대 영웅,male,"child,teenager",0.94,-1,smart,느긋한 남자아이. 여유롭고 웃음 섞이게.
+squirrel,다람쥐,사건 친구,female,"child,teenager",1.02,1,smart,부지런하고 명랑한 여자아이. 걱정할 땐 떨리게.
+spider,거미 스피니,사건 친구,female,"child,teenager",0.92,0,smart,수줍고 다정한 여자아이. 작고 부드럽게.
+mole,고슴도치,사건 친구,male,"child,teenager",0.96,0,smart,씩씩하지만 수줍은 광부 소년. 또박또박.
+beaver,비버,사건 친구,male,"teenager,child",0.95,-1,smart,성실한 목수 소년. 조금 굵고 차분하게.
+gull,갈매기,사건 친구,female,"child,teenager",1.06,0,smart,바닷가의 활발한 여자아이. 밝고 시원하게.
+v_gray,회색냥,고양이 악당,male,"young_adult,middle_age",1.0,0,smart,"얄미운 만화 악당 고양이. 콧소리 섞인 비웃음, 절대 무섭지 않게."
+v_black,흑묘,고양이 악당,male,"young_adult,middle_age",0.95,-1,smart,"능청스럽고 교활한 고양이. 낮게 속삭이듯, 장난스럽게."
+v_white,백묘,고양이 악당,female,"young_adult,teenager",1.0,1,smart,새침하고 도도한 고양이. 높고 깔끔하게.
+v_tiger,호랑이냥,고양이 악당,male,"young_adult,middle_age",1.0,0,smart,허세 가득한 큰소리 고양이. 코믹하게.
+v_fat,뚱냥,고양이 악당,male,"middle_age,young_adult",0.88,-2,smart,느릿느릿한 먹보 고양이. 굵고 느리게.
+v_purple,보라냥,고양이 악당,female,"teenager,young_adult",1.06,1,smart,킥킥 웃음 섞인 장난꾸러기 고양이. 가볍고 빠르게.
+sb_rabbit,동화 속 토끼,동화 속 인물,male,"child,teenager",1.06,1,smart,장난꾸러기 토끼. 빠르고 높고 자신만만하게.
+sb_turtle,동화 속 거북이,동화 속 인물,male,"child,teenager",0.85,-1,smart,"순하고 느린 소년 거북이. 한 박자 늦게, 착하게."
+sb_country,시골 쥐,동화 속 인물,male,"child,teenager",0.92,0,smart,소박하고 순한 시골 쥐. 조금 느리고 따뜻하게.
+sb_city,도시 쥐,동화 속 인물,male,"child,teenager",1.06,1,smart,으스대는 도시 쥐. 빠르고 자신만만하게.

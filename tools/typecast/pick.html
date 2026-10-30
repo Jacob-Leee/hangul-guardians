@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>목소리 고르기 · 한글 수비대</title>
+<style>
+:root{--ink:#1F2A44;--muted:#5E6A82;--line:#D9DFEA;--bg:#F6F8FC;--card:#fff;--pri:#2F5BD8;--ok:#1E8B4A}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:20px 24px 8px;max-width:1100px;margin:auto}
+h1{margin:0 0 6px;font-size:24px}
+p{margin:4px 0;line-height:1.55;color:var(--muted)}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 24px;border-bottom:1px solid var(--line)}
+.bar .in{max-width:1100px;margin:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+button{font:inherit;border:2px solid var(--ink);background:#fff;border-radius:10px;padding:7px 14px;cursor:pointer}
+button.pri{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700}
+main{max-width:1100px;margin:auto;padding:12px 24px 60px}
+.grp{margin:22px 0 8px;font-size:16px}
+.role{display:grid;grid-template-columns:170px minmax(0,1fr);gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0}
+.role b{font-size:17px}
+.role small{display:block;color:var(--muted);font-size:13px;margin-top:3px;line-height:1.4}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select{font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line);max-width:100%;min-width:260px}
+input[type=number]{width:70px;font:inherit;padding:5px;border-radius:8px;border:1px solid var(--line)}
+label{font-size:13px;color:var(--muted)}
+audio{height:34px;vertical-align:middle;max-width:100%}
+.sample{margin-top:8px;font-size:14px}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:#EEF2FA;color:var(--muted)}
+.tag.ok{background:#E3F6E8;color:var(--ok)}
+.changed{outline:3px solid #FFC94D}
+.none{padding:30px;background:#fff;border:1px dashed var(--line);border-radius:14px}
+@media (max-width:640px){.role{grid-template-columns:1fr}select{min-width:0;width:100%}}
+</style>
+</head>
+<body>
+<header>
+ <h1>🎙️ 목소리 고르기</h1>
+ <p>역할마다 Typecast 목소리가 자동으로 골라져 있어요. <b>▶ 미리 듣기</b>로 들어 보고, 마음에 들지 않으면 목록에서 바꾸세요.</p>
+ <p>바꾼 뒤 <b>캐스팅표 저장</b>을 누르면 <code>casting.csv</code>가 다운로드 폴더에 저장되고, 다음에 <b>2_samples.bat</b>이나 <b>3_record_main.bat</b>을 실행하면 자동으로 가져와요.</p>
+</header>
+<div class="bar"><div class="in"><button class="pri" id="save">💾 캐스팅표 저장</button><label><input type="checkbox" id="all"> 다른 성별 목소리도 보기</label><span id="info" class="tag"></span></div></div>
+<main id="list"></main>
+<script src="data/voices.js"></script>
+<script src="data/roles.js"></script>
+<script src="data/casting.js"></script>
+<script src="data/first.js"></script>
+<script src="data/made.js"></script>
+<script>
+(function(){
+const V=window.TC_VOICES||[],R=window.TC_ROLES||[],C=window.TC_CAST||[],F=window.TC_FIRST||{},M=window.TC_MADE||{};
+const cast={};C.forEach(c=>cast[c['화자ID']]=Object.assign({},c));
+const byId={};V.forEach(v=>byId[v.voice_id]=v);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+const list=document.getElementById('list');let showAll=false;const changed=new Set();
+const sig=(c,t)=>[c.voice_id,c['속도'],c['높낮이'],c['감정'],c['세기'],t].join('|');
+function opts(role,cur){const g=role['성별'];const vs=V.filter(v=>showAll||!g||v.gender===g);
+ if(cur&&!vs.find(v=>v.voice_id===cur)&&byId[cur])vs.unshift(byId[cur]);
+ return vs.map(v=>`<option value="${esc(v.voice_id)}"${v.voice_id===cur?' selected':''}>${esc(v.name||v.name_eng)} · ${esc(v.gender||'?')} · ${esc(v.age||'?')}${v.use_cases?' · '+esc(v.use_cases):''}</option>`).join('')}
+function draw(){
+ if(!V.length){list.innerHTML='<div class="none">목소리 목록이 아직 없어요. 먼저 <b>1_voices.bat</b>을 실행하세요.</div>';return}
+ let html='',grp='';
+ R.forEach(r=>{const id=r['화자ID'],c=cast[id]||{'화자ID':id,'캐릭터':r['캐릭터'],voice_id:'','속도':r['속도'],'높낮이':r['높낮이'],'감정':r['감정'],'세기':'1.0','설명':r['설명']};cast[id]=c;
+  if(r['그룹']!==grp){grp=r['그룹'];html+=`<h2 class="grp">${esc(grp)}</h2>`}
+  const v=byId[c.voice_id],f=F[id],ok=f&&M[f.file]===sig(c,f.text);
+  html+=`<div class="role${changed.has(id)?' changed':''}" data-id="${esc(id)}"><div><b>${esc(r['캐릭터'])}</b><small>${esc(r['설명'])}</small><small>찾는 목소리: ${esc(r['성별'])} · ${esc(r['나이'])}</small></div>
+   <div><div class="row"><select data-k="voice">${opts(r,c.voice_id)}</select>
+    ${v&&v.preview_url?`<button data-k="prev">▶ 미리 듣기</button>`:''}
+    <label>속도 <input type="number" data-k="속도" step="0.02" min="0.5" max="2" value="${esc(c['속도'])}"></label>
+    <label>높낮이 <input type="number" data-k="높낮이" step="1" min="-12" max="12" value="${esc(c['높낮이'])}"></label></div>
+    <div class="sample">${f?(ok?`<span class="tag ok">이 목소리로 만든 첫 대사</span> <audio controls preload="none" src="out/${encodeURIComponent(f.file)}?t=${Date.now()}"></audio>`:`<span class="tag">첫 대사 샘플 없음 — 2_samples.bat을 실행하면 만들어져요</span>`)+`<div style="margin-top:4px">“${esc(f.text)}”</div>`:''}</div></div></div>`});
+ list.innerHTML=html;
+ document.getElementById('info').textContent=`목소리 ${V.length}개 · 역할 ${R.length}개`;
+ list.querySelectorAll('.role').forEach(el=>{const id=el.dataset.id,c=cast[id];
+  el.querySelector('[data-k=voice]').onchange=e=>{const v=byId[e.target.value];c.voice_id=e.target.value;c['목소리']=v?v.name:'';c['성별']=v?v.gender:'';c['나이']=v?v.age:'';changed.add(id);draw()};
+  el.querySelectorAll('input[type=number]').forEach(i=>i.onchange=()=>{c[i.dataset.k]=i.value;changed.add(id);el.classList.add('changed')});
+  const pb=el.querySelector('[data-k=prev]');if(pb)pb.onclick=()=>{const v=byId[c.voice_id];if(!v||!v.preview_url)return;const a=new Audio(v.preview_url);a.play().catch(()=>alert('미리 듣기를 재생하지 못했어요. 인터넷 연결을 확인하세요.'))}})}
+document.getElementById('all').onchange=e=>{showAll=e.target.checked;draw()};
+document.getElementById('save').onclick=()=>{const cols=['화자ID','캐릭터','voice_id','목소리','성별','나이','속도','높낮이','감정','세기','설명'];
+ const q=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"';
+ const rows=[cols.map(q).join(',')].concat(R.map(r=>{const c=cast[r['화자ID']];return cols.map(k=>q(c[k])).join(',')}));
+ const blob=new Blob(['﻿'+rows.join('\r\n')+'\r\n'],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='casting.csv';document.body.appendChild(a);a.click();a.remove();
+ changed.clear();draw();alert('casting.csv를 다운로드 폴더에 저장했어요. 이제 2_samples.bat(첫 대사 다시 듣기) 또는 3_record_main.bat(중요한 대사 녹음)을 실행하세요.')};
+draw();
+})();
+</script>
+</body>
+</html>

@@ -6,7 +6,7 @@ Put the recorded files in audio/ with the exact names from docs/dubbing_b1.csv
     python tools/make_voice_manifest.py
 
 Lines whose file is missing are left out, so the game reads them with the device voice.
-By default it reads docs/dubbing_b1.csv, docs/dubbing_cases.csv and docs/dubbing_letters.csv.
+By default it reads docs/dubbing_b1.csv, dubbing_b2.csv, dubbing_cases.csv and dubbing_letters.csv.
 You can pass CSV files yourself for later books:  python tools/make_voice_manifest.py docs/dubbing_b2.csv
 """
 import csv
@@ -15,7 +15,7 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-csv_files = sys.argv[1:] or [os.path.join(ROOT, "docs", n) for n in ("dubbing_b1.csv", "dubbing_cases.csv", "dubbing_letters.csv")
+csv_files = sys.argv[1:] or [os.path.join(ROOT, "docs", n) for n in ("dubbing_b1.csv", "dubbing_b2.csv", "dubbing_cases.csv", "dubbing_letters.csv")
                              if os.path.exists(os.path.join(ROOT, "docs", n))]
 
 entries, missing, seen = [], [], set()
