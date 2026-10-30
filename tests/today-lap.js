@@ -17,16 +17,16 @@ const out=[];let bad=0;const ok=(n,c,x)=>{if(!c)bad++;out.push((c?'PASS ':'FAIL 
  await p.evaluate(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await p.waitForTimeout(600);
  await p.addScriptTag({content:HELP('pg-auto.js')});await p.addScriptTag({content:HELP('kz-auto.js')});
  const W=ms=>p.waitForTimeout(ms);const closeLv=()=>p.evaluate(()=>{const c=document.getElementById('lvOk');if(c&&!document.getElementById('lvOv').hidden)c.click()});
- const ACTS=['fish','mole','course','pair','rain','battle','train','trace','fill','story','words'];
- let st=await p.evaluate(()=>({hud:emjText($("tdHud")),chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent,lap:tdLap().length,tot:tdTotal()}));
- ok('one lap only: HUD 0/11, 9 games, total 11',st.hud==='☀️ 0/11'&&st.chip==='0/11'&&st.lap===9&&st.tot===11,st);
+ const ACTS=['fish','mole','course','pair','rain','battle','train','trace','opp','fill','story','words'];
+ let st=await p.evaluate(()=>({hud:!!$("tdHud"),chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent,lap:tdLap().length,tot:tdTotal()}));
+ ok('sun chip removed; one lap: 10 games, total 12',st.hud===false&&st.chip==='0/12'&&st.lap===10&&st.tot===12,st);
  st=await p.evaluate(()=>({n:document.querySelectorAll('.tdstone').length,done:document.querySelectorAll('.tdstone.done').length,nx:emjText(document.querySelector('.tdstone.nx .stn')),tag:(document.querySelector('.tdstone .tag')||{}).textContent}));
- ok('11 stones on the island, none done, fishing glows first',st.n===11&&st.done===0&&(st.nx||'').includes('🎣')&&/0\/11/.test(st.tag||''),st);
+ ok('12 stones on the island, none done, fishing glows first',st.n===12&&st.done===0&&(st.nx||'').includes('🎣')&&/0\/12/.test(st.tag||''),st);
  await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_island0.png`)});
  // ☀️ HUD: no card, toast the next stone, walk over and fishing opens by itself
- await p.evaluate(()=>$("tdHud").click());await W(400);
+ await p.evaluate(()=>{const b=document.querySelector('#extras .xbtn .tdp');(b?b.closest('.xbtn'):null)?tdOpen():tdOpen()});await W(400);
  st=await p.evaluate(()=>({td:!$("tdOv").hidden,toast:__toasts.join('|')}));
- ok('☀️ shows no card and names the next stone',!st.td&&/다음/.test(st.toast),st);
+ ok('today button shows no card and names the next stone',!st.td&&/다음/.test(st.toast),st);
  let o=null;for(let i=0;i<30;i++){o=await p.evaluate(()=>({pg:!$("pgOv").hidden,g:PGS&&PGS.g}));if(o.pg)break;await W(400)}
  ok('hero walks to the stone and fishing opens',o.pg&&o.g==='fish',o);
  const playPg=async()=>{for(let k=0;k<260;k++){const d=await p.evaluate(()=>!!document.querySelector('.pgres'));if(d)break;await p.evaluate(()=>PGAUTO(false));await W(250)}await W(700);await closeLv()};
@@ -53,24 +53,24 @@ const out=[];let bad=0;const ok=(n,c,x)=>{if(!c)bad++;out.push((c?'PASS ':'FAIL 
    for(let k2=0;k2<30;k2++){const r2=await p.evaluate(()=>RMAUTO(false));if(r2==='none')break;await W(1200)}await W(600);await closeLv()}
   else{await hitStone(i);await W(700);await playPg();await toIsland()}
   const n=await p.evaluate(()=>tdCount());
-  ok(`${k}: counted once (${n}/11)`,n===i+1,{k,n});
+  ok(`${k}: counted once (${n}/12)`,n===i+1,{k,n});
   if(i===3)await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_mid.png`)});
   if(i===4){const t=await p.evaluate(()=>__toasts.join(' | '));ok('halfway note after 4 games',/절반/.test(t),t.slice(-130))}}
  // all 11 → celebration queued once
  await W(1200);await closeLv();await W(900);
- st=await p.evaluate(()=>({win:!!document.querySelector('.tdwin')&&!$("tdOv").hidden,paid:tdFresh().paid,hud:emjText($("tdHud")),td:G.days[dkey()].td,coins:G.coins}));
+ st=await p.evaluate(()=>({win:!!document.querySelector('.tdwin')&&!$("tdOv").hidden,paid:tdFresh().paid,hud:tdChip(),td:G.days[dkey()].td,coins:G.coins}));
  await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_done.png`)});
- ok('all 11 → celebration, paid, HUD ✓',st.win&&st.paid===1&&st.hud==='☀️ ✓'&&st.td===1,st);
+ ok('all 12 → celebration, paid, chip ✓',st.win&&st.paid===1&&/✓/.test(st.hud)&&st.td===1,st);
  await p.evaluate(()=>document.getElementById('tdX').click());await W(300);
  const c1=await p.evaluate(()=>{tdCelebrate();const c=G.coins;$("tdOv").hidden=true;return c});
  ok('celebration pays once',c1===st.coins,{c1,c:st.coins});
  st=await p.evaluate(()=>{renderAll();return {done:document.querySelectorAll('.tdstone.done').length,nx:document.querySelectorAll('.tdstone.nx').length,tag:(document.querySelector('.tdstone .tag')||{}).textContent}});
- ok('island shows 11 checked stones, nothing glowing',st.done===11&&st.nx===0&&/11\/11/.test(st.tag||''),st);
+ ok('island shows 12 checked stones, nothing glowing',st.done===12&&st.nx===0&&/12\/12/.test(st.tag||''),st);
  // repeating a finished stone works and never double counts
  await hitStone(0);await W(700);
  st=await p.evaluate(()=>({pg:!$("pgOv").hidden,g:PGS&&PGS.g}));ok('a done stone can be played again',st.pg&&st.g==='fish',st);
  await p.evaluate(()=>{pgStop();$("pgOv").hidden=true;renderAll()});
- const n2=await p.evaluate(()=>tdCount());ok('no double count on repeat',n2===11,n2);
+ const n2=await p.evaluate(()=>tdCount());ok('no double count on repeat',n2===12,n2);
  // ☀️ while an overlay is open does nothing
  st=await p.evaluate(()=>{showSettings();const t0=__toasts.length;tdOpen();const r={set:!$("setOv").hidden,quiet:__toasts.length===t0};$("setOv").hidden=true;const g=$("gateOv");if(g)g.hidden=true;return r});
  ok('☀️ waits while another screen is open',st.set&&st.quiet,st);

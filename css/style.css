@@ -2031,7 +2031,7 @@ textarea,input,select{-webkit-user-select:text;user-select:text;-webkit-touch-ca
 .tdstone.done .sp{opacity:.92}
 /* 본부 — 둥근 기지 (타원 무대 + 깊이 스케일) */
 .hqc .hq3wrap{position:relative;overflow:hidden;border-radius:14px;background:linear-gradient(#0D2746 0%,#17406B 46%,#1F588F 100%);height:clamp(250px,50vh,500px);flex:1 1 auto}
-.hqcl{position:absolute;width:120px;height:34px;border-radius:30px;background:rgba(255,255,255,.12);filter:blur(5px)}
+.hqcl{position:absolute;width:120px;height:34px;border-radius:30px;background:rgba(255,255,255,.09);filter:blur(6px)}
 .hqcl.c1{left:6%;top:7%;animation:v30cl 40s linear infinite}
 .hqcl.c2{right:4%;top:15%;width:90px;animation:v30cl 55s linear infinite reverse}
 @keyframes v30cl{0%{translate:0 0}50%{translate:6vmin 1vmin}100%{translate:0 0}}
@@ -2059,3 +2059,66 @@ textarea,input,select{-webkit-user-select:text;user-select:text;-webkit-touch-ca
 .hq3rooms b{font-size:14px;margin-right:2px}
 @media (orientation:landscape) and (max-height:520px){.hqc .hq3wrap{height:clamp(190px,56vh,330px)}.hq3pad .up img{width:clamp(34px,7.5vmin,52px)}.hq3mentor img{width:clamp(44px,9.5vmin,70px)}}
 @media (prefers-reduced-motion:reduce){.hq3pad .up img,.hq3mentor img,.hq3pad .up .job{animation:none}}
+.trbox.trwarn{animation:v30shake .45s}
+@keyframes v30shake{0%,100%{translate:0 0}25%{translate:-5px 0}50%{translate:5px 0}75%{translate:-3px 0}}
+/* 본부 꾸미기: 밤하늘·언덕·달·별똥별·오로라·깃발·가로등·반딧불·스포트라이트·바닥 무늬 */
+.hq3wrap i{pointer-events:none}
+.hq3wrap .hq3pad,.hq3wrap .hq3mentor{pointer-events:auto}
+.hqaur{position:absolute;inset:-10% -20% 40% -20%;background:linear-gradient(115deg,transparent 30%,rgba(90,225,180,.14) 42%,rgba(120,180,255,.16) 52%,transparent 66%);filter:blur(14px);animation:hqAur 11s ease-in-out infinite alternate}
+@keyframes hqAur{from{transform:translateX(-4%) skewX(-6deg)}to{transform:translateX(4%) skewX(4deg)}}
+.hqfield{position:absolute;inset:0 0 45% 0;background:radial-gradient(1.6px 1.6px at 12% 22%,#fff 50%,transparent 51%),radial-gradient(1.3px 1.3px at 28% 9%,#fff 50%,transparent 51%),radial-gradient(1.7px 1.7px at 41% 30%,#EAF4FF 50%,transparent 51%),radial-gradient(1.2px 1.2px at 57% 12%,#fff 50%,transparent 51%),radial-gradient(1.6px 1.6px at 69% 26%,#fff 50%,transparent 51%),radial-gradient(1.2px 1.2px at 83% 8%,#EAF4FF 50%,transparent 51%),radial-gradient(1.6px 1.6px at 93% 24%,#fff 50%,transparent 51%);opacity:.75;animation:v30tw 5s ease-in-out infinite}
+.hqmoon{position:absolute;right:7%;top:6%;font-size:clamp(20px,4.4vmin,36px);font-style:normal;filter:drop-shadow(0 0 14px rgba(255,244,180,.8))}
+.hqshoot{position:absolute;left:18%;top:9%;width:72px;height:2px;border-radius:2px;background:linear-gradient(90deg,#fff,transparent);opacity:0;rotate:-24deg;animation:hqShoot 9s ease-in 2s infinite}
+@keyframes hqShoot{0%,88%,100%{opacity:0;translate:0 0}90%{opacity:.95;translate:4vmin 2vmin}96%{opacity:0;translate:13vmin 6.5vmin}}
+.hqhill{position:absolute;bottom:58%;width:48%;height:16%;border-radius:50% 50% 0 0;background:#0A1E38;opacity:.85}
+.hqhill.h1{left:-9%}.hqhill.h2{right:-11%;height:20%;background:#0C2342}
+.hqflag{position:absolute;left:26%;top:11%;translate:-50% 0;width:4px;height:17%;background:linear-gradient(#C9D6E6,#8FA3BC);border-radius:2px;z-index:1}
+.hqflag b{position:absolute;left:3px;top:0;width:46px;height:28px;background:linear-gradient(135deg,#E8573A,#C93A2E);clip-path:polygon(0 0,100% 0,78% 50%,100% 100%,0 100%);transform-origin:0 0;animation:hqFlag 3.2s ease-in-out infinite}
+.hqflag b::after{content:"🐾";position:absolute;left:6px;top:4px;font-size:14px}
+@keyframes hqFlag{0%,100%{transform:skewY(0deg)}50%{transform:skewY(-4deg)}}
+.hq3skirt{position:absolute;left:50%;top:61.5%;width:90%;height:64%;translate:-50% -50%;border-radius:50%;background:linear-gradient(#174B78,#0E3156)}
+.hq3pat{position:absolute;left:50%;top:58%;width:76%;height:52%;translate:-50% -50%;border-radius:50%;background:repeating-conic-gradient(from 8deg,rgba(255,255,255,.07) 0 10deg,transparent 10deg 30deg);-webkit-mask:radial-gradient(circle,transparent 0 24%,#000 25% 72%,transparent 73%);mask:radial-gradient(circle,transparent 0 24%,#000 25% 72%,transparent 73%);animation:hqPat 60s linear infinite}
+@keyframes hqPat{to{rotate:360deg}}
+.hq3rim.r2{width:82%;height:56%;border-color:rgba(160,220,255,.3);border-style:dotted;animation:hqRim 46s linear infinite reverse}
+.hq3rim{animation:hqRim 34s linear infinite}
+@keyframes hqRim{to{rotate:360deg}}
+.hqlamp{position:absolute;width:5px;height:11%;background:linear-gradient(#B9C6D8,#7C8DA6);border-radius:3px;z-index:12}
+.hqlamp::after{content:"";position:absolute;left:50%;top:-10px;translate:-50% 0;width:16px;height:16px;border-radius:50%;background:radial-gradient(#FFF3B8,#FFC94D 65%,#C98F1B);box-shadow:0 0 18px 7px rgba(255,214,110,.45);animation:hqLampG 2.6s ease-in-out infinite}
+@keyframes hqLampG{0%,100%{box-shadow:0 0 18px 7px rgba(255,214,110,.45)}50%{box-shadow:0 0 24px 10px rgba(255,214,110,.6)}}
+.hqlamp.l1{left:13%;top:34%}.hqlamp.l2{right:13%;top:34%}.hqlamp.l3{left:5%;top:56%}.hqlamp.l4{right:5%;top:56%}
+.hqfly{position:absolute;width:6px;height:6px;border-radius:50%;background:#FFF2A6;box-shadow:0 0 10px 3px rgba(255,240,150,.7);opacity:.85;animation:hqFly1 10s ease-in-out infinite}
+.hqfly.f1{left:22%;top:62%}.hqfly.f2{left:72%;top:66%;animation-delay:2.4s}.hqfly.f3{left:40%;top:74%;animation-delay:5s;animation-name:hqFly2}.hqfly.f4{left:60%;top:48%;animation-delay:1.2s;animation-name:hqFly2}
+@keyframes hqFly1{0%,100%{translate:0 0;opacity:.2}30%{translate:5vmin -4vmin;opacity:.95}60%{translate:9vmin 1vmin;opacity:.5}}
+@keyframes hqFly2{0%,100%{translate:0 0;opacity:.9}40%{translate:-6vmin -3vmin;opacity:.3}75%{translate:-2vmin 2.5vmin;opacity:.95}}
+.hqspot{position:absolute;left:50%;top:14%;translate:-50% 0;width:34%;height:46%;background:linear-gradient(rgba(255,250,210,.3),rgba(255,250,210,.02));clip-path:polygon(44% 0,56% 0,100% 100%,0 100%);z-index:13;animation:hqSpotG 5s ease-in-out infinite}
+@keyframes hqSpotG{0%,100%{opacity:.55}50%{opacity:.85}}
+@media (prefers-reduced-motion:reduce){.hqaur,.hqshoot,.hq3pat,.hq3rim,.hq3rim.r2,.hqflag b,.hqfly,.hqspot,.hqlamp::after{animation:none}}
+/* 거울 반대말 */
+.opp3{position:absolute;inset:0;background:linear-gradient(#E8F6FF,#CDEAF7 60%,#B7DDF0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:10px;overflow:hidden}
+.opdeco{position:absolute;font-style:normal;opacity:.7;animation:v30tw 3.2s ease-in-out infinite}
+.opdeco.d1{left:7%;top:10%}.opdeco.d2{right:8%;bottom:14%;animation-delay:1.4s}
+.opmir{position:absolute;right:4%;top:6%;width:clamp(74px,15vmin,120px);height:clamp(94px,19vmin,152px);border-radius:50%/42%;background:linear-gradient(145deg,#F4FBFF,#CFE6F2 55%,#B9D7E6);border:6px solid #8A6D3B;box-shadow:inset 0 0 18px rgba(255,255,255,.9),0 6px 0 rgba(0,0,0,.08);display:grid;place-items:center}
+.opmir .fr{position:absolute;inset:8% 12%;border-radius:50%/42%;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.75) 50%,transparent 58%)}
+.opmir .oppop{font-weight:800;font-size:clamp(11px,2.1vmin,16px);text-align:center;padding:0 6px;color:#1D3A57}
+.opmir.flash{animation:opFlash .9s ease}
+@keyframes opFlash{0%{transform:scale(1)}30%{transform:scale(1.14) rotate(-3deg);box-shadow:0 0 0 8px rgba(255,255,160,.65),inset 0 0 18px rgba(255,255,255,.9)}100%{transform:scale(1)}}
+.opstage{width:100%;max-width:760px;display:grid;gap:10px;justify-items:center}
+.opgiven{background:#fff;border:3px solid #BFDCEC;border-radius:16px;padding:8px 22px;text-align:center;box-shadow:0 4px 0 rgba(0,0,0,.06)}
+.opgiven b{font-size:clamp(26px,6vmin,44px)}
+.opgiven small{display:block;color:#5B7A91}
+.oprow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;width:100%}
+.opcard{border:3px solid #BFDCEC;background:#fff;border-radius:18px;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.08);padding:10px 14px;transition:transform .12s}
+.opcard:active{transform:scale(.95)}
+.opcard.pic{display:grid;justify-items:center;gap:2px;min-width:clamp(104px,22vmin,170px)}
+.opcard.pic .pe{font-size:clamp(40px,10vmin,76px);line-height:1.1}
+.opcard.pic b{font-size:clamp(15px,3vmin,22px)}
+.opcard.word b{font-size:clamp(22px,4.6vmin,34px);padding:4px 10px;display:block}
+.opcard.pghint{box-shadow:0 0 0 4px #FFD54F,0 5px 0 rgba(0,0,0,.08)}
+.pg-opp .pgprompt .opw{font-weight:800;font-size:clamp(20px,4vmin,30px);background:#fff;border-radius:10px;padding:0 10px;border:2px solid #BFDCEC}
+.pg-opp .pgprompt .oparr{font-size:clamp(18px,3.6vmin,26px);margin:0 4px}
+.pg-opp .pgprompt .opq{font-weight:800;font-size:clamp(20px,4vmin,30px);color:#00838F;background:#E0F5F9;border-radius:10px;padding:0 12px;border:2px dashed #7FCBD6}
+.pg-opp .pgprompt .opask2{font-weight:700;font-size:clamp(15px,3vmin,22px)}
+@media (orientation:landscape) and (max-height:520px){.opmir{right:2%;top:4%;width:64px;height:82px}.opcard.pic .pe{font-size:clamp(30px,8vmin,52px)}}
+/* 본부 배경 그림이 오면(assets/img/hq/room_base.webp) 그린 장식 대신 그림을 쓴다 */
+.hq3wrap.art{background-size:cover;background-position:center}
+.hq3wrap.art .hqaur,.hq3wrap.art .hqfield,.hq3wrap.art .hqhill,.hq3wrap.art .hqcl,.hq3wrap.art .hqflag,.hq3wrap.art .hqlamp,.hq3wrap.art .hq3skirt,.hq3wrap.art .hq3plat,.hq3wrap.art .hq3pat,.hq3wrap.art .hq3rim,.hq3wrap.art .hqmoon,.hq3wrap.art .hqshoot{display:none}

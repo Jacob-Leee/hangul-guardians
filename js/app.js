@@ -4729,14 +4729,15 @@ LADDER.trc3={n:"배운 글자 쓰기",items:function(){return POOL.map(function(
 LADDER.trc4={n:"받침 글자 쓰기",items:function(){return "강산곰달별꽃집눈손밤숲물길봄섬".split("").map(function(t){return {t:t}})}};
 LADDER.trc5={n:"낱말 쓰기",items:function(){var ws=WB.filter(function(w){return w.lv<=2&&w.t.length===2});if(!ws.length)ws=WB.filter(function(w){return w.t.length===2});return ws.map(function(w){return {t:w.t,p:w.p}})}};
 PGAMES.trace={ic:"✍️",n:{en:"Trace & Write",ko:"따라 쓰기"},tag:{en:"Write it",ko:"글씨 쓰기"},
- how:{en:"Trace the big letter with your finger until it shines.",ko:"큰 글자를 손가락으로 따라 써요. 글자가 다 채워지면 성공!"},
+ how:{en:"Trace the shadow letter exactly — stay inside the lines.",ko:"회색 그림자 글자를 손가락으로 따라 써요. 그림자 밖으로 나가지 않게 정확히!"},
  lv:["trc1","trc2","trc3","trc4","trc5"],goal:4};
 PGCOL.trace=["#BCAAA4","#6D4C41"];
 var GRID=96;
 PGM.trace=function(){var A,row,fill,boxes=[],qual=[],color="#3949AB";
  function fontFam(){try{return getComputedStyle(document.body).fontFamily||"Jua,sans-serif"}catch(e){return "Jua,sans-serif"}}
  function meter(){if(!fill)return;var un=boxes.filter(function(b){return !b.done}),v;
-  if(!boxes.length)v=0;else if(!un.length)v=1;else v=boxes.reduce(function(a,b){return a+(b.done?1:Math.min(1,b.cov()/b.th))},0)/boxes.length;
+  if(!boxes.length)v=0;else if(!un.length)v=1;
+  else v=boxes.reduce(function(a,b){return a+(b.done?1:Math.min(1,b.cov()/b.th)*Math.min(1,(b.q()||1)/b.tq))},0)/boxes.length;
   fill.style.width=Math.round(v*100)+"%"}
  function mkBox(ch,sz){var S=PGS,box=document.createElement("div");box.className="trbox";box.style.width=sz+"px";box.style.height=sz+"px";
   var g=document.createElement("canvas"),ink=document.createElement("canvas");g.className="trguide";ink.className="trink";
@@ -4748,30 +4749,33 @@ PGM.trace=function(){var A,row,fill,boxes=[],qual=[],color="#3949AB";
   var dat=oc.getImageData(0,0,GRID,GRID).data,mask=new Uint8Array(GRID*GRID),cnt=0;
   for(var i=0;i<GRID*GRID;i++)if(dat[i*4+3]>70){mask[i]=1;cnt++}
   var ic=ink.getContext("2d");ic.lineCap=ic.lineJoin="round";
-  var b={el:box,ink:ink,ch:ch,done:false,hits:{},nh:0,out:{},no:0,th:G.easy?.42:.5,mark:0,
+  var b={el:box,ink:ink,ch:ch,done:false,hits:{},nh:0,out:{},no:0,th:G.easy?.58:.7,tq:G.easy?.55:.62,warn:0,mark:0,
    cov:function(){return cnt?b.nh/cnt:0},
    q:function(){return b.nh?b.nh/(b.nh+b.no*.65):0},
    reset:function(){ic.clearRect(0,0,sz,sz);b.hits={};b.nh=0;b.out={};b.no=0;b.mark=0;meter()}};
-  var R=Math.max(3,Math.round(sz*.11/2/sz*GRID)),last=null,down=false;
+  var R=Math.max(3,Math.round(.095/2*GRID)),last=null,down=false;
   function stamp(gx,gy){for(var dy=-R;dy<=R;dy++)for(var dx=-R;dx<=R;dx++){if(dx*dx+dy*dy>R*R)continue;
    var x=gx+dx,y=gy+dy;if(x<0||y<0||x>=GRID||y>=GRID)continue;var k=y*GRID+x;
    if(mask[k]){if(!b.hits[k]){b.hits[k]=1;b.nh++}}else if(!b.out[k]){b.out[k]=1;b.no++}}}
   function at(e){var r=ink.getBoundingClientRect();return [(e.clientX-r.left)/r.width*sz,(e.clientY-r.top)/r.height*sz]}
-  function seg(p,q2){ic.strokeStyle=color;ic.lineWidth=sz*.11;ic.beginPath();ic.moveTo(p[0],p[1]);ic.lineTo(q2[0],q2[1]);ic.stroke();
+  function seg(p,q2){ic.strokeStyle=color;ic.lineWidth=sz*.095;ic.beginPath();ic.moveTo(p[0],p[1]);ic.lineTo(q2[0],q2[1]);ic.stroke();
    var n=Math.max(1,Math.ceil(Math.hypot(q2[0]-p[0],q2[1]-p[1])/(sz/GRID*2)));
    for(var i2=0;i2<=n;i2++){var x=p[0]+(q2[0]-p[0])*i2/n,y=p[1]+(q2[1]-p[1])*i2/n;stamp(Math.round(x/sz*(GRID-1)),Math.round(y/sz*(GRID-1)))}}
   function prog(x,y){meter();var c=b.cov();
    if(c-b.mark>=.14){b.mark=c;var s=document.createElement("span");s.textContent="✨";s.style.cssText="position:absolute;left:"+Math.round(x/sz*100)+"%;top:"+Math.round(y/sz*100)+"%;translate:-50% -50%;pointer-events:none;font-size:18px;animation:v30dizzy2 .6s ease-out forwards";
     box.appendChild(s);setTimeout(function(){try{s.remove()}catch(e){}},650)}
-   if(c>=b.th)fin()}
-  function fin(){if(b.done)return;b.done=true;box.classList.add("done");qual.push(Math.max(.4,Math.min(1,b.q()+.15)));sfx2("pop");burstAt(box);meter();
+   if(c>=b.th&&b.q()>=b.tq)fin()}
+  function fin(){if(b.done)return;b.done=true;box.classList.add("done");qual.push(Math.max(.4,Math.min(1,(b.q()-.35)/.6)));sfx2("pop");burstAt(box);meter();
    if(PGS===S&&!S.dead&&boxes.every(function(x){return x.done})){var t=S.target.t,sv=t.length===1&&JN[t]?JN[t]:t;
     pgRight(box,{say:sv,wait:1050+hanN(sv)*130})}}
   function pd(e){var S2=PGS;if(S2!==S||S2.dead||S2.lock||b.done)return;
    down=true;last=at(e);seg(last,last);prog(last[0],last[1]);e.preventDefault&&e.preventDefault();
    try{ink.setPointerCapture&&e.pointerId!=null&&ink.setPointerCapture(e.pointerId)}catch(err){}}
   function pm(e){if(!down||b.done)return;var p2=at(e);seg(last,p2);last=p2;prog(p2[0],p2[1])}
-  function pu(){down=false;last=null}
+  function pu(){down=false;last=null;if(b.done)return;
+   if(b.cov()>=b.th*.5&&b.q()<b.tq&&Date.now()-b.warn>2500){b.warn=Date.now();
+    box.classList.remove("trwarn");void box.offsetWidth;box.classList.add("trwarn");
+    pgMsg(K("Stay on the shadow! Erase and trace it again.","그림자 밖으로 나갔어요! 🧽 지우고 그림자만 따라 써 봐요"),1)}}
   ink.addEventListener("pointerdown",pd);ink.addEventListener("pointermove",pm);
   ink.addEventListener("pointerup",pu);ink.addEventListener("pointercancel",pu);ink.addEventListener("pointerleave",pu);
   return b}
@@ -4795,14 +4799,14 @@ PGM.trace=function(){var A,row,fill,boxes=[],qual=[],color="#3949AB";
 
 /* ===== v30c: 오늘의 모험 × 한글 섬 — 모험 돌이 섬 위에 깔린다 ===== */
 (function(){
-/* 한 바퀴에 따라 쓰기 포함 (9게임 + 이야기 + 낱말 = 11) */
-tdLap=function(){return ["fish","mole","course","pair","rain","battle","train","trace","fill"]};
+/* 한 바퀴: 게임 10 + 이야기 + 낱말 = 12 */
+tdLap=function(){return ["fish","mole","course","pair","rain","battle","train","trace","opp","fill"]};
 var STN=null;
 function occ(x,y){if(!ground(x,y))return 1;if(npcAt(x,y))return 1;if(chestAt(x,y)>=0)return 1;if(stationAt(x,y))return 1;
  if(typeof SPAWNS!=="undefined"&&SPAWNS.some(function(s){return s.x===x&&s.y===y}))return 1;
  if(G.px===x&&G.py===y)return 1;if(G.fx===x&&G.fy===y)return 1;if(MAP[y]&&MAP[y][x]!==".")return 1;return 0}
 function stones(){if(STN)return STN;
- var want=[[2,1],[4,1],[6,1],[7,2],[6,3],[4,3],[2,4],[5,5],[6,6],[5,7],[6,8]],used={},out=[];
+ var want=[[2,1],[4,1],[6,1],[7,2],[6,3],[4,3],[2,4],[5,5],[7,5],[6,6],[5,7],[6,8]],used={},out=[];
  want.forEach(function(a){var best=null,bd=1e9;
   for(var y=0;y<H;y++)for(var x=0;x<W;x++){var k=x+","+y;if(used[k]||occ(x,y))continue;
    var d=Math.abs(x-a[0])*2+Math.abs(y-a[1])*2+((x+","+y)===(a[0]+","+a[1])?-1:0);if(d<bd){bd=d;best=[x,y]}}
@@ -4849,6 +4853,9 @@ var _pgRes1=pgResult;pgResult=function(){_pgRes1.apply(this,arguments);var S=PGS
   hb.onclick=function(){sfx("tap");pgStop();$("pgOv").hidden=true;renderAll()}}};
 var _pgPlay1=pgPlay;pgPlay=function(g,lv,o){_pgPlay1.apply(this,arguments);
  if(o&&o.isl){var b=$("pgBack");if(b)b.onclick=function(){sfx("tap");pgStop();$("pgOv").hidden=true;renderAll()}}};
+try{var _hudB=$("tdHud");if(_hudB)_hudB.remove()}catch(e){}
+/* 다른 화면이 열려 있을 때 메뉴(부모 잠금)가 그 위로 겹치지 않게 */
+try{var _mb=$("menuBtn");if(_mb)_mb.addEventListener("click",function(e){if(overlayOpen()){e.stopImmediatePropagation();e.preventDefault()}},true)}catch(e){}
 var _rAll0=renderAll;renderAll=function(){_rAll0();
  if(!G.tdIslIntro&&!overlayOpen()&&$("map")&&!$("map").hidden){G.tdIslIntro=1;save();
   setTimeout(function(){if(!overlayOpen())toast("☀️ "+K("Sun stones are on the island now: tap one for today's adventure!","섬에 해님 돌이 생겼어요! 돌을 누르면 오늘의 모험이 시작돼요"))},900)}};
@@ -4870,14 +4877,20 @@ var JOBS={rat:["🔍",["is studying clues","돋보기로 단서를 연구하는 
  pig:["🍪",["is baking snacks for everyone","모두의 간식을 굽는 중!"]]};
 function ensureOv(){var ov=$("hqOv");if(!ov){ov=document.createElement("div");ov.id="hqOv";ov.className="ov center";
  ov.innerHTML='<div class="card hqc" id="hqCard"></div>';document.body.appendChild(ov)}return ov}
-window.hqBase=function(){var own=hqOwned();
+window.hqBase=function(){var own=hqOwned(),BG=(window.HQART&&HQART.room&&HQART.room.base)||null,WK=(window.HQART&&HQART.work)||{};
  var SLOT=[[34,29],[66,29],[18,37],[82,37],[50,26],[12,57],[88,57],[25,70],[75,70],[38,81],[62,81],[50,86]];
  var pads=CHARS.map(function(c,i){var J=JOBS[c.id]||["⭐",["is helping","여기저기 돕는 중!"]];
   var x=SLOT[i][0],y=SLOT[i][1],sc=(0.6+(y-26)/60*0.55).toFixed(2),z=10+Math.round(y);
-  return '<button class="hq3pad" data-h="'+c.id+'" aria-label="'+escH(L(c.n))+'" style="--x:'+x.toFixed(1)+'%;--y:'+y.toFixed(1)+'%;--s:'+sc+';--z:'+z+'"><span class="up"><i class="job">'+J[0]+'</i><img src="'+heroBody(c.id)+'" alt=""></span></button>'}).join("");
+  var wk=WK[c.id];
+  return '<button class="hq3pad" data-h="'+c.id+'" aria-label="'+escH(L(c.n))+'" style="--x:'+x.toFixed(1)+'%;--y:'+y.toFixed(1)+'%;--s:'+sc+';--z:'+z+'"><span class="up">'+(wk?'':'<i class="job">'+J[0]+'</i>')+'<img src="'+(wk||heroBody(c.id))+'" alt=""></span></button>'}).join("");
  $("hqCard").innerHTML='<div class="hqhead"><h2>🏰 '+K("Our HQ","우리 본부")+'</h2><span class="hqcount">🎁 '+own.length+' / '+HQ_ITEMS.length+'</span><button class="btn" id="hqX">'+K("Close","닫기")+'</button></div>'
- +'<div class="hq3wrap"><i class="hqcl c1"></i><i class="hqcl c2"></i><i class="hqstar s1">✦</i><i class="hqstar s2">✧</i><i class="hqstar s3">✦</i>'
- +'<i class="hq3plat"></i><i class="hq3rim"></i>'+pads
+ +'<div class="hq3wrap'+(BG?" art":"")+'"'+(BG?' style="background-image:url(\''+BG+'\')"':'')+'><i class="hqaur"></i><i class="hqfield"></i><i class="hqmoon">🌙</i><i class="hqshoot"></i>'
+ +'<i class="hqcl c1"></i><i class="hqcl c2"></i><i class="hqstar s1">✦</i><i class="hqstar s2">✧</i><i class="hqstar s3">✦</i>'
+ +'<i class="hqhill h1"></i><i class="hqhill h2"></i><i class="hqflag"><b></b></i>'
+ +'<i class="hq3skirt"></i><i class="hq3plat"></i><i class="hq3pat"></i><i class="hq3rim"></i><i class="hq3rim r2"></i>'
+ +'<i class="hqlamp l1"></i><i class="hqlamp l2"></i><i class="hqlamp l3"></i><i class="hqlamp l4"></i>'
+ +'<i class="hqfly f1"></i><i class="hqfly f2"></i><i class="hqfly f3"></i><i class="hqfly f4"></i>'
+ +'<i class="hqspot"></i>'+pads
  +'<i class="hq3ped"></i><button class="hq3mentor" id="hqMentor" aria-label="'+K("Master Turtle","거북이 스승님")+'"><img src="'+(DA.mentor||PORT.mentor)+'" alt=""></button>'
  +'</div>'
  +'<p class="hqtip hq3tip" id="hqTip" hidden></p>'
@@ -4903,6 +4916,68 @@ var _hqDraw0=hqDraw;hqDraw=function(){_hqDraw0.apply(this,arguments);
   if(head&&!head.querySelector("#hqHome")){var b=document.createElement("button");b.className="btn";b.id="hqHome";
    b.textContent="⬅ "+K("Base","기지");head.insertBefore(b,head.querySelector("#hqX"));
    b.onclick=function(){sfx("tap");hqOpen()}}}catch(e){}};
+})();
+
+/* ===== v30e: 🪞 거울 반대말 — 그림 비교(더/가장) + 반대말 고르기 + 문장 속 반대말 ===== */
+(function(){
+var P2=[["누가 더 커요?",["🐘","코끼리"],["🐭","생쥐"]],["누가 더 빨라요?",["🐆","치타"],["🐢","거북이"]],
+ ["어느 것이 더 길어요?",["🚂","기차"],["🚗","자동차"]],["누가 더 무거워요?",["🐘","코끼리"],["🎈","풍선"]],
+ ["어느 것이 더 뜨거워요?",["🔥","불"],["🧊","얼음"]],["어느 것이 더 높아요?",["🏔️","산"],["🏠","집"]],
+ ["누가 더 작아요?",["🐜","개미"],["🐶","강아지"]],["어느 것이 더 차가워요?",["🧊","얼음"],["☕","코코아"]],
+ ["어느 것이 더 밝아요?",["☀️","해"],["🌙","달"]],["누가 더 느려요?",["🐌","달팽이"],["🐇","토끼"]],
+ ["어느 것이 더 가벼워요?",["🪶","깃털"],["🪨","돌"]],["어느 쪽이 더 어두워요?",["🌙","밤"],["☀️","낮"]]];
+var P3=[["가장 커요",["🐘","코끼리"],["🐕","개"],["🐁","쥐"]],["가장 빨라요",["🚀","로켓"],["🚗","자동차"],["🚲","자전거"]],
+ ["가장 높아요",["🏔️","산"],["🌳","나무"],["🌼","꽃"]],["가장 무거워요",["🐋","고래"],["🐷","돼지"],["🐤","병아리"]],
+ ["가장 작아요",["🐜","개미"],["🐈","고양이"],["🐮","소"]],["가장 길어요",["🚆","기차"],["🚌","버스"],["🛴","킥보드"]],
+ ["가장 뜨거워요",["🌋","용암"],["🍲","국"],["🍧","빙수"]],["가장 느려요",["🐌","달팽이"],["🚶","사람"],["🐎","말"]],
+ ["가장 밝아요",["☀️","해"],["💡","전등"],["🕯️","촛불"]],["가장 차가워요",["⛄","눈사람"],["💧","물"],["🍵","따뜻한 차"]]];
+var OP1=[["크다","작다"],["길다","짧다"],["높다","낮다"],["빠르다","느리다"],["많다","적다"],
+ ["무겁다","가볍다"],["뜨겁다","차갑다"],["밝다","어둡다"],["낮","밤"],["위","아래"]];
+var OP2=[["열다","닫다"],["입다","벗다"],["웃다","울다"],["서다","앉다"],["가다","오다"],["앞","뒤"],
+ ["안","밖"],["깨끗하다","더럽다"],["넓다","좁다"],["멀다","가깝다"],["켜다","끄다"],["새것","헌것"]];
+var SENT=[["코끼리는 크고, 개미는 ___.","작아요",["길어요","추워요"]],["낮은 밝고, 밤은 ___.","어두워요",["뜨거워요","짧아요"]],
+ ["불은 뜨겁고, 얼음은 ___.","차가워요",["무거워요","높아요"]],["치타는 빠르고, 거북이는 ___.","느려요",["가벼워요","밝아요"]],
+ ["돌은 무겁고, 깃털은 ___.","가벼워요",["어두워요","더러워요"]],["기차는 길고, 버스는 ___.","짧아요",["낮아요","추워요"]],
+ ["산은 높고, 언덕은 ___.","낮아요",["빨라요","적어요"]],["여름은 덥고, 겨울은 ___.","추워요",["길어요","무거워요"]],
+ ["쓰레기통 밖은 깨끗하고, 안은 ___.","더러워요",["넓어요","멀어요"]],["형은 많이 먹고, 동생은 ___ 먹어요.","조금",["크게","높이"]]];
+function pic(arr){return {n:arr===P2?"그림 비교 · 둘 중에":"그림 비교 · 셋 중에",items:function(){return arr.map(function(r){
+ return {t:r[1][1],q:{k:"pic",ask:r[0],opts:r.slice(1)}}})}}}
+function opp(pairs,nd,nm){return {n:nm,items:function(){var all=pairs.map(function(p){return p[1]});
+ return pairs.map(function(p,i){var o=shuffle(all.filter(function(x){return x!==p[1]&&x!==p[0]})).slice(0,nd);
+  return {t:p[1],q:{k:"opp",w:p[0],a:p[1],o:o}}})}}}
+LADDER.op1=pic(P2);LADDER.op2=pic(P3);
+LADDER.op3=opp(OP1,1,"반대말 · 둘 중에");LADDER.op4=opp(OP1.concat(OP2),2,"반대말 · 셋 중에");
+LADDER.op5={n:"문장 속 반대말",items:function(){return SENT.map(function(r){return {t:r[1],q:{k:"sent",s:r[0],a:r[1],o:r[2]}}})}};
+PGAMES.opp={ic:"🪞",n:{en:"Mirror Opposites",ko:"거울 반대말"},tag:{en:"Compare & opposite",ko:"비교·반대말"},
+ how:{en:"Compare the pictures, then pick the opposite word.",ko:"그림을 잘 비교하고, 반대말을 골라요."},
+ lv:["op1","op2","op3","op4","op5"],goal:6};
+PGCOL.opp=["#80DEEA","#00838F"];
+PGM.opp=function(){var A;
+ var M={
+  setup:function(){A=document.createElement("div");A.className="opp3";
+   A.innerHTML='<i class="opdeco d1">✨</i><i class="opdeco d2">✨</i><div class="opmir"><i class="fr"></i></div><div class="opstage"></div>';
+   $("pgArea").appendChild(A);var sb=$("pgSay");if(sb)sb.style.display="none"},
+  prompt:function(it){var q=it.q;
+   return '<span class="lab">'+(q.k==="opp"?K("Opposite of","반대말은?"):q.k==="sent"?K("Fill the gap","빈칸에 꼭 맞게"):K("Compare!","비교해요"))+'</span>'
+    +(q.k==="opp"?'<span class="opw">'+escH(q.w)+'</span><span class="oparr">↔</span><span class="opq">?</span>'
+    :'<span class="opask2">'+escH(q.k==="sent"?q.s:q.ask)+'</span>')},
+  target:function(it){var q=it.q,st=A.querySelector(".opstage"),h="";
+   if(q.k==="pic"){var os=q.opts.map(function(o,i){return {e:o[0],t:o[1],ok:i===0}});os=shuffle(os);
+    h='<div class="oprow pics n'+os.length+'">'+os.map(function(o){return '<button class="opcard pic" data-t="'+escH(o.t)+'"><span class="pe">'+o.e+'</span><b>'+escH(o.t)+'</b></button>'}).join("")+'</div>'}
+   else{var ws=shuffle([q.a].concat(q.o));
+    h=(q.k==="opp"?'<div class="opgiven"><b>'+escH(q.w)+'</b><small>'+K("the opposite is…","이것의 반대말은…")+'</small></div>':'')
+     +'<div class="oprow words">'+ws.map(function(w){return '<button class="opcard word" data-t="'+escH(w)+'"><b>'+escH(w)+'</b></button>'}).join("")+'</div>'}
+   st.innerHTML=h;
+   st.querySelectorAll(".opcard").forEach(function(b){b.onclick=function(){var S=PGS;if(!S||S.lock)return;
+    if(b.dataset.t===S.target.t){
+     var q2=S.target.q,pair=q2.k==="opp"?escH(q2.w)+' ↔ '+escH(q2.a):q2.k==="sent"?escH(q2.a):escH(q2.ask)+' → '+escH(S.target.t);
+     var m=A.querySelector(".opmir");m.innerHTML='<i class="fr"></i><span class="oppop">'+pair+'</span>';
+     m.classList.remove("flash");void m.offsetWidth;m.classList.add("flash");
+     pgRight(b,{say:S.target.t})}
+    else pgWrong(b,{t:b.dataset.t})}})},
+  say:function(){},
+  hint:function(){var S=PGS;A.querySelectorAll(".opcard").forEach(function(b){b.classList.toggle("pghint",b.dataset.t===S.target.t)})}};
+ return M};
 })();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

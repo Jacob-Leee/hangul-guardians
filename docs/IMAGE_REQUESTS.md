@@ -167,3 +167,52 @@ No text, letters, numbers, logos or watermark. Friendly for a 5-year-old. Canvas
 | b12 아기 돼지 삼 형제 | 왼쪽 지푸라기 집 + 가운데 나무 집 + 오른쪽 벽돌집 | 집 짓는 삼 형제 / 후후 부는 늑대와 날아가는 집 / 벽돌집에 모인 삼 형제 | p1_stand·p2_stand·p3_stand·pig_scared(돼지들), wolf_stand·wolf_blow(늑대) |
 
 표지(cover)는 page1을 그대로 씁니다(따로 만들지 않아도 됩니다).
+
+## 7. 본부 원형 기지 그림 (v30.3 — 지금은 코드 장식, 그림이 오면 자동 교체)
+
+지금 본부는 코드로 그린 밤 무대입니다. 아래 그림을 만들어 올리면 **자동으로 갈아끼워집니다**: 배경은 `incoming/room_base.png`, 일하는 포즈는 `incoming/work_<영웅id>.png`. (영웅 포즈가 없으면 지금처럼 서 있는 그림+이모지로 나오니, 배경 1장만 먼저 해도 됩니다.)
+
+### ⑦-1 기지 배경 1장 — `room_base.png` (1536×1024)
+
+```
+A wide night-time background for a cute 3D animated children's game, matching the attached
+reference art style (soft, warm, slightly painterly 3D; same world as the reference hero image).
+Scene: a round floating headquarters platform seen from a slightly high angle (about 30 degrees),
+perfectly centered. A large elliptical two-tier platform of pale blue stone with a softly glowing
+dashed ring pattern on the floor and a visible stone side edge. At the exact center, a small round
+golden pedestal (empty). Around the platform edge: four small lamp posts with warm glowing lanterns,
+and one red pennant flag with a paw-print emblem on a pole at the LEFT rear edge. Night sky with a
+crescent moon (upper right), small twinkling stars, a soft green-blue aurora, dark island hills on
+the horizon, a few tiny fireflies. IMPORTANT: the platform is completely EMPTY — no characters,
+no animals (the game places them on top). Low-contrast floor so characters stand out.
+No text, letters, numbers, logos or watermark. Friendly for a 5-year-old. Canvas 1536x1024.
+```
+
+### ⑦-2 영웅 '일하는 포즈' 12장 — `work_<id>.png` (1024×1024, 투명 배경, 선택)
+
+공통 틀 (각 영웅의 기존 그림을 참고로 첨부하고 [일] 부분만 바꾸기):
+
+```
+The SAME character as the attached reference image (same outfit, same colors, same face),
+in a new pose: [일]. Whole body visible, facing slightly left, cheerful.
+Single character only, transparent background PNG, no floor, no shadow outside the character,
+no text or watermark. Matching the reference 3D style exactly. Canvas 1024x1024.
+```
+
+| 파일 이름 | 영웅 | [일] 에 넣을 내용 |
+|---|---|---|
+| work_rat.png | 번개 쥐 | looking through a big magnifying glass at a small clue card |
+| work_ox.png | 강철 소 | proudly lifting a small dumbbell with one arm |
+| work_tiger.png | 대장 호랑이 | pointing at a small mission map board held in the other hand |
+| work_rabbit.png | 달빛 토끼 | holding a watering can and a fresh carrot |
+| work_dragon.png | 하늘 용 | looking through a brass telescope pointed at the sky |
+| work_snake.png | 바람 뱀 | neatly holding two letter envelopes |
+| work_horse.png | 질주 말 | carrying a small parcel box |
+| work_sheep.png | 구름 양 | knitting with yarn and two needles |
+| work_monkey.png | 재주 원숭이 | holding a small stack of picture books |
+| work_rooster.png | 새벽 닭 | polishing a small shiny brass horn with a cloth |
+| work_dog.png | 용감한 개 | standing guard holding a small round shield |
+| work_pig.png | 든든 돼지 | holding a tray of freshly baked cookies |
+
+- 스승님은 기존 그림(mentor)을 그대로 쓰므로 안 만들어도 됩니다.
+- 올리는 곳: 깃허브 `incoming/` 폴더 (지금까지와 동일). 제가 webp로 바꿔 끼웁니다.
