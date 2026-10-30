@@ -7,6 +7,8 @@ const phone=process.argv[2]==='phone',vw=phone?{width:390,height:844}:{width:102
 const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(extra!==undefined?' :: '+JSON.stringify(extra):''));};
 (async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:vw});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
  await p.addInitScript(()=>{window.SpeechSynthesisUtterance=class{constructor(t){this.text=t}};window.__said=[];
+  // recorded voices (audio/*.mp3) count as 'read aloud' too; background music is Web Audio, not <audio>
+  window.__played=[];const _pl=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){try{const f=String(this.src||'');if(/\.mp3/i.test(f)&&!/bgm/i.test(f))window.__played.push(f.split('/').pop())}catch(e){}return _pl.call(this)};
   Object.defineProperty(window,'speechSynthesis',{value:{getVoices:()=>[{name:'Yuna',lang:'ko-KR'}],speaking:false,speak:u=>{window.__said.push(u.text);setTimeout(()=>u.onend&&u.onend(),40)},cancel:()=>{},addEventListener(){}}});
   // fake recogniser: hears exactly what window.__hear says (or fails with window.__micErr)
   window.SpeechRecognition=window.webkitSpeechRecognition=class{start(){setTimeout(()=>{if(window.__micErr){this.onerror&&this.onerror({error:window.__micErr});return}
@@ -35,8 +37,8 @@ const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(
  await p.evaluate(()=>{openCases();caseStart(0)});await p.waitForTimeout(12800);
  st=await p.evaluate(()=>({nudge:$("kzSay").classList.contains('nudge'),act:KZ.act}));ok('level 2: 🔊 glows after 12 s in the case',st.nudge&&st.act===0,st);
  // 4. level 3: play case 1 with missions; mission card text must be the long version
- await p.evaluate(()=>{G.rd=3;G.autoRead=false;window.__said=[];caseStart(0)});await p.waitForTimeout(1500);
- st=await p.evaluate(()=>window.__said.length);ok('level 3: nothing read aloud by itself at case start',st===0,{said:st});
+ await p.evaluate(()=>{G.rd=3;G.autoRead=false;window.__said=[];window.__played=[];caseStart(0)});await p.waitForTimeout(1500);
+ st=await p.evaluate(()=>window.__said.length+window.__played.length);ok('level 3: nothing read aloud by itself at case start',st===0,{said:st});
  let seen=[],t0=Date.now(),wrongOnce=true;
  while(Date.now()-t0<90000){const s=await p.evaluate(()=>({done:!!(KZ&&KZ.done),rm:!$("rmOv").hidden,txt:$("rmOv").hidden?'':($("rmText")||{}).textContent}));
   if(s.done)break;if(s.rm&&s.txt&&!seen.includes(s.txt)){seen.push(s.txt);if(seen.length===1)await p.screenshot({path:`${OUTD}/v29_${phone?'P':'T'}_mission.png`})}
@@ -92,8 +94,8 @@ const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(
  st=await p.evaluate(()=>({btn:!!$("rmMic"),dead:G.micDead,msg:$("rmMsg").textContent}));ok('mic blocked → button hides, remembered',!st.btn&&st.dead===1,st);
  await p.evaluate(()=>$("rmSkip").click());st=await p.evaluate(()=>({done:window.__rmdone,skip:G.days[dkey()].skip,hidden:$("rmOv").hidden}));ok('skip closes and is logged',st.done===1&&st.skip>=1&&st.hidden,st);
  // 9. level 1 reads the brief and the mission by itself
- await p.evaluate(()=>{G.rd=1;window.__said=[];openCases();caseStart(1)});await p.waitForTimeout(2500);
- st=await p.evaluate(()=>window.__said.slice(0,3));ok('level 1: case brief is read aloud by itself',st.length>0,st);
+ await p.evaluate(()=>{G.rd=1;window.__said=[];window.__played=[];openCases();caseStart(1)});await p.waitForTimeout(2500);
+ st=await p.evaluate(()=>({tts:window.__said.slice(0,3),voice:window.__played.slice(0,3)}));ok('level 1: case brief is read aloud by itself (recorded voice or device voice)',st.tts.length+st.voice.length>0,st);
  await p.evaluate(()=>{caseClose();window.__said=[];rmShow(RMS.k3[0],{src:"test"},()=>{})});await p.waitForTimeout(1200);
  st=await p.evaluate(()=>({said:window.__said,tip:$("rmTip").textContent,txt:$("rmText").textContent}));ok('level 1: mission short sentence read first, then "your turn"',st.said.includes(st.txt.replace(/\s+/g,' ').trim())&&/따라|Now/.test(st.tip),st);
  await p.evaluate(()=>$("rmSkip").click());

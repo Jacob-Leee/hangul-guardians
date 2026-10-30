@@ -5,6 +5,8 @@
     python tools/voice_pack.py split <folder> --dry # only checks the recordings, writes nothing
     python tools/voice_pack.py split-one <file> [--order order.txt] [--roles rat,ox,rabbit] [--dry]
                                                     # ONE recording with many roles (one project in the voice website)
+    python tools/voice_pack.py split-srt <file.mp3> <file.srt> [--dry]
+                                                    # ONE recording + its subtitle file (Typecast: download MP3 + SRT)
     python tools/make_voice_manifest.py             # connects the new files to the game
 
 The recordings: one audio file per role, made from that role's script (docs/voice_pack/scripts/NN_id_name.txt) with
@@ -23,6 +25,7 @@ import csv
 import math
 import os
 import re
+import shutil
 import subprocess
 import sys
 
@@ -140,6 +143,14 @@ def make(out):
         })
     with open(os.path.join(sdir, "00_all_characters.txt"), "w", encoding="utf-8") as f:
         f.write("\n\n".join(every) + "\n")
+    story, seen_t = [], set()   # the story narrator (not in the roles above: the letters are the narrator role there)
+    for r in read_csv("dubbing_b1.csv") + read_csv("dubbing_b2.csv") + read_csv("dubbing_cases.csv"):
+        t = r["대사"].strip()
+        if r["화자ID"].strip() == "narrator" and t not in seen_t:
+            seen_t.add(t)
+            story.append(t)
+    with open(os.path.join(sdir, "00_narrator_story.txt"), "w", encoding="utf-8") as f:
+        f.write("\n\n".join(story) + "\n")
     with open(os.path.join(out, "casting.csv"), "w", encoding="utf-8-sig", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(sheet[0].keys()))
         w.writeheader()
@@ -470,6 +481,139 @@ def split_one(path, order=None, role_ids=None, out=None, dry=False):
     return problems
 
 
+# ---------------------------------------------------------------- split-srt (one recording + its subtitles)
+def loose_key(t):
+    t = str(t)
+    for q in '"\'\u201c\u201d\u2018\u2019':
+        t = t.replace(q, "")
+    t = t.replace("...", "\u2026")
+    return re.sub(r"[\s.]+$", "", re.sub(r"\s+", " ", t).strip())
+
+
+def parse_srt(path):
+    with open(path, encoding="utf-8-sig") as f:
+        s = f.read().replace("\r\n", "\n")
+    out = []
+    for blk in re.split(r"\n\s*\n", s.strip()):
+        lines = blk.split("\n")
+        m = next((re.match(r"(\d+):(\d+):(\d+)[,.](\d+)\s*-->\s*(\d+):(\d+):(\d+)[,.](\d+)", ln) for ln in lines[:2]
+                  if re.match(r"\d+:\d+:\d+", ln)), None)
+        if not m:
+            continue
+        g = [int(v) for v in m.groups()]
+        a = g[0] * 3600 + g[1] * 60 + g[2] + g[3] / 1000
+        b = g[4] * 3600 + g[5] * 60 + g[6] + g[7] / 1000
+        k = next(i for i, ln in enumerate(lines) if "-->" in ln)
+        text = " ".join(ln.strip() for ln in lines[k + 1:] if ln.strip())
+        if text:
+            out.append((a, b, text))
+    return out
+
+
+def split_srt(audio, srt, out=None, dry=False, small=True):
+    """Cut one recording at its subtitle times. Every subtitle line is matched to the scripts (who says it, which file name);
+    a line that several roles say goes to the role of the lines around it. Silence at both ends is trimmed and every role
+    gets its own volume. small=True writes mono 40 kbps files (the app size), otherwise 96 kbps."""
+    import numpy as np
+    roles = load_roles()
+    index = {}
+    for rid, role in roles.items():
+        for r in role["rows"]:
+            index.setdefault(loose_key(r["대사"]), {}).setdefault(rid, []).append(r)
+    seen = set()
+    for r in read_csv("dubbing_b1.csv") + read_csv("dubbing_b2.csv") + read_csv("dubbing_cases.csv"):
+        if r["화자ID"].strip() == "narrator" and r["파일명"] not in seen:   # the story narrator (letters are already in roles)
+            seen.add(r["파일명"])
+            index.setdefault(loose_key(r["대사"]), {}).setdefault("narrator", []).append(r)
+    entries = parse_srt(srt)
+    if not entries:
+        sys.exit("no subtitle lines found in " + srt)
+    cand = [index.get(loose_key(t)) for _, _, t in entries]
+    who = []
+    for i, c in enumerate(cand):
+        if not c:
+            who.append(None)
+            continue
+        if len(c) == 1:
+            who.append(next(iter(c)))
+            continue
+        prev = next((who[j] for j in range(i - 1, -1, -1) if who[j]), None)
+        nxt = next((next(iter(cand[j])) for j in range(i + 1, len(cand)) if cand[j] and len(cand[j]) == 1), None)
+        who.append(prev if prev in c else nxt if nxt in c else sorted(c)[0])
+    x = decode(audio)
+    db, thr, runs, hop = analyse(x)
+    n, step = len(db), hop / SR
+    loud = db >= thr
+    spans, problems = [], []
+    for k, (a, b, t) in enumerate(entries):
+        A, B = max(0, int(a / step)), min(n, int(b / step) + 1)
+        idx = np.where(loud[A:B])[0]
+        if not len(idx):
+            spans.append(None)
+            problems.append(f"line {k + 1} is silent between {a:.2f}s and {b:.2f}s: \"{t[:30]}\"")
+            continue
+        s0, s1 = a + idx[0] * step, a + (idx[-1] + 3) * step
+        lo = entries[k - 1][1] - 0.03 if k else 0.0
+        hi = entries[k + 1][0] + 0.03 if k + 1 < len(entries) else len(x) / SR
+        spans.append((max(lo, s0 - 0.10), min(hi, s1 + 0.18)))
+        if loud[max(0, B - 3):B + 1].any() and k + 1 < len(entries):
+            problems.append(f"line {k + 1}: speech goes past its end time ({b:.2f}s), listen to it: \"{t[:30]}\"")
+    gains = {}
+    for rid in {w for w in who if w}:
+        seg = [x[int(sp[0] * SR):int(sp[1] * SR)] for sp, w in zip(spans, who) if sp and w == rid]
+        if seg:
+            xr = np.concatenate(seg)
+            d2, t2, _, _ = analyse(xr)
+            gains[rid] = gain_for(xr, d2, t2)
+    if not dry:
+        os.makedirs(out, exist_ok=True)
+    queue = {}
+    made, report, written = 0, [], {}
+    for k, ((a, b, t), w, sp) in enumerate(zip(entries, who, spans)):
+        if not w:
+            problems.append(f"line {k + 1} is not in the scripts (text changed?): \"{t[:40]}\"")
+            continue
+        if not sp:
+            continue
+        key = (w, loose_key(t))
+        rows = cand[k][w]
+        q = queue.setdefault(key, list(rows))
+        row = q.pop(0) if q else rows[-1]
+        name = row["파일명"].strip()
+        report.append(f"   {k + 1:>3}. {name:<22} {w:<10} {sp[1] - sp[0]:5.2f}s  {t[:34]}")
+        if not dry:
+            d = sp[1] - sp[0]
+            fade = min(0.015, d / 4)
+            af = f"volume={gains.get(w, 0):.2f}dB,afade=t=in:d={fade:.3f},afade=t=out:st={d - fade:.3f}:d={fade:.3f}"
+            enc = ["-ac", "1", "-ar", "24000", "-b:a", "40k"] if small else ["-ac", "1", "-ar", "44100", "-b:a", "96k"]
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{sp[0]:.3f}", "-t", f"{d:.3f}", "-i", audio, "-af", af]
+                           + enc + ["-codec:a", "libmp3lame", os.path.join(out, name)], check=True)
+            written[key] = name
+            made += 1
+    # the same role saying the same line in another place (another file name) gets the same recording
+    extra = 0
+    for (w, lk), q in queue.items():
+        for row in q:
+            name = row["파일명"].strip()
+            if not dry and (w, lk) in written:
+                shutil.copy2(os.path.join(out, written[(w, lk)]), os.path.join(out, name))
+            extra += 1
+    print("\n".join(report))
+    print("volume per role: " + ", ".join(f"{r} {g:+.1f} dB" for r, g in sorted(gains.items())))
+    by_role = {}
+    for w in who:
+        if w:
+            by_role[w] = by_role.get(w, 0) + 1
+    print("lines per role: " + ", ".join(f"{r} {c}" for r, c in sorted(by_role.items())))
+    print(f"\n{made} file(s) written to {out}" + (f", {extra} more copied for the same line in another place" if extra else "")
+          if not dry else f"\n(dry run: {len(entries)} subtitle lines, nothing written)")
+    if problems:
+        print("\nCheck these:")
+        for p in problems:
+            print(" -", p)
+    return problems
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -485,11 +629,19 @@ def main():
     o.add_argument("--roles", help="role ids in reading order, e.g. rat,ox,rabbit (default: scripts/00_all_characters.txt)")
     o.add_argument("--out", default=os.path.join(ROOT, "audio"))
     o.add_argument("--dry", action="store_true")
+    t = sub.add_parser("split-srt")
+    t.add_argument("file")
+    t.add_argument("srt")
+    t.add_argument("--out", default=os.path.join(ROOT, "audio"))
+    t.add_argument("--full", action="store_true", help="96 kbps instead of the small 40 kbps app files")
+    t.add_argument("--dry", action="store_true")
     a = ap.parse_args()
     if a.cmd == "make":
         make(a.out)
     elif a.cmd == "split-one":
         split_one(a.file, a.order, a.roles, a.out, a.dry)
+    elif a.cmd == "split-srt":
+        split_srt(a.file, a.srt, a.out, a.dry, not a.full)
     else:
         split(a.folder, a.out, a.dry)
 

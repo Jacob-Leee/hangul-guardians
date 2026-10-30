@@ -4249,5 +4249,12 @@ function kzMood(n){const w=$("kzWorld");if(!w||!KZ)return;kzMoodEnsure();
  requestAnimationFrame(()=>requestAnimationFrame(kzCamApply));kzBoard(n===4)}
 var _kzGo3=kzGo;kzGo=function(n){_kzGo3(n);if(KZ)kzMood(n)};
 var _kzFit3=kzFit;kzFit=function(){_kzFit3();kzCamApply();if(KZ&&KZ.act===4)setTimeout(kzString,60)};
+
+
+/* ===== v29.4 recorded AI voices: credit line in the settings (Typecast asks for attribution; shown whenever voice files exist) ===== */
+var _showSettings1=showSettings;showSettings=function(){_showSettings1();const c=$("setCard"),n=(window.VOICEFILES||[]).length;
+ if(c&&n&&!c.querySelector(".vcredit")){const p=document.createElement("p");p.className="credit vcredit noemj";
+  p.textContent=K("Voices: "+n+" lines are AI voices made with Typecast. The other lines use this device's voice.","목소리: 대사 "+n+"줄은 Typecast로 만든 AI 음성이에요. 나머지 대사는 이 기기의 목소리로 읽어요.");
+  const ref=c.querySelector(".credit");if(ref)ref.after(p);else c.appendChild(p)}};
 /* book 2 voices (VOX is defined above; books/b2/book.js holds the story) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

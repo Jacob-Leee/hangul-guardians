@@ -34,7 +34,7 @@
 
 - 인수인계(개발자·AI용): `docs/HANDOVER.md` ← 먼저 읽기
 - ChatGPT(그림 담당)에게 처음 보낼 메시지: `docs/CHATGPT_START.md` · 그림 요청서: `docs/IMAGE_REQUESTS.md`
-- AI 녹음: 타입캐스트 녹음 키트 `tools/typecast/`(Windows, `README_KO.txt`), 사람이 녹음할 때 대본 `docs/voice_pack/`
+- AI 녹음: 캐릭터·스승님·글자 소리 246줄 연결됨(`audio/`). 타입캐스트 웹에서 MP3+SRT로 받으면 `python tools/voice_pack.py split-srt <mp3> <srt>`로 자름. 대본 `docs/voice_pack/scripts/`(내레이터는 `00_narrator_story.txt`), 다른 방법으로 API 키트 `tools/typecast/`
 - 아이패드·아이폰 실기기 점검표: `docs/IPAD_CHECKLIST.md`
 - 다음 기능 설계안(본부 꾸미기, 배틀·코스 다양화, 확정 전): `docs/HQ_PLAN.md`
 - 더빙 대본: `docs/dubbing_characters.md`(녹음할 캐릭터 대사 155줄), 전체 대본 `docs/dubbing_b1.*`, `docs/dubbing_b2.*`, `docs/dubbing_cases.*`
