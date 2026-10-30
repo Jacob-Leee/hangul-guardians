@@ -2121,4 +2121,6 @@ textarea,input,select{-webkit-user-select:text;user-select:text;-webkit-touch-ca
 @media (orientation:landscape) and (max-height:520px){.opmir{right:2%;top:4%;width:64px;height:82px}.opcard.pic .pe{font-size:clamp(30px,8vmin,52px)}}
 /* 본부 배경 그림이 오면(assets/img/hq/room_base.webp) 그린 장식 대신 그림을 쓴다 */
 .hq3wrap.art{background-size:cover;background-position:center}
-.hq3wrap.art .hqaur,.hq3wrap.art .hqfield,.hq3wrap.art .hqhill,.hq3wrap.art .hqcl,.hq3wrap.art .hqflag,.hq3wrap.art .hqlamp,.hq3wrap.art .hq3skirt,.hq3wrap.art .hq3plat,.hq3wrap.art .hq3pat,.hq3wrap.art .hq3rim,.hq3wrap.art .hqmoon,.hq3wrap.art .hqshoot{display:none}
+.hq3wrap.art .hqaur,.hq3wrap.art .hqfield,.hq3wrap.art .hqhill,.hq3wrap.art .hqcl,.hq3wrap.art .hqflag,.hq3wrap.art .hqlamp,.hq3wrap.art .hq3skirt,.hq3wrap.art .hq3plat,.hq3wrap.art .hq3pat,.hq3wrap.art .hq3rim,.hq3wrap.art .hqmoon,.hq3wrap.art .hqshoot,.hq3wrap.art .hqstar,.hq3wrap.art .hq3ped{display:none}
+
+@media (max-width:480px){.hq3wrap.art .hq3pad .up img{width:clamp(34px,8vmin,56px)}.hq3wrap.art .hq3mentor img{width:clamp(46px,10vmin,76px)}}

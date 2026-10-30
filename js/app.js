@@ -4258,7 +4258,7 @@ var _showSettings1=showSettings;showSettings=function(){_showSettings1();const c
   const ref=c.querySelector(".credit");if(ref)ref.after(p);else c.appendChild(p)}};
 
 
-window.HQART={"room":{},"item":{}};
+window.HQART={"room":{"base":"assets/img/hq/room_base.webp"},"item":{}};
 /* ===== v29.5 우리 본부 (HQ): the shop is gone; reading achievements give treasures to decorate the HQ in the library tree.
    Treasures come when something is achieved (a case solved, a book won back, a playground level, a battle tier, course runs,
    one lap of today's adventure), not for every game. Rooms open with the hero level (3, 6, 9).
@@ -4882,7 +4882,7 @@ window.hqBase=function(){var own=hqOwned(),BG=(window.HQART&&HQART.room&&HQART.r
  var pads=CHARS.map(function(c,i){var J=JOBS[c.id]||["⭐",["is helping","여기저기 돕는 중!"]];
   var x=SLOT[i][0],y=SLOT[i][1],sc=(0.6+(y-26)/60*0.55).toFixed(2),z=10+Math.round(y);
   var wk=WK[c.id];
-  return '<button class="hq3pad" data-h="'+c.id+'" aria-label="'+escH(L(c.n))+'" style="--x:'+x.toFixed(1)+'%;--y:'+y.toFixed(1)+'%;--s:'+sc+';--z:'+z+'"><span class="up">'+(wk?'':'<i class="job">'+J[0]+'</i>')+'<img src="'+(wk||heroBody(c.id))+'" alt=""></span></button>'}).join("");
+  return '<button class="hq3pad" data-h="'+c.id+'" data-sx="'+x+'" data-sy="'+y+'" aria-label="'+escH(L(c.n))+'" style="--x:'+x.toFixed(1)+'%;--y:'+y.toFixed(1)+'%;--s:'+sc+';--z:'+z+'"><span class="up">'+(wk?'':'<i class="job">'+J[0]+'</i>')+'<img src="'+(wk||heroBody(c.id))+'" alt=""></span></button>'}).join("");
  $("hqCard").innerHTML='<div class="hqhead"><h2>🏰 '+K("Our HQ","우리 본부")+'</h2><span class="hqcount">🎁 '+own.length+' / '+HQ_ITEMS.length+'</span><button class="btn" id="hqX">'+K("Close","닫기")+'</button></div>'
  +'<div class="hq3wrap'+(BG?" art":"")+'"'+(BG?' style="background-image:url(\''+BG+'\')"':'')+'><i class="hqaur"></i><i class="hqfield"></i><i class="hqmoon">🌙</i><i class="hqshoot"></i>'
  +'<i class="hqcl c1"></i><i class="hqcl c2"></i><i class="hqstar s1">✦</i><i class="hqstar s2">✧</i><i class="hqstar s3">✦</i>'
@@ -4905,7 +4905,19 @@ window.hqBase=function(){var own=hqOwned(),BG=(window.HQART&&HQART.room&&HQART.r
  $("hqCard").querySelectorAll(".hq3rooms [data-r]").forEach(function(b){b.onclick=function(){sfx("tap");
   var x=HQ_ROOMS.find(function(q){return q.id===b.dataset.r});
   if(!hqRoomOpen(x)){hqTip(K("This room opens when your hero reaches level "+x.lv+".","영웅 레벨 "+x.lv+"이 되면 열려요."),true);return}
-  _hqOpen0(x.id)}})};
+  _hqOpen0(x.id)}});
+ if(BG){hqArtAlign();requestAnimationFrame(function(){try{hqArtAlign()}catch(e){}})}};
+function hqArtAlign(){var wrap=$("hqCard")&&$("hqCard").querySelector(".hq3wrap.art");if(!wrap)return;
+ var W=wrap.clientWidth,Hh=wrap.clientHeight;if(!W||!Hh)return;
+ var s=Math.max(W/1024,Hh/1024),dx=(W-1024*s)/2,dy=(Hh-1024*s)/2;
+ var cx=512,cy=602,rx=408,ry=174,pcy=552;
+ wrap.querySelectorAll(".hq3pad").forEach(function(b){
+  var nx=(parseFloat(b.dataset.sx)-50)/45,ny=(parseFloat(b.dataset.sy)-58)/32;
+  var X=dx+(cx+nx*rx)*s,Y=dy+(cy+ny*ry)*s,yp=Y/Hh*100;
+  b.style.left=X+"px";b.style.top=Y+"px";b.style.zIndex=10+Math.round(yp);
+  b.style.setProperty("--s",(0.6+Math.max(0,Math.min(1,(yp-26)/60))*0.55).toFixed(2))});
+ var m=wrap.querySelector(".hq3mentor");if(m){var MY=dy+pcy*s;m.style.left=(dx+cx*s)+"px";m.style.top=MY+"px";m.style.zIndex=10+Math.round(MY/Hh*100)}}
+addEventListener("resize",function(){try{hqArtAlign()}catch(e){}});
 var _hqOpen0=hqOpen;
 hqOpen=function(roomId,itemId){if(roomId)return _hqOpen0(roomId,itemId);
  hqG();hqSync();var ov=ensureOv();ov.hidden=false;hqBase();
