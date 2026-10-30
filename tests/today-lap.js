@@ -16,7 +16,7 @@ const out=[];let bad=0;const ok=(n,c,x)=>{if(!c)bad++;out.push((c?'PASS ':'FAIL 
  await p.evaluate(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await p.waitForTimeout(600);
  await p.addScriptTag({content:HELP('pg-auto.js')});await p.addScriptTag({content:HELP('kz-auto.js')});
  const W=ms=>p.waitForTimeout(ms);const closeLv=()=>p.evaluate(()=>{const c=document.getElementById('lvOk');if(c&&!document.getElementById('lvOv').hidden)c.click()});
- let st=await p.evaluate(()=>({hud:$("tdHud").textContent,chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent,len:G.tdLen}));
+ let st=await p.evaluate(()=>({hud:emjText($("tdHud")),chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent,len:G.tdLen}));
  ok('default is one lap: HUD 0/10',st.hud==='☀️ 0/10'&&st.chip==='0/10',st);
  await p.evaluate(()=>tdOpen());await W(300);await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_card0.png`)});
  st=await p.evaluate(()=>({g:[...document.querySelectorAll('.tdg')].map(e=>e.dataset.tg),nx:(document.querySelector('.tdg.nx')||{}).dataset,rows:document.querySelectorAll('.tdlist > li').length}));
@@ -51,10 +51,10 @@ const out=[];let bad=0;const ok=(n,c,x)=>{if(!c)bad++;out.push((c?'PASS ':'FAIL 
  // words then story → celebration once
  await p.evaluate(()=>document.querySelector('[data-td="words"]').click());await W(300);
  for(let k=0;k<30;k++){const r=await p.evaluate(()=>RMAUTO(false));if(r==='none')break;await W(1200)}
- st=await p.evaluate(()=>({n:tdCount(),hud:$("tdHud").textContent}));ok('words done → 9/10',st.n===9&&st.hud==='☀️ 9/10',st);
+ st=await p.evaluate(()=>({n:tdCount(),hud:emjText($("tdHud"))}));ok('words done → 9/10',st.n===9&&st.hud==='☀️ 9/10',st);
  await p.evaluate(()=>{$("tdOv").hidden=true});const c0=await p.evaluate(()=>G.coins);
  await closeLv();await p.evaluate(()=>tdMark("story"));await W(900);await closeLv();await W(900);
- st=await p.evaluate(()=>({win:!!document.querySelector('.tdwin')&&!$("tdOv").hidden,paid:tdFresh().paid,hud:$("tdHud").textContent,td:G.days[dkey()].td,coins:G.coins}));
+ st=await p.evaluate(()=>({win:!!document.querySelector('.tdwin')&&!$("tdOv").hidden,paid:tdFresh().paid,hud:emjText($("tdHud")),td:G.days[dkey()].td,coins:G.coins}));
  await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_done.png`)});
  ok('all 10 → celebration, paid, HUD ✓',st.win&&st.paid===1&&st.hud==='☀️ ✓'&&st.td===1&&st.coins>c0,st);
  await p.evaluate(()=>document.getElementById('tdX').click());await W(300);const c1=await p.evaluate(()=>{tdCelebrate();const c=G.coins;$("tdOv").hidden=true;return c});ok('celebration pays once',c1===st.coins,{c1,c:st.coins});
@@ -67,7 +67,7 @@ const out=[];let bad=0;const ok=(n,c,x)=>{if(!c)bad++;out.push((c?'PASS ':'FAIL 
  // short mode from settings
  await p.evaluate(()=>{G.today={d:dkey(),play:0,story:0,words:0,rm:0,paid:0,lap:{}};save();showSettings()});await W(300);
  await p.evaluate(()=>document.querySelector('[data-tdl="0"]').click());await W(300);
- st=await p.evaluate(()=>({len:G.tdLen,hud:$("tdHud").textContent}));ok('settings → short: HUD 0/3',st.len==='short'&&st.hud==='☀️ 0/3',st);
+ st=await p.evaluate(()=>({len:G.tdLen,hud:emjText($("tdHud"))}));ok('settings → short: HUD 0/3',st.len==='short'&&st.hud==='☀️ 0/3',st);
  // sound check button
  await p.evaluate(()=>document.getElementById('auTest').click());await W(700);
  st=await p.evaluate(()=>({stat:($("auStat")||{}).textContent,ctx:window.AC&&AC.state}));ok('sound check shows a status',!!st.stat,st);

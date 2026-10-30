@@ -1633,3 +1633,36 @@ textarea,input,select{-webkit-user-select:text;user-select:text;-webkit-touch-ca
 .tdrest{margin:6px 0 0;font-size:13px;color:#1E8B4A}
 .austat{font-size:12px;color:var(--muted);margin-left:6px}
 @media (max-width:560px){.tdlist li.lap{flex-wrap:wrap}.tdlist li.lap>div{flex-basis:calc(100% - 56px)}.tdlist li.lap>.btn{margin-left:auto}}
+
+/* v29.3 3D emoji pictures */
+.emj{display:inline-block;width:1.18em;height:1.18em;vertical-align:-.2em;background-repeat:no-repeat;background-size:800% 800%;line-height:1}
+
+/* v29.3 home: the big today's-adventure button, the rest under "More" */
+.extras .xbtn.big{flex:1 1 100%;min-height:72px;font-size:20px;background:linear-gradient(#FFF3B0,#FFC93C);border-width:4px;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.extras .xbtn.big .ic{font-size:34px}
+.extras .xbtn.big .xsub{margin-left:auto;font-size:14px;font-weight:700;color:#6B4A00;background:rgba(255,255,255,.6);border-radius:10px;padding:4px 10px}
+.extras .xbtn.xmore{display:none}
+.extras.open .xbtn.xmore{display:flex}
+.extras .xbtn.xm{flex:0 1 110px}
+@media (max-width:560px){.extras .xbtn.big{flex-wrap:wrap;row-gap:4px}.extras .xbtn.big .xsub{margin-left:0;flex-basis:100%;text-align:center}}
+.xbtn:active,.wtopt:active,.rmop:active,.fopt:active,.bop:active,.kzop:active,.tdg:active,.pgrec:active{transform:translateY(2px) scale(.98);box-shadow:none}
+.xbtn,.wtopt,.rmop,.fopt,.tdg{transition:transform .08s}
+/* v29.3 screens pop in */
+@keyframes ovIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.ov:not([hidden])>.card{animation:ovIn .24s cubic-bezier(.2,.9,.3,1.12)}
+@media (prefers-reduced-motion:reduce){.ov:not([hidden])>.card{animation:none}}
+/* v29.3 parent lock */
+.gatec{max-width:380px}
+.gq{margin:6px 0;color:var(--muted)}
+.gsum{font-size:32px;font-weight:800;text-align:center;margin:6px 0 10px;font-family:var(--f-k)}
+.gin{display:inline-block;min-width:2.2em;border-bottom:3px solid var(--ink)}
+.gpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.gpad .btn{min-height:54px;font-size:22px}
+.credit{margin:14px 4px 4px;font-size:12px;color:var(--muted);text-align:center}
+/* v29.3 playground result: hero cheers, coins fly to the wallet */
+.pgrbox{position:relative}
+.pgrhero{position:absolute;left:-14px;bottom:-12px;width:96px;pointer-events:none;animation:pgrHop .55s ease-out 2}
+.pgrhero img,.pgrhero svg{width:100%;height:auto;display:block;filter:drop-shadow(0 6px 6px rgba(0,0,0,.3))}
+@keyframes pgrHop{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px) rotate(-4deg)}}
+@media (max-width:560px){.pgrhero{width:70px;left:-8px;bottom:-8px}}
+.cfly{position:fixed;z-index:130;font-size:28px;pointer-events:none;transition:left .75s cubic-bezier(.5,-.3,.6,1),top .75s cubic-bezier(.3,.6,.4,1),opacity .75s,transform .75s;transform:translate(-50%,-50%)}

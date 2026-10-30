@@ -50,7 +50,7 @@ if 'rel="manifest"' not in html:
 open(p, 'w', encoding='utf-8').write(html)
 
 # ---- service worker: precache every file the game needs at run time ----
-SKIP_DIRS = {'docs', 'tests', 'tools', '.git', '.github', 'node_modules'}
+SKIP_DIRS = {'docs', 'tests', 'tools', '.git', '.github', 'node_modules', 'incoming'}
 files = []
 for root, dirs, fs in os.walk(OUT):
     dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS and not d.startswith('.'))
@@ -58,7 +58,7 @@ for root, dirs, fs in os.walk(OUT):
         rel = os.path.relpath(os.path.join(root, f), OUT).replace(os.sep, '/')
         if rel in ('sw.js', 'README.md', '.nojekyll') or rel.endswith(('.txt', '.md', '.zip')) or f == 'LICENSE' or f.startswith('.'): continue
         files.append(rel)
-core = [f for f in ['index.html', 'css/style.css', 'js/app.js', 'audio/voices.js', 'books/b1/book.js', 'manifest.webmanifest',
+core = [f for f in ['index.html', 'css/style.css', 'js/app.js', 'audio/voices.js', 'books/b1/book.js', 'books/b2/book.js', 'manifest.webmanifest',
                     'assets/fonts/jua-korean-400-normal.woff2', 'assets/fonts/gowun-dodum-korean-400-normal.woff2'] if f in files]
 rest = [f for f in files if f not in core]
 hsh = hashlib.sha256()

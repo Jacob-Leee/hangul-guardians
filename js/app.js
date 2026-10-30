@@ -255,7 +255,7 @@ const vKey=(w,t)=>(w==="learn"?"narrator":w)+"|"+ttsClean(t);
 const lineVoice=(l,o)=>{const allQ=/^\s*["“][^"”]*["”]\s*$/.test(l);return o.voice||(allQ?(o.who||"narrator"):/["“”]/.test(l)?null:"narrator")};
 /* how a narrate() call is spoken: whole single-voice lines, or sentence parts when a line mixes narrator and a quote */
 function vPlan(lines,o){o=o||{};const out=[];(Array.isArray(lines)?lines:[lines]).forEach(l=>{l=String(l);if(!ttsClean(l))return;const parts=[];
- l.split(/(["“][^"”]*["”])/).forEach(p=>{p=p.trim();if(!p)return;const q=/^["“]/.test(p);(p.match(/[^.!?]+[.!?]*["”]?/g)||[p]).forEach(x=>{x=x.trim();if(ttsClean(x))parts.push({t:x,w:o.voice||(q?(o.who||"narrator"):"narrator")})})});
+ l.split(/(["“][^"”]*["”])/).forEach(p=>{p=p.trim();if(!p)return;const q=/^["“]/.test(p);sentSplit(p,1).forEach(x=>{x=x.trim();if(ttsClean(x))parts.push({t:x,w:o.voice||(q?(o.who||"narrator"):"narrator")})})});
  out.push({line:l,lw:lineVoice(l,o),parts})});return out}
 /* recorded voice files listed in audio/voices.js: [voice, text, file] */
 (window.VOICEFILES||[]).forEach(([w,t,f])=>{VAUD[vKey(w,t)]=f});
@@ -811,7 +811,7 @@ document.addEventListener("keydown",e=>{
  const nx=G.px+d[0],ny=G.py+d[1];if(nx<0||ny<0||nx>=W||ny>=H)return;const act=interactAt(nx,ny);if(act){act();return}
  if(walkable(nx,ny))walk([[nx,ny]]);
 });
-const overlayOpen=()=>["libOv","stOv","dlgOv","chalOv","batOv","parOv","evoOv","titleOv","clearOv","heroOv","shopOv","lvOv","runOv","setOv","splashOv","duelOv","caseOv","bookOv","pgOv","tdOv","rmOv"].some(id=>!$(id).hidden);
+const overlayOpen=()=>["libOv","stOv","dlgOv","chalOv","batOv","parOv","evoOv","titleOv","clearOv","heroOv","shopOv","lvOv","runOv","setOv","splashOv","duelOv","caseOv","bookOv","pgOv","tdOv","rmOv","gateOv"].some(id=>!$(id).hidden);
 
 /* progress */
 function rec(s,ok){const r=G.m[s]||(G.m[s]={r:0,w:0});ok?r.r++:r.w++}
@@ -1338,7 +1338,7 @@ function runDraw(){
  RUN.gates.forEach(g=>drawGate(c,g));
  RUN.signs.forEach(sg=>{const x=sg.x,y=7*T;c.fillStyle="#7A4E2C";c.fillRect(x-3,y-56,6,56);rr(c,x-30,y-92,60,40,6);c.fillStyle="#F3E2C7";c.fill();c.lineWidth=2.5;c.strokeStyle="#1B2233";c.stroke();
   c.font="22px sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText(RUN.word.p,x-12,y-72);c.fillText("🔊",x+14,y-72)});
- if(RUN.flag){const x=RUN.flag.x;c.fillStyle="#C9D2DE";c.fillRect(x-3,2*T,6,5*T);c.strokeStyle="#1B2233";c.lineWidth=2;c.strokeRect(x-3,2*T,6,5*T);
+ if(RUN.flag&&drawGoal(c,RUN.flag.x)){}else if(RUN.flag){const x=RUN.flag.x;c.fillStyle="#C9D2DE";c.fillRect(x-3,2*T,6,5*T);c.strokeStyle="#1B2233";c.lineWidth=2;c.strokeRect(x-3,2*T,6,5*T);
   c.beginPath();c.arc(x,2*T-6,8,0,7);c.fillStyle="#FFC23D";c.fill();c.stroke();
   const wave=Math.sin(RUN.t*5)*4;c.beginPath();c.moveTo(x+3,2*T+6);c.quadraticCurveTo(x+30,2*T+10+wave,x+56,2*T+18);c.lineTo(x+3,2*T+40);c.closePath();c.fillStyle="#E8573A";c.fill();c.stroke();
   c.font='22px Jua, sans-serif';c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";c.fillText("한",x+22,2*T+22)}
@@ -1975,7 +1975,7 @@ const KC=[
  spots:[{k:"a",ic:"🍪",x:34,y:84,n:"과자 부스러기",t:"책장 앞에 과자 부스러기가 잔뜩 떨어져 있어요."},
   {k:"b",ic:"🐾",x:72,y:76,n:"큰 발자국",t:"창문 아래에 동글동글한 큰 고양이 발자국이 있어요."},
   {k:"c",ic:"📘",x:54,y:66,n:"'친구 소개' 책",t:"'친구 소개' 책이에요. 친구들이 좋아하는 것이 바르게 적혀 있어요."},
-  {k:"d",ic:"🕰️",x:20,y:52,decoy:1,t:"벽시계가 똑딱똑딱 가요. 단서는 아니에요."}],
+  {k:"d",ic:"💡",x:20,y:52,decoy:1,t:"램프가 따뜻하게 빛나요. 단서는 아니에요."}],
  talk:[{w:"squirrel",t:"\"어젯밤 도서관에서 냠냠 과자 먹는 소리가 들렸어.\""},
   {w:"v",t:"\"나는 도서관에 간 적도 없다냥! 과자도 안 먹었다냥!\"",lie:1,proof:["a","b"]},
   {w:"gull",t:"\"배가 볼록한 고양이가 카드를 한 아름 안고 나가는 걸 봤어.\""}],
@@ -2009,9 +2009,9 @@ const KC=[
  brief:["이번 주말에 마을 광장에서 별빛 축제가 열려요.","그런데 광장 게시판의 축제 안내문이 이상하게 바뀌었어요.","\"축제에는 반드시 백묘만 들어올 수 있어요.\"","안내문을 읽은 갈매기와 친구들은 축제에 못 갈까 봐 걱정했어요."],
  q:{ask:"마을 광장에서 열리는 축제는 무엇일까?",a:["별빛 축제","✨"],o:[["눈꽃 축제","❄️"],["꽃 축제","🌸"]],clue:"별빛 축제",note:"축제 안내문이 바뀌었어요."},
  spots:[{k:"a",ic:"📄",x:32,y:58,n:"덧붙인 종이",t:"진짜 안내문 위에 새 종이가 덧붙어 있어요. 종이 가장자리에 하얀 털이 붙어 있어요."},
-  {k:"b",ic:"🧴",x:62,y:84,n:"'백' 풀통",t:"의자 밑에 하얀 풀통이 있어요. 뚜껑에 '백'이라고 쓰여 있어요."},
+  {k:"b",ic:"🧴",x:62,y:84,n:"'백' 풀통",t:"나무통 옆에 하얀 풀통이 있어요. 뚜껑에 '백'이라고 쓰여 있어요."},
   {k:"c",ic:"📰",x:44,y:76,n:"진짜 안내문",t:"덧붙인 종이를 살짝 들추니 그 밑에 진짜 안내문이 보여요."},
-  {k:"d",ic:"🎈",x:80,y:62,decoy:1,t:"축제에 쓸 풍선이에요. 단서는 아니에요."}],
+  {k:"d",ic:"🚩",x:80,y:62,decoy:1,t:"축제에 쓸 알록달록 깃발이에요. 단서는 아니에요."}],
  talk:[{w:"spider",t:"\"어젯밤 하얀 고양이가 풀통을 들고 게시판 앞에 서 있었어.\""},
   {w:"v",t:"\"내 안내문이 진짜다냥! 풀 같은 건 쓴 적도 없다냥!\"",lie:1,proof:["b","a"]},
   {w:"squirrel",t:"\"작년 축제에는 누구나 갈 수 있었어.\""}],
@@ -2029,7 +2029,7 @@ const KC=[
  spots:[{k:"a",ic:"📝",x:62,y:70,n:"흑묘의 쪽지",t:"수레 위에 쪽지가 있어요. '등불은 내가 가져간다냥. 찾을 테면 찾아봐라냥!'"},
   {k:"b",ic:"🐾",x:40,y:84,n:"까만 발자국",t:"광산 입구에 까만 고양이 발자국이 있어요. 발자국은 숲속 길로 이어져요."},
   {k:"c",ic:"🧭",x:22,y:74,n:"길 안내 메모",t:"길에 메모가 떨어져 있어요. 등불을 숨긴 곳으로 가는 길이 적혀 있어요."},
-  {k:"d",ic:"💎",x:80,y:56,decoy:1,t:"반짝이는 수정이에요. 예쁘지만 단서는 아니에요."}],
+  {k:"d",ic:"🪨",x:80,y:56,decoy:1,t:"커다란 바위예요. 단서는 아니에요."}],
  talk:[{w:"gull",t:"\"새벽에 까만 고양이가 불빛을 들고 숲으로 들어갔어.\""},
   {w:"v",t:"\"나는 등불이 뭔지도 모른다냥!\"",lie:1,proof:["a","b"]},
   {w:"beaver",t:"\"고슴도치는 어제 등불을 광산 입구에 걸어 두었어.\""}],
@@ -2463,7 +2463,7 @@ function kzDed(){const c=KZ.c,S=KZ.ss,d=c.ded[S.d];
   ${d?`<div class="kzq"><div class="kzopts">${S.opts[S.d].map(o=>`<button class="kzop big" data-a="${escH(o)}">${escH(o)}</button>`).join("")}</div></div>`:""}`);
  $("kzNB2").onclick=kzNote;
  if(!d){kzNextBtn(`👉 ${K("The culprit is you!","범인은 바로 너야!")}`,()=>kzGo(5));const nb=$("kzPanel").querySelector(".kznext");if(nb)nb.classList.add("gotcha");KZ.say=()=>kzRead(c.ded.map(x=>x.s.replace("___",x.a)),{els:[...$("kzPanel").querySelectorAll(".kzded")],voice:"narrator"});return}
- KZ.say=()=>narrate([d.s.replace("___","무엇")],null,"ko",{voice:"narrator"});if(autoNar())setTimeout(()=>{if(KZ&&KZ.act===4&&KZ.ss.d===S.d)KZ.say()},500);
+ KZ.say=()=>narrate([blankRead(d.s)],null,"ko",{voice:"narrator"});if(autoNar())setTimeout(()=>{if(KZ&&KZ.act===4&&KZ.ss.d===S.d)KZ.say()},500);
  $("kzPanel").querySelectorAll(".kzq [data-a]").forEach(b=>b.onclick=()=>{if(KZ.busy||b.disabled)return;if(b.dataset.a!==d.a)return kzNo(b,K("Check your notebook!","수첩을 다시 봐요!"));
   kzOK(b);KZ.busy=true;flyTo(escH(d.a),b,$("kzBlank"),"blk2").then(()=>{if(!KZ||KZ.act!==4)return;KZ.busy=false;S.d++;KZ.miss=0;kzDed();narrate([d.s.replace("___",d.a)],null,"ko",{voice:"narrator"})})});
  KZ.hint=()=>{const nb=$("kzNB");if(nb){nb.classList.remove("got");void nb.offsetWidth;nb.classList.add("got")}return {t:"수첩을 다시 보렴. 찾은 단서 속에 답이 있단다."}};
@@ -2643,7 +2643,7 @@ async function sayLine(text,who){const b=BK,A=b.D.actors[who],clean=String(text)
  await bSpeak(text,who);if(!bAlive(b))return;
  if(A){const c=b.D.claim;if(c&&c.who===who&&b.claimOn)claimShow(b.claimOn);else actBub(who,null)}capt(null)}
 /* --- storybook reader: big readable text, sentence highlight, voice, page turns --- */
-function splitSegs(text){const out=[];String(text).split(/(["“][^"”]*["”])/).forEach(p=>{p=p.trim();if(!p)return;if(/^["“]/.test(p)){out.push({t:p,q:1});return}(p.match(/[^.!?]+[.!?]*/g)||[p]).forEach(x=>{x=x.trim();if(x)out.push({t:x,q:0})})});return out}
+function splitSegs(text){const out=[];String(text).split(/(["“][^"”]*["”])/).forEach(p=>{p=p.trim();if(!p)return;if(/^["“]/.test(p)){out.push({t:p,q:1});return}sentSplit(p,0).forEach(x=>{x=x.trim();if(x)out.push({t:x,q:0})})});return out}
 async function readSegs(segs,who){const b=BK,tok=b.rt=(b.rt||0)+1;
  const hl=k=>document.querySelectorAll("#sbText .sg").forEach(e=>e.classList.toggle("on",+e.dataset.k===k));
  const A=who&&b.D.actors[who];
@@ -3599,7 +3599,7 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden&&RUN){RUN.k
 
 /* ===== v29: reading help levels, reading missions, today's adventure, weekly parent summary, backup code, read-aloud check =====
    Everything below is function declarations and var, so the first renderAll() (which runs before this block) can call tdChip()/tdHudSet() safely. */
-var RMS={"k1":[{"a":"다람쥐의 창고 열쇠가 사라졌어요.","b":"다람쥐는 가을 내내 도토리를 창고에 모아 두었어요. 그런데 창고 열쇠가 감쪽같이 사라졌어요.","q":"무엇이 사라졌나요?","ans":["열쇠","🔑"],"o":[["도토리","🌰"],["모자","🧢"]]},{"a":"창고 앞에 까만 발자국이 있었어요.","b":"흑묘는 창고 근처에도 안 갔다고 했어요. 하지만 창고 앞에 까만 고양이 발자국이 있었어요.","q":"창고 앞에 무엇이 있었나요?","ans":["발자국","🐾"],"o":[["꽃","🌸"],["우산","☂️"]]},{"a":"열쇠는 키 큰 소나무 위에 있었어요.","b":"번개 쥐는 비밀 메모를 꼼꼼히 읽었어요. 그리고 키 큰 소나무 위에서 열쇠를 찾았어요.","q":"열쇠는 어디에 있었나요?","ans":["소나무 위","🌲"],"o":[["강물 속","🌊"],["모래 밑","🏖️"]]}],"k2":[{"a":"비버의 오두막이 와르르 무너졌어요.","b":"비버는 설명서대로 강가에 오두막을 지었어요. 그런데 오두막이 와르르 무너졌어요.","q":"무엇이 무너졌나요?","ans":["오두막","🛖"],"o":[["다리","🌉"],["탑","🗼"]]},{"a":"설명서에 하얀 물감이 덧칠되어 있었어요.","b":"백묘는 설명서가 처음부터 그랬다고 했어요. 하지만 설명서 글씨 위에 하얀 물감이 덧칠되어 있었어요.","q":"설명서에 무엇이 덧칠되어 있었나요?","ans":["하얀 물감","🎨"],"o":[["빨간 잼","🍓"],["까만 먹물","🖋️"]]},{"a":"기둥, 벽, 지붕 순서로 지어요.","b":"강철 소는 진짜 설명서를 차근차근 읽었어요. 그리고 기둥, 벽, 지붕 순서로 오두막을 지었어요.","q":"맨 먼저 무엇을 세우나요?","ans":["기둥","🪵"],"o":[["지붕","🔺"],["창문","🪟"]]}],"k3":[{"a":"호랑이냥이 금메달을 가져갔어요.","b":"고슴도치는 달리기 대회에서 일 등을 했어요. 그런데 호랑이냥이 금메달을 가져가 버렸어요.","q":"호랑이냥이 무엇을 가져갔나요?","ans":["금메달","🥇"],"o":[["모자","🎩"],["사과","🍎"]]},{"a":"호랑이냥은 늦잠을 자서 대회에 못 왔어요.","b":"호랑이냥은 제일 먼저 결승선에 들어왔다고 했어요. 하지만 호랑이냥은 늦잠을 자서 대회에 오지 않았어요.","q":"호랑이냥은 왜 대회에 못 왔나요?","ans":["늦잠을 자서","😴"],"o":[["비가 와서","🌧️"],["길을 잃어서","🧭"]]},{"a":"고슴도치가 다시 금메달을 목에 걸었어요.","b":"대장 호랑이는 기록과 다른 거짓말을 모두 깨뜨렸어요. 고슴도치는 다시 금메달을 목에 걸고 활짝 웃었어요.","q":"금메달은 누가 목에 걸었나요?","ans":["고슴도치","🦔"],"o":[["호랑이냥","🐯"],["다람쥐","🐿️"]]}],"k4":[{"a":"스피니의 생일 케이크가 사라졌어요.","b":"오늘은 거미 스피니의 생일이에요. 그런데 식탁 위에 있던 딸기 케이크가 사라졌어요.","q":"무엇이 사라졌나요?","ans":["케이크","🎂"],"o":[["풍선","🎈"],["선물","🎁"]]},{"a":"포크 손잡이에 '뚱'이라고 쓰여 있었어요.","b":"뚱냥은 케이크 냄새도 못 맡았다고 했어요. 하지만 크림이 묻은 포크 손잡이에 '뚱'이라고 쓰여 있었어요.","q":"포크 손잡이에 무슨 글자가 있었나요?","ans":["뚱",""],"o":[["백",""],["흑",""]]},{"a":"친구들은 새 케이크를 함께 만들었어요.","b":"달빛 토끼는 스피니를 따뜻하게 위로했어요. 친구들은 새 케이크를 함께 만들어 생일 파티를 했어요.","q":"친구들은 함께 무엇을 만들었나요?","ans":["새 케이크","🎂"],"o":[["모래성","🏰"],["종이배","⛵"]]}],"k5":[{"a":"친구들이 모두 동굴 앞으로 갔어요.","b":"갈매기는 초대장에 등대 앞에서 조개 잔치를 한다고 썼어요. 그런데 친구들은 모두 깜깜한 동굴 앞으로 갔어요.","q":"친구들은 어디로 갔나요?","ans":["동굴 앞","🕳️"],"o":[["등대 앞","🗼"],["학교 앞","🏫"]]},{"a":"우체통 위에 보라색 잉크가 있었어요.","b":"보라냥은 초대장에 손도 안 댔다고 했어요. 하지만 우체통 위에 보라색 잉크 방울이 떨어져 있었어요.","q":"우체통 위에 무엇이 있었나요?","ans":["보라색 잉크","🟣"],"o":[["하얀 깃털","🪶"],["노란 모래","🟡"]]},{"a":"친구들은 등대 앞에서 조개 잔치를 했어요.","b":"하늘 용은 갈매기의 수첩과 똑같이 초대장을 고쳤어요. 친구들은 등대 앞에 모여 조개 잔치를 했어요.","q":"친구들은 어디에서 잔치를 했나요?","ans":["등대 앞","🗼"],"o":[["동굴 앞","🕳️"],["학교 앞","🏫"]]}],"k6":[{"a":"창고 상자의 이름표가 모두 바뀌었어요.","b":"스승님의 창고에는 신기한 상자가 많아요. 그런데 보라냥이 이름표를 몽땅 비슷한 낱말로 바꿔 붙였어요.","q":"무엇이 바뀌었나요?","ans":["이름표","🏷️"],"o":[["상자 색깔","🎨"],["창고 문","🚪"]]},{"a":"바뀐 이름표는 보라색 글씨였어요.","b":"보라냥은 펜 같은 건 가져 본 적도 없다고 했어요. 하지만 바뀐 이름표는 모두 보라색 글씨였어요.","q":"바뀐 이름표는 무슨 색 글씨였나요?","ans":["보라색","🟣"],"o":[["까만색","⚫"],["초록색","🟢"]]},{"a":"모든 상자에 바른 이름표를 붙였어요.","b":"바람 뱀은 물건 설명을 읽고 수수께끼를 하나씩 풀었어요. 그리고 모든 상자에 바른 이름표를 붙였어요.","q":"이제 상자에는 어떤 이름표가 붙어 있나요?","ans":["바른 이름표","✅"],"o":[["엉터리 이름표","❌"],["빈 이름표","⬜"]]}],"k7":[{"a":"쿠키 순서표가 뒤죽박죽 섞였어요.","b":"다람쥐는 친구들에게 줄 도토리 쿠키를 굽기로 했어요. 그런데 빵집 벽의 순서표가 뒤죽박죽 섞여 있었어요.","q":"무엇이 뒤죽박죽 섞였나요?","ans":["순서표","📋"],"o":[["도토리","🌰"],["밀가루","🌾"]]},{"a":"가위에 회색 털이 붙어 있었어요.","b":"회색냥은 가위를 만진 적도 없다고 했어요. 하지만 식탁 밑 가위에 회색 털이 붙어 있었어요.","q":"가위에 무엇이 붙어 있었나요?","ans":["회색 털","🐈"],"o":[["초콜릿","🍫"],["반창고","🩹"]]},{"a":"다람쥐는 쿠키를 친구들에게 나눠 주었어요.","b":"질주 말은 쿠키 만드는 순서를 차례차례 맞췄어요. 다람쥐는 고소한 쿠키를 구워 친구들에게 나눠 주었어요.","q":"다람쥐는 쿠키를 어떻게 했나요?","ans":["나눠 주었어요","🤲"],"o":[["혼자 먹었어요","😋"],["버렸어요","🗑️"]]}],"k8":[{"a":"도서관의 친구 카드가 뒤섞였어요.","b":"비버는 도서관 벽에 친구 소개 카드를 붙였어요. 그런데 밤사이 카드가 몽땅 뒤섞였어요.","q":"무엇이 뒤섞였나요?","ans":["친구 카드","🃏"],"o":[["책장","📚"],["의자","🪑"]]},{"a":"책장 앞에 과자 부스러기가 있었어요.","b":"뚱냥은 도서관에 간 적도 없다고 했어요. 하지만 책장 앞에 과자 부스러기가 잔뜩 떨어져 있었어요.","q":"책장 앞에 무엇이 떨어져 있었나요?","ans":["과자 부스러기","🍪"],"o":[["나뭇잎","🍂"],["단추","🔘"]]},{"a":"구름 양이 카드를 제자리에 붙였어요.","b":"구름 양은 '친구 소개' 책을 꼼꼼히 읽었어요. 그리고 카드를 하나씩 제자리에 붙였어요.","q":"카드를 제자리에 붙인 친구는 누구인가요?","ans":["구름 양","🐑"],"o":[["뚱냥","🐱"],["비버","🦫"]]}],"k9":[{"a":"개울가의 물레방아가 멈췄어요.","b":"물레방아가 돌아야 밀을 빻아 빵을 만들 수 있어요. 그런데 오늘 아침 물레방아가 멈춰 버렸어요.","q":"무엇이 멈췄나요?","ans":["물레방아","🎡"],"o":[["시계","⏰"],["자동차","🚗"]]},{"a":"개울이 커다란 돌로 막혀 있었어요.","b":"회색냥은 물레방아가 원래 혼자 멈춘다고 했어요. 하지만 개울 위쪽이 커다란 돌로 꽉 막혀 있었어요.","q":"개울은 무엇으로 막혀 있었나요?","ans":["돌","🪨"],"o":[["나무","🌳"],["얼음","🧊"]]},{"a":"돌을 치우자 물레방아가 다시 돌았어요.","b":"재주 원숭이는 물레방아가 멈춘 까닭을 알아냈어요. 돌을 치우자 물이 흐르고 물레방아가 다시 빙글빙글 돌았어요.","q":"무엇을 치우니 물레방아가 다시 돌았나요?","ans":["돌","🪨"],"o":[["눈","❄️"],["모래","🏖️"]]}],"k10":[{"a":"별빛 축제 안내문이 이상하게 바뀌었어요.","b":"이번 주말에 마을 광장에서 별빛 축제가 열려요. 그런데 축제 안내문이 이상하게 바뀌어 있었어요.","q":"무슨 축제가 열리나요?","ans":["별빛 축제","🌟"],"o":[["눈꽃 축제","❄️"],["꽃 축제","🌸"]]},{"a":"풀통 뚜껑에 '백'이라고 쓰여 있었어요.","b":"백묘는 풀 같은 건 쓴 적도 없다고 했어요. 하지만 의자 밑 풀통 뚜껑에 '백'이라고 쓰여 있었어요.","q":"풀통 뚜껑에 무슨 글자가 있었나요?","ans":["백",""],"o":[["뚱",""],["흑",""]]},{"a":"친구들은 모두 함께 축제를 즐겼어요.","b":"새벽 닭은 진짜 안내문을 친구들에게 읽어 주었어요. 토요일 저녁, 친구들은 모두 함께 축제를 즐겼어요.","q":"축제에는 누가 왔나요?","ans":["친구들 모두","👫"],"o":[["백묘만","🐱"],["아무도 안 왔어요","🚫"]]}],"k11":[{"a":"고슴도치의 등불이 사라졌어요.","b":"어두운 광산에서는 등불이 꼭 필요해요. 그런데 오늘 아침 고슴도치의 등불이 사라졌어요.","q":"무엇이 사라졌나요?","ans":["등불","🏮"],"o":[["망치","🔨"],["수정","💎"]]},{"a":"수레 위에 흑묘의 쪽지가 있었어요.","b":"흑묘는 등불이 뭔지도 모른다고 했어요. 하지만 수레 위에 흑묘가 쓴 쪽지가 남아 있었어요.","q":"수레 위에 무엇이 있었나요?","ans":["쪽지","📝"],"o":[["등불","🏮"],["수정","💎"]]},{"a":"등불은 큰 바위 뒤에 숨겨져 있었어요.","b":"용감한 개는 메모에 적힌 길을 그대로 따라갔어요. 등불은 큰 바위 뒤에 숨겨져 있었어요.","q":"등불은 어디에 있었나요?","ans":["바위 뒤","🪨"],"o":[["나무 위","🌳"],["다리 밑","🌉"]]}],"k12":[{"a":"숲속 신문의 제목이 바뀌었어요.","b":"다람쥐는 '숲속 신문'을 만들어요. 그런데 이번 주 신문 제목이 '호랑이냥, 혼자서 다리를 고치다!'로 바뀌었어요.","q":"무엇이 바뀌었나요?","ans":["신문 제목","📰"],"o":[["다리 색깔","🌉"],["숲 이름","🌲"]]},{"a":"다리를 고친 건 비버였어요.","b":"호랑이냥은 다리를 혼자 고쳤다고 했어요. 하지만 사진에는 비버가 망치로 다리를 고치는 모습이 있었어요.","q":"다리를 고친 건 누구인가요?","ans":["비버","🦫"],"o":[["호랑이냥","🐯"],["다람쥐","🐿️"]]},{"a":"새 신문에 바른 제목이 실렸어요.","b":"든든 돼지는 신문 기사를 끝까지 읽고 바른 제목을 골랐어요. 새 신문에는 '비버, 낡은 다리를 고치다'라는 제목이 실렸어요.","q":"새 신문에는 어떤 제목이 실렸나요?","ans":["바른 제목","✅"],"o":[["엉터리 제목","❌"],["제목 없음","⬜"]]}],"b1":[{"a":"회색냥이 동화책의 문장을 바꿨어요.","b":"어느 밤, 회색냥이 몰래 도서관에 들어왔어요. 그리고 〈토끼와 거북이〉의 문장을 바꿔 버렸어요.","q":"누가 문장을 바꿨나요?","ans":["회색냥","🐈"],"o":[["거북이 스승님","🐢"],["토끼","🐰"]]},{"a":"나무 아래에서 잠든 동물은 토끼예요.","b":"기록에는 토끼가 나무 아래에서 쿨쿨 잤다고 쓰여 있어요. 그래서 책 속 문장을 바르게 고쳤어요.","q":"나무 아래에서 잠든 동물은 누구인가요?","ans":["토끼","🐰"],"o":[["거북이","🐢"],["다람쥐","🐿️"]]},{"a":"거북이가 먼저 결승점에 도착했어요.","b":"거북이는 쉬지 않고 엉금엉금 걸었어요. 그래서 토끼보다 먼저 결승점에 도착했어요.","q":"누가 먼저 결승점에 도착했나요?","ans":["거북이","🐢"],"o":[["토끼","🐰"],["회색냥","🐈"]]}]};
+var RMS={"k1":[{"a":"다람쥐의 창고 열쇠가 사라졌어요.","b":"다람쥐는 가을 내내 도토리를 창고에 모아 두었어요. 그런데 창고 열쇠가 감쪽같이 사라졌어요.","q":"무엇이 사라졌나요?","ans":["열쇠","🔑"],"o":[["도토리","🌰"],["모자","🧢"]]},{"a":"창고 앞에 까만 발자국이 있었어요.","b":"흑묘는 창고 근처에도 안 갔다고 했어요. 하지만 창고 앞에 까만 고양이 발자국이 있었어요.","q":"창고 앞에 무엇이 있었나요?","ans":["발자국","🐾"],"o":[["꽃","🌸"],["우산","☂️"]]},{"a":"열쇠는 키 큰 소나무 위에 있었어요.","b":"번개 쥐는 비밀 메모를 꼼꼼히 읽었어요. 그리고 키 큰 소나무 위에서 열쇠를 찾았어요.","q":"열쇠는 어디에 있었나요?","ans":["소나무 위","🌲"],"o":[["강물 속","🌊"],["모래 밑","🏖️"]]}],"k2":[{"a":"비버의 오두막이 와르르 무너졌어요.","b":"비버는 설명서대로 강가에 오두막을 지었어요. 그런데 오두막이 와르르 무너졌어요.","q":"무엇이 무너졌나요?","ans":["오두막","🛖"],"o":[["다리","🌉"],["탑","🗼"]]},{"a":"설명서에 하얀 물감이 덧칠되어 있었어요.","b":"백묘는 설명서가 처음부터 그랬다고 했어요. 하지만 설명서 글씨 위에 하얀 물감이 덧칠되어 있었어요.","q":"설명서에 무엇이 덧칠되어 있었나요?","ans":["하얀 물감","🎨"],"o":[["빨간 잼","🍓"],["까만 먹물","🖋️"]]},{"a":"기둥, 벽, 지붕 순서로 지어요.","b":"강철 소는 진짜 설명서를 차근차근 읽었어요. 그리고 기둥, 벽, 지붕 순서로 오두막을 지었어요.","q":"맨 먼저 무엇을 세우나요?","ans":["기둥","🪵"],"o":[["지붕","🔺"],["창문","🪟"]]}],"k3":[{"a":"호랑이냥이 금메달을 가져갔어요.","b":"고슴도치는 달리기 대회에서 일 등을 했어요. 그런데 호랑이냥이 금메달을 가져가 버렸어요.","q":"호랑이냥이 무엇을 가져갔나요?","ans":["금메달","🥇"],"o":[["모자","🎩"],["사과","🍎"]]},{"a":"호랑이냥은 늦잠을 자서 대회에 못 왔어요.","b":"호랑이냥은 제일 먼저 결승선에 들어왔다고 했어요. 하지만 호랑이냥은 늦잠을 자서 대회에 오지 않았어요.","q":"호랑이냥은 왜 대회에 못 왔나요?","ans":["늦잠을 자서","😴"],"o":[["비가 와서","🌧️"],["길을 잃어서","🧭"]]},{"a":"고슴도치가 다시 금메달을 목에 걸었어요.","b":"대장 호랑이는 기록과 다른 거짓말을 모두 깨뜨렸어요. 고슴도치는 다시 금메달을 목에 걸고 활짝 웃었어요.","q":"금메달은 누가 목에 걸었나요?","ans":["고슴도치","🦔"],"o":[["호랑이냥","🐯"],["다람쥐","🐿️"]]}],"k4":[{"a":"스피니의 생일 케이크가 사라졌어요.","b":"오늘은 거미 스피니의 생일이에요. 그런데 식탁 위에 있던 딸기 케이크가 사라졌어요.","q":"무엇이 사라졌나요?","ans":["케이크","🎂"],"o":[["풍선","🎈"],["선물","🎁"]]},{"a":"포크 손잡이에 '뚱'이라고 쓰여 있었어요.","b":"뚱냥은 케이크 냄새도 못 맡았다고 했어요. 하지만 크림이 묻은 포크 손잡이에 '뚱'이라고 쓰여 있었어요.","q":"포크 손잡이에 무슨 글자가 있었나요?","ans":["뚱",""],"o":[["백",""],["흑",""]]},{"a":"친구들은 새 케이크를 함께 만들었어요.","b":"달빛 토끼는 스피니를 따뜻하게 위로했어요. 친구들은 새 케이크를 함께 만들어 생일 파티를 했어요.","q":"친구들은 함께 무엇을 만들었나요?","ans":["새 케이크","🎂"],"o":[["모래성","🏰"],["종이배","⛵"]]}],"k5":[{"a":"친구들이 모두 동굴 앞으로 갔어요.","b":"갈매기는 초대장에 등대 앞에서 조개 잔치를 한다고 썼어요. 그런데 친구들은 모두 깜깜한 동굴 앞으로 갔어요.","q":"친구들은 어디로 갔나요?","ans":["동굴 앞","🕳️"],"o":[["등대 앞","🗼"],["학교 앞","🏫"]]},{"a":"우체통 위에 보라색 잉크가 있었어요.","b":"보라냥은 초대장에 손도 안 댔다고 했어요. 하지만 우체통 위에 보라색 잉크 방울이 떨어져 있었어요.","q":"우체통 위에 무엇이 있었나요?","ans":["보라색 잉크","🟣"],"o":[["하얀 깃털","🪶"],["노란 모래","🟡"]]},{"a":"친구들은 등대 앞에서 조개 잔치를 했어요.","b":"하늘 용은 갈매기의 수첩과 똑같이 초대장을 고쳤어요. 친구들은 등대 앞에 모여 조개 잔치를 했어요.","q":"친구들은 어디에서 잔치를 했나요?","ans":["등대 앞","🗼"],"o":[["동굴 앞","🕳️"],["학교 앞","🏫"]]}],"k6":[{"a":"창고 상자의 이름표가 모두 바뀌었어요.","b":"스승님의 창고에는 신기한 상자가 많아요. 그런데 보라냥이 이름표를 몽땅 비슷한 낱말로 바꿔 붙였어요.","q":"무엇이 바뀌었나요?","ans":["이름표","🏷️"],"o":[["상자 색깔","🎨"],["창고 문","🚪"]]},{"a":"바뀐 이름표는 보라색 글씨였어요.","b":"보라냥은 펜 같은 건 가져 본 적도 없다고 했어요. 하지만 바뀐 이름표는 모두 보라색 글씨였어요.","q":"바뀐 이름표는 무슨 색 글씨였나요?","ans":["보라색","🟣"],"o":[["까만색","⚫"],["초록색","🟢"]]},{"a":"모든 상자에 바른 이름표를 붙였어요.","b":"바람 뱀은 물건 설명을 읽고 수수께끼를 하나씩 풀었어요. 그리고 모든 상자에 바른 이름표를 붙였어요.","q":"이제 상자에는 어떤 이름표가 붙어 있나요?","ans":["바른 이름표","✅"],"o":[["엉터리 이름표","❌"],["빈 이름표","⬜"]]}],"k7":[{"a":"쿠키 순서표가 뒤죽박죽 섞였어요.","b":"다람쥐는 친구들에게 줄 도토리 쿠키를 굽기로 했어요. 그런데 빵집 벽의 순서표가 뒤죽박죽 섞여 있었어요.","q":"무엇이 뒤죽박죽 섞였나요?","ans":["순서표","📋"],"o":[["도토리","🌰"],["밀가루","🌾"]]},{"a":"가위에 회색 털이 붙어 있었어요.","b":"회색냥은 가위를 만진 적도 없다고 했어요. 하지만 식탁 밑 가위에 회색 털이 붙어 있었어요.","q":"가위에 무엇이 붙어 있었나요?","ans":["회색 털","🐈"],"o":[["초콜릿","🍫"],["반창고","🩹"]]},{"a":"다람쥐는 쿠키를 친구들에게 나눠 주었어요.","b":"질주 말은 쿠키 만드는 순서를 차례차례 맞췄어요. 다람쥐는 고소한 쿠키를 구워 친구들에게 나눠 주었어요.","q":"다람쥐는 쿠키를 어떻게 했나요?","ans":["나눠 주었어요","🤲"],"o":[["혼자 먹었어요","😋"],["버렸어요","🗑️"]]}],"k8":[{"a":"도서관의 친구 카드가 뒤섞였어요.","b":"비버는 도서관 벽에 친구 소개 카드를 붙였어요. 그런데 밤사이 카드가 몽땅 뒤섞였어요.","q":"무엇이 뒤섞였나요?","ans":["친구 카드","🃏"],"o":[["책장","📚"],["의자","🪑"]]},{"a":"책장 앞에 과자 부스러기가 있었어요.","b":"뚱냥은 도서관에 간 적도 없다고 했어요. 하지만 책장 앞에 과자 부스러기가 잔뜩 떨어져 있었어요.","q":"책장 앞에 무엇이 떨어져 있었나요?","ans":["과자 부스러기","🍪"],"o":[["나뭇잎","🍂"],["단추","🔘"]]},{"a":"구름 양이 카드를 제자리에 붙였어요.","b":"구름 양은 '친구 소개' 책을 꼼꼼히 읽었어요. 그리고 카드를 하나씩 제자리에 붙였어요.","q":"카드를 제자리에 붙인 친구는 누구인가요?","ans":["구름 양","🐑"],"o":[["뚱냥","🐱"],["비버","🦫"]]}],"k9":[{"a":"개울가의 물레방아가 멈췄어요.","b":"물레방아가 돌아야 밀을 빻아 빵을 만들 수 있어요. 그런데 오늘 아침 물레방아가 멈춰 버렸어요.","q":"무엇이 멈췄나요?","ans":["물레방아","🎡"],"o":[["시계","⏰"],["자동차","🚗"]]},{"a":"개울이 커다란 돌로 막혀 있었어요.","b":"회색냥은 물레방아가 원래 혼자 멈춘다고 했어요. 하지만 개울 위쪽이 커다란 돌로 꽉 막혀 있었어요.","q":"개울은 무엇으로 막혀 있었나요?","ans":["돌","🪨"],"o":[["나무","🌳"],["얼음","🧊"]]},{"a":"돌을 치우자 물레방아가 다시 돌았어요.","b":"재주 원숭이는 물레방아가 멈춘 까닭을 알아냈어요. 돌을 치우자 물이 흐르고 물레방아가 다시 빙글빙글 돌았어요.","q":"무엇을 치우니 물레방아가 다시 돌았나요?","ans":["돌","🪨"],"o":[["눈","❄️"],["모래","🏖️"]]}],"k10":[{"a":"별빛 축제 안내문이 이상하게 바뀌었어요.","b":"이번 주말에 마을 광장에서 별빛 축제가 열려요. 그런데 축제 안내문이 이상하게 바뀌어 있었어요.","q":"무슨 축제가 열리나요?","ans":["별빛 축제","🌟"],"o":[["눈꽃 축제","❄️"],["꽃 축제","🌸"]]},{"a":"풀통 뚜껑에 '백'이라고 쓰여 있었어요.","b":"백묘는 풀 같은 건 쓴 적도 없다고 했어요. 하지만 나무통 옆 풀통 뚜껑에 '백'이라고 쓰여 있었어요.","q":"풀통 뚜껑에 무슨 글자가 있었나요?","ans":["백",""],"o":[["뚱",""],["흑",""]]},{"a":"친구들은 모두 함께 축제를 즐겼어요.","b":"새벽 닭은 진짜 안내문을 친구들에게 읽어 주었어요. 토요일 저녁, 친구들은 모두 함께 축제를 즐겼어요.","q":"축제에는 누가 왔나요?","ans":["친구들 모두","👫"],"o":[["백묘만","🐱"],["아무도 안 왔어요","🚫"]]}],"k11":[{"a":"고슴도치의 등불이 사라졌어요.","b":"어두운 광산에서는 등불이 꼭 필요해요. 그런데 오늘 아침 고슴도치의 등불이 사라졌어요.","q":"무엇이 사라졌나요?","ans":["등불","🏮"],"o":[["망치","🔨"],["수정","💎"]]},{"a":"수레 위에 흑묘의 쪽지가 있었어요.","b":"흑묘는 등불이 뭔지도 모른다고 했어요. 하지만 수레 위에 흑묘가 쓴 쪽지가 남아 있었어요.","q":"수레 위에 무엇이 있었나요?","ans":["쪽지","📝"],"o":[["등불","🏮"],["수정","💎"]]},{"a":"등불은 큰 바위 뒤에 숨겨져 있었어요.","b":"용감한 개는 메모에 적힌 길을 그대로 따라갔어요. 등불은 큰 바위 뒤에 숨겨져 있었어요.","q":"등불은 어디에 있었나요?","ans":["바위 뒤","🪨"],"o":[["나무 위","🌳"],["다리 밑","🌉"]]}],"k12":[{"a":"숲속 신문의 제목이 바뀌었어요.","b":"다람쥐는 '숲속 신문'을 만들어요. 그런데 이번 주 신문 제목이 '호랑이냥, 혼자서 다리를 고치다!'로 바뀌었어요.","q":"무엇이 바뀌었나요?","ans":["신문 제목","📰"],"o":[["다리 색깔","🌉"],["숲 이름","🌲"]]},{"a":"다리를 고친 건 비버였어요.","b":"호랑이냥은 다리를 혼자 고쳤다고 했어요. 하지만 사진에는 비버가 망치로 다리를 고치는 모습이 있었어요.","q":"다리를 고친 건 누구인가요?","ans":["비버","🦫"],"o":[["호랑이냥","🐯"],["다람쥐","🐿️"]]},{"a":"새 신문에 바른 제목이 실렸어요.","b":"든든 돼지는 신문 기사를 끝까지 읽고 바른 제목을 골랐어요. 새 신문에는 '비버, 낡은 다리를 고치다'라는 제목이 실렸어요.","q":"새 신문에는 어떤 제목이 실렸나요?","ans":["바른 제목","✅"],"o":[["엉터리 제목","❌"],["제목 없음","⬜"]]}],"b1":[{"a":"회색냥이 동화책의 문장을 바꿨어요.","b":"어느 밤, 회색냥이 몰래 도서관에 들어왔어요. 그리고 〈토끼와 거북이〉의 문장을 바꿔 버렸어요.","q":"누가 문장을 바꿨나요?","ans":["회색냥","🐈"],"o":[["거북이 스승님","🐢"],["토끼","🐰"]]},{"a":"나무 아래에서 잠든 동물은 토끼예요.","b":"기록에는 토끼가 나무 아래에서 쿨쿨 잤다고 쓰여 있어요. 그래서 책 속 문장을 바르게 고쳤어요.","q":"나무 아래에서 잠든 동물은 누구인가요?","ans":["토끼","🐰"],"o":[["거북이","🐢"],["다람쥐","🐿️"]]},{"a":"거북이가 먼저 결승점에 도착했어요.","b":"거북이는 쉬지 않고 엉금엉금 걸었어요. 그래서 토끼보다 먼저 결승점에 도착했어요.","q":"누가 먼저 결승점에 도착했나요?","ans":["거북이","🐢"],"o":[["토끼","🐰"],["회색냥","🐈"]]}]};
 var RDN={1:["Listen & repeat","듣고 따라 읽기"],2:["Read first","먼저 읽기"],3:["Read alone","혼자 읽기"]};
 var RM=null,lastAct=Date.now();
 function dkey(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
@@ -3982,3 +3982,139 @@ var _duLose0=duLose;duLose=function(){const D=DU,fresh=!!D&&!D.done,stage=!!STAG
 var _duClose0=duClose;duClose=function(){_duClose0();if(TDR==="battle"){TDR=null;setTimeout(()=>tdBack("battle"),250)}};
 /* a playground game started from the card: its back arrow returns to the card instead of the playground menu */
 var _pgPlay0=pgPlay;pgPlay=function(g,lv,o){_pgPlay0(g,lv,o);if(o&&o.td){const b=$("pgBack");if(b)b.onclick=()=>{sfx("tap");pgStop();$("pgOv").hidden=true;TDR=null;renderAll();tdBack()}}};
+
+
+/* ===== v29.3: 3D pictures for every emoji, game-feel package (home menu, parent lock, bigger search picture, result effects) ===== */
+/* -- 3D emoji: Microsoft Fluent Emoji 3D (MIT licence, assets/img/emoji/LICENSE-fluent-emoji.txt), packed in
+   8×8 sheets (assets/img/emoji/e0.webp, e1.webp ..., 160px cells; rebuild with tools/build_emoji_sheets.py). Any emoji written into the page becomes a <span class="emj"> showing its
+   picture, so every device shows the same 3D look. Canvas drawings, inputs, SVG and .noemj parts are left alone. -- */
+var EMJ_MAP={"1f0cf":[0,0],"1f300":[0,1],"1f305":[0,2],"1f308":[0,3],"1f309":[0,4],"1f30a":[0,5],"1f30b":[0,6],"1f30c":[0,7],"1f30d":[0,8],"1f310":[0,9],"1f319":[0,10],"1f327":[0,11],"1f32c":[0,12],"1f32d":[0,13],"1f32e":[0,14],"1f330":[0,15],"1f331":[0,16],"1f332":[0,17],"1f333":[0,18],"1f335":[0,19],"1f336":[0,20],"1f337":[0,21],"1f338":[0,22],"1f339":[0,23],"1f33a":[0,24],"1f33b":[0,25],"1f33d":[0,26],"1f341":[0,27],"1f342":[0,28],"1f343":[0,29],"1f344":[0,30],"1f345":[0,31],"1f346":[0,32],"1f347":[0,33],"1f348":[0,34],"1f349":[0,35],"1f34a":[0,36],"1f34b":[0,37],"1f34c":[0,38],"1f34d":[0,39],"1f34e":[0,40],"1f350":[0,41],"1f351":[0,42],"1f352":[0,43],"1f353":[0,44],"1f354":[0,45],"1f355":[0,46],"1f356":[0,47],"1f357":[0,48],"1f359":[0,49],"1f35a":[0,50],"1f35b":[0,51],"1f35c":[0,52],"1f35d":[0,53],"1f35e":[0,54],"1f35f":[0,55],"1f360":[0,56],"1f363":[0,57],"1f364":[0,58],"1f366":[0,59],"1f367":[0,60],"1f369":[0,61],"1f36a":[0,62],"1f36b":[0,63],"1f36c":[1,0],"1f36d":[1,1],"1f36e":[1,2],"1f36f":[1,3],"1f370":[1,4],"1f371":[1,5],"1f372":[1,6],"1f373":[1,7],"1f374":[1,8],"1f375":[1,9],"1f37c":[1,10],"1f37d":[1,11],"1f37f":[1,12],"1f380":[1,13],"1f381":[1,14],"1f382":[1,15],"1f384":[1,16],"1f385":[1,17],"1f386":[1,18],"1f388":[1,19],"1f389":[1,20],"1f392":[1,21],"1f3a0":[1,22],"1f3a1":[1,23],"1f3a2":[1,24],"1f3a3":[1,25],"1f3a4":[1,26],"1f3a8":[1,27],"1f3b2":[1,28],"1f3b3":[1,29],"1f3b5":[1,30],"1f3b8":[1,31],"1f3b9":[1,32],"1f3ba":[1,33],"1f3bb":[1,34],"1f3be":[1,35],"1f3c0":[1,36],"1f3c9":[1,37],"1f3ca":[1,38],"1f3cd":[1,39],"1f3d0":[1,40],"1f3d3":[1,41],"1f3d6":[1,42],"1f3db":[1,43],"1f3dd":[1,44],"1f3df":[1,45],"1f3e0":[1,46],"1f3e4":[1,47],"1f3e5":[1,48],"1f3e6":[1,49],"1f3e8":[1,50],"1f3eb":[1,51],"1f3ed":[1,52],"1f3f0":[1,53],"1f406":[1,54],"1f40a":[1,55],"1f40c":[1,56],"1f40d":[1,57],"1f410":[1,58],"1f411":[1,59],"1f414":[1,60],"1f418":[1,61],"1f419":[1,62],"1f41a":[1,63],"1f41b":[2,0],"1f41c":[2,1],"1f41d":[2,2],"1f41e":[2,3],"1f41f":[2,4],"1f420":[2,5],"1f421":[2,6],"1f422":[2,7],"1f424":[2,8],"1f426":[2,9],"1f427":[2,10],"1f428":[2,11],"1f42b":[2,12],"1f42c":[2,13],"1f42d":[2,14],"1f42e":[2,15],"1f42f":[2,16],"1f430":[2,17],"1f431":[2,18],"1f433":[2,19],"1f434":[2,20],"1f435":[2,21],"1f436":[2,22],"1f437":[2,23],"1f438":[2,24],"1f439":[2,25],"1f43a":[2,26],"1f43b":[2,27],"1f43b 200d 2744":[2,28],"1f43c":[2,29],"1f43e":[2,30],"1f43f":[2,31],"1f440":[2,32],"1f442":[2,33],"1f443":[2,34],"1f444":[2,35],"1f445":[2,36],"1f44d":[2,37],"1f44f":[2,38],"1f451":[2,39],"1f453":[2,40],"1f454":[2,41],"1f455":[2,42],"1f456":[2,43],"1f457":[2,44],"1f45b":[2,45],"1f45e":[2,46],"1f45f":[2,47],"1f462":[2,48],"1f46e":[2,49],"1f470":[2,50],"1f474":[2,51],"1f475":[2,52],"1f476":[2,53],"1f478":[2,54],"1f47b":[2,55],"1f47c":[2,56],"1f47d":[2,57],"1f485":[2,58],"1f48d":[2,59],"1f4a1":[2,60],"1f4a7":[2,61],"1f4aa":[2,62],"1f4bb":[2,63],"1f4c5":[3,0],"1f4cc":[3,1],"1f4ce":[3,2],"1f4cf":[3,3],"1f4d3":[3,4],"1f4da":[3,5],"1f4e6":[3,6],"1f4f1":[3,7],"1f4f7":[3,8],"1f4fa":[3,9],"1f50b":[3,10],"1f50d":[3,11],"1f511":[3,12],"1f512":[3,13],"1f525":[3,14],"1f528":[3,15],"1f52a":[3,16],"1f534":[3,17],"1f535":[3,18],"1f53a":[3,19],"1f54a":[3,20],"1f56f":[3,21],"1f576":[3,22],"1f577":[3,23],"1f578":[3,24],"1f58d":[3,25],"1f5fc":[3,26],"1f646":[3,27],"1f680":[3,28],"1f681":[3,29],"1f682":[3,30],"1f687":[3,31],"1f68c":[3,32],"1f68f":[3,33],"1f691":[3,34],"1f692":[3,35],"1f693":[3,36],"1f695":[3,37],"1f697":[3,38],"1f69a":[3,39],"1f69c":[3,40],"1f6a1":[3,41],"1f6aa":[3,42],"1f6b2":[3,43],"1f6bd":[3,44],"1f6c1":[3,45],"1f6cb":[3,46],"1f6cf":[3,47],"1f6e3":[3,48],"1f6f0":[3,49],"1f6f3":[3,50],"1f6f4":[3,51],"1f6f7":[3,52],"1f6fc":[3,53],"1f7e0":[3,54],"1f7e1":[3,55],"1f7e2":[3,56],"1f7e3":[3,57],"1f7e6":[3,58],"1f916":[3,59],"1f91d":[3,60],"1f921":[3,61],"1f927":[3,62],"1f934":[3,63],"1f935":[4,0],"1f941":[4,1],"1f944":[4,2],"1f94a":[4,3],"1f951":[4,4],"1f952":[4,5],"1f954":[4,6],"1f955":[4,7],"1f957":[4,8],"1f95a":[4,9],"1f95b":[4,10],"1f95c":[4,11],"1f95d":[4,12],"1f95e":[4,13],"1f95f":[4,14],"1f962":[4,15],"1f963":[4,16],"1f964":[4,17],"1f965":[4,18],"1f966":[4,19],"1f96a":[4,20],"1f96c":[4,21],"1f96d":[4,22],"1f96f":[4,23],"1f977":[4,24],"1f980":[4,25],"1f981":[4,26],"1f982":[4,27],"1f983":[4,28],"1f985":[4,29],"1f986":[4,30],"1f987":[4,31],"1f988":[4,32],"1f989":[4,33],"1f98a":[4,34],"1f98b":[4,35],"1f98c":[4,36],"1f98d":[4,37],"1f98e":[4,38],"1f98f":[4,39],"1f990":[4,40],"1f991":[4,41],"1f992":[4,42],"1f993":[4,43],"1f994":[4,44],"1f995":[4,45],"1f996":[4,46],"1f997":[4,47],"1f998":[4,48],"1f99a":[4,49],"1f99b":[4,50],"1f99c":[4,51],"1f99d":[4,52],"1f99e":[4,53],"1f99f":[4,54],"1f9a2":[4,55],"1f9a5":[4,56],"1f9a6":[4,57],"1f9a8":[4,58],"1f9a9":[4,59],"1f9ac":[4,60],"1f9ad":[4,61],"1f9b4":[4,62],"1f9b5":[4,63],"1f9b6":[5,0],"1f9b7":[5,1],"1f9c0":[5,2],"1f9c3":[5,3],"1f9c4":[5,4],"1f9c5":[5,5],"1f9c7":[5,6],"1f9ca":[5,7],"1f9d1":[5,8],"1f9d1 200d 1f33e":[5,9],"1f9d1 200d 1f373":[5,10],"1f9d1 200d 1f3a4":[5,11],"1f9d1 200d 1f3a8":[5,12],"1f9d1 200d 1f3eb":[5,13],"1f9d1 200d 1f680":[5,14],"1f9d1 200d 1f692":[5,15],"1f9d1 200d 2695":[5,16],"1f9d9":[5,17],"1f9da":[5,18],"1f9dc":[5,19],"1f9e0":[5,20],"1f9e2":[5,21],"1f9e3":[5,22],"1f9e4":[5,23],"1f9e5":[5,24],"1f9e6":[5,25],"1f9e9":[5,26],"1f9ee":[5,27],"1f9f1":[5,28],"1f9f5":[5,29],"1f9f8":[5,30],"1f9f9":[5,31],"1f9fa":[5,32],"1f9fb":[5,33],"1f9fc":[5,34],"1fa71":[5,35],"1fa80":[5,36],"1fa81":[5,37],"1fa82":[5,38],"1fa91":[5,39],"1fa9c":[5,40],"1fa9e":[5,41],"1fa9f":[5,42],"1faa5":[5,43],"1faa8":[5,44],"1fab0":[5,45],"1fab1":[5,46],"1fab2":[5,47],"1fab4":[5,48],"1fad0":[5,49],"1fad1":[5,50],"1fad6":[5,51],"23f0":[5,52],"23f3":[5,53],"2600":[5,54],"2601":[5,55],"2602":[5,56],"260e":[5,57],"2614":[5,58],"2615":[5,59],"26a1":[5,60],"26bd":[5,61],"26be":[5,62],"26c4":[5,63],"26ea":[6,0],"26f0":[6,1],"26f2":[6,2],"26f3":[6,3],"26f5":[6,4],"26f7":[6,5],"26f8":[6,6],"26fa":[6,7],"2702":[6,8],"2708":[6,9],"2709":[6,10],"270b":[6,11],"270f":[6,12],"2744":[6,13],"2764":[6,14],"2b50":[6,15],"2b55":[6,16],"1f31f":[6,17],"1f328":[6,18],"1f33c":[6,19],"1f33e":[6,20],"1f38a":[6,21],"1f396":[6,22],"1f3a9":[6,23],"1f3aa":[6,24],"1f3ad":[6,25],"1f3ae":[6,26],"1f3af":[6,27],"1f3c1":[6,28],"1f3c3":[6,29],"1f3c6":[6,30],"1f3dc":[6,31],"1f3ee":[6,32],"1f3f3":[6,33],"1f3f7":[6,34],"1f3f9":[6,35],"1f408":[6,36],"1f409":[6,37],"1f413":[6,38],"1f415":[6,39],"1f423":[6,40],"1f425":[6,41],"1f432":[6,42],"1f446":[6,43],"1f449":[6,44],"1f450":[6,45],"1f48c":[6,46],"1f48e":[6,47],"1f497":[6,48],"1f49b":[6,49],"1f4a4":[6,50],"1f4a8":[6,51],"1f4ab":[6,52],"1f4ac":[6,53],"1f4c1":[6,54],"1f4c2":[6,55],"1f4c3":[6,56],"1f4c4":[6,57],"1f4ca":[6,58],"1f4cb":[6,59],"1f4d2":[6,60],"1f4d6":[6,61],"1f4d8":[6,62],"1f4dc":[6,63],"1f4dd":[7,0],"1f4e2":[7,1],"1f4e5":[7,2],"1f4f0":[7,3],"1f4f2":[7,4],"1f4f8":[7,5],"1f501":[7,6],"1f507":[7,7],"1f508":[7,8],"1f50a":[7,9],"1f50e":[7,10],"1f513":[7,11],"1f518":[7,12],"1f51f":[7,13],"1f524":[7,14],"1f526":[7,15],"1f529":[7,16],"1f52e":[7,17],"1f530":[7,18],"1f531":[7,19],"1f537":[7,20],"1f53c":[7,21],"1f570":[7,22],"1f573":[7,23],"1f575":[7,24],"1f58a":[7,25],"1f58b":[7,26],"1f58c":[7,27],"1f5bc":[7,28],"1f5d1":[7,29],"1f5e1":[7,30],"1f5fa":[7,31],"1f604":[7,32],"1f60b":[7,33],"1f61e":[7,34],"1f61f":[7,35],"1f620":[7,36],"1f622":[7,37],"1f628":[7,38],"1f634":[7,39],"1f6ab":[7,40],"1f6d6":[7,41],"1f6e0":[7,42],"1f6e1":[7,43],"1f6e4":[7,44],"1f7eb":[7,45],"1f90d":[7,46],"1f917":[7,47],"1f929":[7,48],"1f932":[7,49],"1f945":[7,50],"1f947":[7,51],"1f9ab":[7,52],"1f9e1":[7,53],"1f9ea":[7,54],"1f9ed":[7,55],"1f9f4":[7,56],"1f9f6":[7,57],"1f9ff":[7,58],"1fa79":[7,59],"1fa83":[7,60],"1fa84":[7,61],"1fa93":[7,62],"1fa99":[7,63],"1faa2":[8,0],"1faaa":[8,1],"1faad":[8,2],"1fab5":[8,3],"1fab6":[8,4],"1fae7":[8,5],"1faf1":[8,6],"21a9":[8,7],"23ed":[8,8],"2694":[8,9],"2699":[8,10],"26ab":[8,11],"26cf":[8,12],"2705":[8,13],"2714":[8,14],"2728":[8,15],"274c":[8,16],"2753":[8,17],"2754":[8,18],"2795":[8,19],"27a1":[8,20],"2b05":[8,21],"2b06":[8,22],"2b1c":[8,23],"1f3d9":[8,24],"1f3e1":[8,25],"1f6a9":[8,26]};
+var EMJ={re:null,bad:{},on:true};
+function emjKey(s){const k=[];for(const ch of s){const c=ch.codePointAt(0);if(c!==0xfe0f)k.push(c.toString(16))}return k.join(" ")}
+function emjBuild(){const keys=Object.keys(EMJ_MAP).sort((a,b)=>b.split(" ").length-a.split(" ").length||b.length-a.length);
+ EMJ.re=new RegExp("(?:"+keys.map(k=>k.split(" ").map(c=>"\\u{"+c+"}\\uFE0F?").join("")).join("|")+")","gu")}
+function emjSpan(e,v){const s=document.createElement("span");s.className="emj s"+v[0];s.setAttribute("role","img");s.setAttribute("aria-label",e);s.dataset.e=e;
+ s.style.backgroundImage="url(assets/img/emoji/e"+v[0]+".webp)";s.style.backgroundPosition=((v[1]%8)*100/7).toFixed(3)+"% "+(Math.floor(v[1]/8)*100/7).toFixed(3)+"%";return s}
+function emjSwapText(t){const s=t.nodeValue;if(!s||s.length>4000)return;EMJ.re.lastIndex=0;let m,last=0,f=null;
+ while((m=EMJ.re.exec(s))){const v=EMJ_MAP[emjKey(m[0])];if(!v||EMJ.bad[v[0]])continue;f=f||document.createDocumentFragment();
+  if(m.index>last)f.appendChild(document.createTextNode(s.slice(last,m.index)));f.appendChild(emjSpan(m[0],v));last=m.index+m[0].length}
+ if(!f)return;if(last<s.length)f.appendChild(document.createTextNode(s.slice(last)));t.parentNode.replaceChild(f,t)}
+/* speech: split text into sentences, but a full stop right before a closing quote and "라고/하고..." does not end the sentence
+   ("설명서에 '지붕을 먼저 올려요.'라고 쓰여 있었어요." stays one line instead of two broken halves) */
+function sentSplit(p,q){const P={".":"\u0001","!":"\u0002","?":"\u0003"},B={"\u0001":".","\u0002":"!","\u0003":"?"};
+ const s=String(p).replace(/[.!?](?=['’」』]+\s?(?:이?라(?:고|며|는|니)|하(?:고|며|는|면서)|고\s))/g,m=>P[m]);
+ return (s.match(q?/[^.!?]+[.!?]*["”]?/g:/[^.!?]+[.!?]*/g)||[s]).map(x=>x.replace(/[\u0001-\u0003]/g,c=>B[c]))}
+/* speech: how a blank (___) is read aloud in the case deduction step. The particle after the blank was written for the
+   answer word, so it is fixed for "무엇": "커다란 ___로" → "커다란 무엇으로", "___ 글씨" → "무슨 글씨", "대회에 ___." → "대회에…" */
+function blankRead(s){const P={"로":"으로","를":"을","는":"은","가":"이","와":"과","랑":"이랑","라고":"이라고","야":"이야","예요":"이에요"};
+ return String(s).replace(/___(?=\s+[가-힣])/g,"무슨").replace(/___(라고|로|를|는|가|와|랑|야|예요)/g,(m,p)=>"무엇"+P[p]).replace(/___(?=['’]?\s*[.!?…]|$)/g,"…").replace(/___/g,"무엇").replace(/…\./g,"…")}
+/* text of an element with the pictures turned back into emoji characters (for tests and any code that reads a label) */
+function emjText(el){if(!el)return "";const c=el.cloneNode(true);c.querySelectorAll(".emj").forEach(x=>x.replaceWith(document.createTextNode(x.dataset.e||"")));return c.textContent}
+var EMJ_SKIP=/^(SCRIPT|STYLE|TEXTAREA|INPUT|OPTION|SELECT|TITLE|CANVAS|CODE)$/;
+function emjBlocked(el){for(let p=el;p&&p.nodeType===1;p=p.parentNode){if(EMJ_SKIP.test(p.nodeName)||p.namespaceURI==="http://www.w3.org/2000/svg"||p.classList.contains("noemj"))return true}return false}
+function emjScan(root){if(!EMJ.on||!EMJ.re||!root||!root.parentNode)return;
+ if(root.nodeType===3){if(!emjBlocked(root.parentNode))emjSwapText(root);return}
+ if(root.nodeType!==1||emjBlocked(root))return;
+ const w=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeType===3?NodeFilter.FILTER_ACCEPT:(EMJ_SKIP.test(n.nodeName)||n.namespaceURI==="http://www.w3.org/2000/svg"||n.classList.contains("noemj"))?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP});
+ const list=[];let n;while((n=w.nextNode()))list.push(n);list.forEach(t=>{if(t.parentNode)emjSwapText(t)})}
+/* a sheet that cannot load (offline before it was saved): show the normal emoji for it instead */
+function emjSheets(){const n=Math.max(...Object.values(EMJ_MAP).map(v=>v[0]))+1;for(let i=0;i<n;i++){const im=new Image();
+ im.onerror=()=>{EMJ.bad[i]=1;document.querySelectorAll(".emj.s"+i).forEach(e=>e.replaceWith(document.createTextNode(e.dataset.e)))};im.src="assets/img/emoji/e"+i+".webp"}}
+(()=>{try{emjBuild();emjSheets();emjScan(document.body);
+ new MutationObserver(ms=>{for(const m of ms){if(m.type==="characterData")emjScan(m.target);else m.addedNodes.forEach(emjScan)}}).observe(document.body,{childList:true,subtree:true,characterData:true})}catch(e){EMJ.on=false;console.error(e)}})();
+/* -- home menu: one big "today's adventure" button first; course, practice battle and shop move under "More" -- */
+var _renderExtras0=renderExtras;renderExtras=function(){_renderExtras0();const ex=$("extras");if(!ex)return;
+ const t=ex.querySelector('[data-x="today"]');
+ if(t){t.classList.add("big");const nx=tdIsLap()?tdNext():null,sub=document.createElement("small");sub.className="xsub";
+  sub.textContent=tdDone()?K("All done for today!","오늘 모험 완료!"):nx?K("Next: ","다음: ")+tdIc(nx)+" "+tdName(nx):K("Tap to start","눌러서 시작");t.appendChild(sub)}
+ ["course","battle","shop"].forEach(k=>{const b=ex.querySelector(`[data-x="${k}"]`);if(b)b.classList.add("xmore")});
+ const m=document.createElement("button");m.className="xbtn xm";m.dataset.x="more";m.setAttribute("aria-expanded",ex.classList.contains("open")?"true":"false");
+ m.innerHTML=`<span class="ic">${ex.classList.contains("open")?"🔼":"➕"}</span>${ex.classList.contains("open")?K("Less","접기"):K("More","더보기")}`;
+ m.onclick=()=>{if(overlayOpen())return;sfx("tap");ex.classList.toggle("open");renderExtras()};ex.appendChild(m)};
+/* -- parent lock in front of the settings: a sum a 5-year-old cannot do yet; unlocked for 10 minutes -- */
+var GATE={until:0};
+function pgate(go){if(Date.now()<GATE.until){go();return}
+ const a=12+Math.floor(Math.random()*27),b=11+Math.floor(Math.random()*27),ans=a+b;let typed="";
+ const ov=$("gateOv");if(!ov){go();return}
+ const draw=()=>{$("gateCard").innerHTML=`<div class="libhead"><h2>🔒 ${K("For grown-ups","어른 확인")}</h2><button class="btn" id="gateX">${K("Close","닫기")}</button></div>
+  <p class="gq">${K("Settings are for parents. Type the answer:","설정은 부모님용이에요. 답을 입력하세요:")}</p><p class="gsum noemj">${a} + ${b} = <span class="gin">${typed||"?"}</span></p>
+  <div class="gpad">${[1,2,3,4,5,6,7,8,9,"del",0,"ok"].map(k=>`<button class="btn${k==="ok"?" pri":""}" data-g="${k}">${k==="del"?K("Del","지우기"):k==="ok"?K("OK","확인"):k}</button>`).join("")}</div>`;
+  $("gateX").onclick=()=>{sfx("tap");ov.hidden=true};
+  $("gateCard").querySelectorAll("[data-g]").forEach(x=>x.onclick=()=>{const k=x.dataset.g;sfx("tap");
+   if(k==="del")typed=typed.slice(0,-1);
+   else if(k==="ok"){if(typed!==""&&+typed===ans){GATE.until=Date.now()+600000;ov.hidden=true;go();return}typed="";toast(K("Not quite. Please ask a grown-up!","다시 해 보세요. 어른에게 부탁해요!"))}
+   else if(typed.length<3)typed+=k;draw()})};
+ draw();ov.hidden=false}
+$("menuBtn").onclick=()=>{if(overlayOpen())return;pgate(showSettings)};
+/* credit line for the 3D emoji (MIT licence asks for the notice; the full text ships in assets/img/emoji/) */
+var _showSettings0=showSettings;showSettings=function(){_showSettings0();const c=$("setCard");if(c&&!c.querySelector(".credit")){const p=document.createElement("p");p.className="credit noemj";
+ p.textContent=K("3D emoji pictures: Microsoft Fluent Emoji (MIT licence).","3D 그림 아이콘: Microsoft Fluent Emoji (MIT 라이선스)");c.appendChild(p)}};
+/* -- case squad: during the search the picture grows into the empty space (tablets showed only half of the 3:2 picture) -- */
+function kzStageSize(){const st=$("kzStage");if(!st||!KZ)return;if(KZ.act!==1){if(st.style.height)st.style.height="";return}
+ st.style.height="";const cur=st.clientHeight,want=Math.min(innerHeight*.58,st.clientWidth/1.5);if(want>cur+8)st.style.height=Math.round(want)+"px"}
+var _kzFit1=kzFit;kzFit=function(){kzStageSize();_kzFit1()};
+var _kzGo1=kzGo;kzGo=function(n){_kzGo1(n);requestAnimationFrame(()=>{if(KZ)kzFit()})};
+/* -- playground results: the hero cheers next to the stars and the coins fly into the wallet -- */
+function coinBurst(from,n){const to=$("hHero");if(!from||!to)return;const a=from.getBoundingClientRect(),z=to.getBoundingClientRect();if(!a.width||!z.width)return;
+ for(let i=0;i<(n||8);i++)setTimeout(()=>{const c=document.createElement("div");c.className="cfly";c.textContent="🪙";
+  c.style.left=(a.left+a.width/2+Math.random()*90-45)+"px";c.style.top=(a.top+a.height*.6)+"px";document.body.appendChild(c);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{c.style.left=(z.left+z.width*.55)+"px";c.style.top=(z.top+z.height*.5)+"px";c.style.opacity=".15";c.style.transform="scale(.55)"}));
+  setTimeout(()=>c.remove(),950)},i*70)}
+var _pgResult1=pgResult;pgResult=function(){const S=PGS;_pgResult1.apply(this,arguments);if(!S)return;const box=document.querySelector("#pgArea .pgrbox");if(!box)return;
+ const h=document.createElement("div");h.className="pgrhero";h.innerHTML=heroArt(G.char,1);box.appendChild(h);if(!S.o.stage)setTimeout(()=>coinBurst(box,8),500)};
+(()=>{try{renderExtras()}catch(e){console.error(e)}})();
+
+
+/* ===== v29.3 art: painted backgrounds for cases 1, 2, 4–11 (made with ChatGPT, 2026-10-30) =====
+   Each case shows its picture instead of the drawn scene; the clue sparkles sit on the matching objects in the picture.
+   Positions are % of the 3:2 picture and stay inside the part every screen shows (x 16–85, mostly y 25–90). */
+(()=>{const P="assets/img/case/";
+ const BG={k1:"case01_rat",k2:"case02_ox",k4:"case04_rabbit",k5:"case05_dragon",k6:"case06_snake",k7:"case07_horse",
+  k8:"case08_sheep",k9:"case09_monkey",k10:"case10_rooster",k11:"case11_dog"};
+ for(const k in BG)KASSET.bg[k]=P+BG[k]+".webp";
+ const SP={
+  k1:{a:[51,58],b:[76,44],c:[26,59],d:[62,80]},   /* door step · thorn bush · under the mossy rock · leaves on the path */
+  k2:{a:[22,44],b:[72,48],c:[59,44],d:[83,30]},   /* work table · log pile · flat rock · river */
+  k4:{a:[52,64],b:[72,52],c:[31,57],d:[13,27]},   /* grass · in front of the fence · under the table · balloons */
+  k5:{a:[42,72],b:[75,40],c:[23,47],d:[66,84]},   /* pier planks · red mailbox · bench · deck */
+  k6:{a:[40,41],b:[55,67],c:[73,55],d:[27,46]},   /* box label · floor under the shelf · lower shelf · corner */
+  k7:{a:[22,31],b:[47,61],c:[79,63],d:[67,43]},   /* picture board · under the table · floor to the back door · jug */
+  k8:{a:[40,59],b:[26,50],c:[55,44],d:[78,33]},   /* floor in front of the shelves · under the window · book on the table · lamp */
+  k9:{a:[21,35],b:[50,62],c:[31,57],d:[80,63]},   /* sluice at the top of the stream · muddy bank · by the big rock · bank */
+  k10:{a:[17,33],b:[74,47],c:[24,41],d:[64,25]},  /* notice board (paper) · by the barrel · notice board (under the paper) · bunting */
+  k11:{a:[85,47],b:[60,55],c:[30,66],d:[39,46]}}; /* mine cart · mine entrance · path · big rock */
+ KC.forEach(c=>{const s0=SP[c.id];if(s0)c.spots.forEach(s=>{const v=s0[s.k];if(v){s.x=s._x0=v[0];s.y=s._y0=v[1]}})});
+ /* spot fixes a parent made with 🛠 were for the old drawn scenes: drop them once for the cases that now have a picture */
+ if(!G.lay293){if(isObj(G.lay))for(const k in BG)delete G.lay[k];G.lay293=1;save()}
+ layApply()})();
+
+RMS.b2=[
+ {a:"뚱냥이 동화책의 문장을 바꿨어요.",b:"맛있는 냄새를 따라온 뚱냥이 책을 펼쳤어요. 그리고 〈시골 쥐와 도시 쥐〉의 문장을 바꿔 버렸어요.",q:"누가 문장을 바꿨나요?",ans:["뚱냥","🐱"],o:[["회색냥","🐈"],["시골 쥐","🐭"]]},
+ {a:"고양이는 도시 집에 나타났어요.",b:"기록에는 도시 집 식탁 밑에서 '야옹' 소리가 났다고 적혀 있어요. 그래서 책 속 문장을 바르게 고쳤어요.",q:"고양이는 어디에 나타났나요?",ans:["도시 집","🏙️"],o:[["시골 집","🏡"],["바닷가","🏖️"]]},
+ {a:"시골 쥐는 시골 집으로 돌아갔어요.",b:"시골 쥐는 짐을 싸서 시골 집으로 돌아갔어요. 걱정 없이 먹는 보리밥이 제일 맛있었어요.",q:"시골 쥐는 어디로 돌아갔나요?",ans:["시골 집","🏡"],o:[["도시 집","🏙️"],["학교","🏫"]]}];
+RMS.b2.forEach((m,i)=>{m.id="b2_"+i});
+
+
+/* ===== v29.3 course props: the gold "?" block, the orange bricks and the flag pole looked like another famous game.
+   Now: a glowing book orb (still hides a letter), stone blocks and a book gate at the finish (pictures made with ChatGPT,
+   assets/img/course/). If a picture cannot load, the old drawing is used. ===== */
+var CPROP={orb:new Image(),gate:new Image()};CPROP.orb.src="assets/img/course/book_orb.webp";CPROP.gate.src="assets/img/course/book_gate.webp";
+function cpReady(im){return !!(im&&im.complete&&im.naturalWidth>0)}
+var _drawTile0=drawTile;
+drawTile=function(c,ch,cx,cy){
+ const x=cx*T,b=RUN.bumps[cx+","+cy]||0,y=cy*T-(b>0?Math.sin((1-b/.16)*Math.PI)*8:0);
+ if((ch==="?"||ch==="U")&&cpReady(CPROP.orb)){c.save();
+  if(ch==="?"){const g=.5+.5*Math.sin(RUN.t*4+cx);c.shadowColor="rgba(255,226,120,"+(.35+.45*g).toFixed(2)+")";c.shadowBlur=8+10*g}else c.globalAlpha=.42;
+  c.drawImage(CPROP.orb,x-3,y-5,T+6,T+6);c.restore();return}
+ if(ch==="B"){const g=c.createLinearGradient(x,y,x,y+T);g.addColorStop(0,"#B9B1A6");g.addColorStop(1,"#7B7166");
+  rr(c,x+1,y+1,T-2,T-2,9);c.fillStyle=g;c.fill();c.lineWidth=2.5;c.strokeStyle="#3D3630";c.stroke();
+  const h=(cx*7+cy*3)%3;c.strokeStyle="rgba(45,35,25,.45)";c.lineWidth=2;c.beginPath();
+  c.moveTo(x+T*(.25+h*.12),y+T*.28);c.lineTo(x+T*(.4+h*.1),y+T*.52);c.lineTo(x+T*(.33+h*.1),y+T*.74);c.stroke();
+  c.fillStyle="rgba(255,255,255,.28)";c.fillRect(x+7,y+6,T-14,3);
+  c.fillStyle="#6CB04F";c.beginPath();c.ellipse(x+T*.3,y+4,T*.2,4.5,0,0,7);c.ellipse(x+T*.68,y+3,T*.16,3.5,0,0,7);c.fill();return}
+ return _drawTile0.apply(this,arguments)};
+/* the finish: the hero walks into the book gate (the run ends at the same spot as the old flag) */
+function drawGoal(c,x){if(!cpReady(CPROP.gate))return false;const h=5.3*T,w=h*CPROP.gate.naturalWidth/CPROP.gate.naturalHeight;
+ c.save();c.shadowColor="rgba(150,255,200,.55)";c.shadowBlur=12+6*Math.sin(RUN.t*3);c.drawImage(CPROP.gate,x+T*.6-w/2,7*T-h+2,w,h);c.restore();return true}
+/* book 2 voices (VOX is defined above; books/b2/book.js holds the story) */
+VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

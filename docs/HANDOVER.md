@@ -1,6 +1,6 @@
 # 열두동물 한글 수비대 — 인수인계 문서
 
-작성: 2026-10-30 · 기준 버전: v29.2 (Claude 아티팩트 버전과 내용 동일, 파일만 나눔) · 앱 주소: https://jacob-leee.github.io/hangul-guardians/ (GitHub `Jacob-Leee/hangul-guardians`, main 브랜치 루트를 GitHub Pages로 배포)
+작성: 2026-10-30 · 기준 버전: v29.3 (Claude 아티팩트 버전과 내용 동일, 파일만 나눔) · 앱 주소: https://jacob-leee.github.io/hangul-guardians/ (GitHub `Jacob-Leee/hangul-guardians`, main 브랜치 루트를 GitHub Pages로 배포)
 
 ## 1. 한 줄 요약
 
@@ -9,6 +9,15 @@
 - 사용자: 만든 사람(보호자)과 5살 아이. 아이는 받침 있는 글도 꽤 잘 읽는다(2026-10 보호자 확인). 목표는 유창성과 **이해**. 그래서 기본은 아이가 직접 읽고, 소리는 필요할 때만(읽기 도움 3단계).
 - 단계: 프로토타입. 설치형 웹 앱(PWA)으로 아이패드 홈 화면에서 오프라인 실행(v29). 로그인·결제·앱스토어 출시는 아직 시작 안 함.
 - 기술: 순수 HTML/CSS/JavaScript. 빌드 도구·프레임워크·서버 없음.
+
+## 1-1. 작업 분담: 그림은 ChatGPT, 프로그램은 Claude (2026-10-30부터)
+
+- 보호자가 GitHub로 ChatGPT와 Claude를 함께 연결했습니다. **ChatGPT는 그림만** 만들어 `incoming/`에 올리고(커밋 메시지 `img: …`), **Claude가 프로그램**(코드·연결·테스트·배포)을 맡습니다. ChatGPT에 줄 첫 메시지는 `docs/CHATGPT_START.md`, 지금 필요한 그림과 프롬프트는 `docs/IMAGE_REQUESTS.md`.
+- **Claude가 프로그램을 올리기 전에 매번 할 일 (순서 중요)**
+  1. `git fetch` 후 main의 새 커밋, 다른 브랜치, 열린 PR을 확인합니다(`gh api repos/Jacob-Leee/hangul-guardians/pulls?state=open`). GraphQL(`gh pr list`)은 막혀 있으니 REST만 씁니다.
+  2. 새 커밋이 있으면 먼저 받아서(`git merge --ff-only origin/main`) 바뀐 파일을 봅니다. `incoming/`의 그림은 WebP로 줄여 제자리에 넣고 코드에 연결합니다. 처리한 원본만 `incoming/`에서 지웁니다.
+  3. 그다음 프로그램을 고치고 테스트한 뒤 올립니다. 저장소를 새로 채울 때 `incoming/`과 처리하지 않은 남의 파일을 지우지 않습니다(마지막으로 Claude가 아닌 사람이 올린 파일이 사라지면 멈추고 확인).
+- 그림이 대화로 오면(보호자가 직접 첨부) 같은 방법으로 넣고, 원본은 올리지 않습니다.
 
 ## 2. 실행 방법
 
@@ -30,25 +39,32 @@ css/style.css           모든 스타일 (마지막 부분이 동화책 엔진 �
 js/app.js               게임 전체 로직 (약 2,700줄)
 books/b1/book.js        1권 데이터 (이야기·장면·문제·대사)
 books/b1/*.webp         1권 그림: 배경 spread, 캐릭터 포즈, 페이지 그림, 순서 카드, 표지, scene_broken·scene_enter(v27)
-assets/img/...          공용 그림: portrait(초상), hero(전신), villain(악당), card(액션 카드), scene(시작 포스터·섬 지도·코스 숲 등)
+assets/img/...          공용 그림: portrait(초상), hero(전신), villain(악당), card(액션 카드), scene(시작 포스터·섬 지도·코스 숲 등),
+                        case(사건 배경 1·2·4–11, v29.3), course(모험 코스 책 구슬·책 문, v29.3),
+                        emoji(3D 그림 아이콘 판 e0–e8.webp + MIT 라이선스, v29.3)
+books/b2/               2권 〈시골 쥐와 도시 쥐〉 데이터(book.js)와 그림 (v29.3, page3.webp는 임시 그림)
+incoming/               ChatGPT가 올리는 새 그림 원본(앱에 저장되지 않음). Claude가 처리한 뒤 지움
 assets/audio/bgm/       배경음악 10곡 (v28)
 assets/fonts/           Jua·Gowun Dodum(한글) + Fredoka(영문 4굵기) woff2 + OFL 라이선스 — 인터넷 없이도 같은 글꼴
                         npc(사건 친구 5명 × 표정·얼굴, 흑묘 전신, 너구리 상점 주인 — 아티팩트에도 같은 경로로 따로 올림)
 audio/voices.js         녹음 음성 목록 (지금은 비어 있음)
-docs/                   이 문서, IPAD_CHECKLIST.md(실기기 점검표), 더빙 대본(dubbing_characters = 녹음할 캐릭터 대사 157줄,
+docs/                   이 문서, IPAD_CHECKLIST.md(실기기 점검표), IMAGE_REQUESTS.md(ChatGPT 그림 요청서), CHATGPT_START.md,
+                        voice_pack/(AI 녹음 대본: 배역별 대본 27개 + casting.csv, tools/voice_pack.py가 만듦),
+                        더빙 대본(dubbing_characters = 녹음할 캐릭터 대사 155줄,
                         dubbing_letters = 학습 소리 49개, 전체 대본 dubbing_b1 / dubbing_cases),
-                        drafts/(2권 초안 b2.js와 무대 배치 그림 — 아직 게임에 안 불러옴)
+                        drafts/(2권 무대 배치 그림)
 tools/                  make_app.py + sw_template.js(앱 만들기), make_voices.py(OpenAI로 음성 생성),
-                        make_voice_manifest.py(음성 연결), compose_music.py(배경음악 만들기)
+                        make_voice_manifest.py(음성 연결), voice_pack.py(AI 녹음 대본 만들기·녹음 파일 자르기),
+                        build_emoji_sheets.py(새 이모지가 생기면 3D 그림 판 다시 만들기), compose_music.py(배경음악 만들기)
 js/                     app.js (게임 전체) — v28부터 모험 코스 업그레이드도 app.js 끝에 합쳐져 있음
 tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀이터 6종), case-autoplay.js (사건 12개),
                         chaos-sim.js (전체 모드 무작위 시뮬레이터), v29-features.js (읽기 도움·미션·오늘의 모험·부모 요약·백업·마이크),
                         app-offline.js (설치·오프라인·업데이트, 로컬 서버 필요), spot-overlap.js (반짝이 가림·🛠 위치 고치기),
-                        today-lap.js (오늘의 모험 한 바퀴)
+                        today-lap.js (오늘의 모험 한 바퀴), book-auto.js (아무 동화책이나 데이터만 보고 끝까지 자동 진행: b1, b2…)
                         + helpers/ (페이지 안에서 정답을 눌러 주는 도우미)
 ```
 
-스크립트 순서가 중요합니다: `books/*/book.js` → `audio/voices.js` → `js/app.js`.
+스크립트 순서가 중요합니다: `books/*/book.js`(b1, b2) → `audio/voices.js` → `js/app.js`.
 
 ## 4. 게임 구성 (화면에 나오는 것)
 
@@ -158,6 +174,9 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
   - 코드로 그린 배경은 채도·대비를 조금 낮추고 인물에 그림자를 넣어 배경과 구분했습니다.
 - **🛠 그림 위치 고치기 (설정, 부모용)**: 켜고 사건 '현장 조사'나 동화책 '탐색'을 열면 반짝이·두루마리를 끌어 옮길 수 있습니다. 편집 중에는 눌러도 단서로 치지 않습니다. 위치는 `G.lay[사건·책 id][단서 k] = [x%, y%]`로 이 기기에만 저장되고(`layApply`가 `KC[].spots`/`BD[].records`에 덮어씀), '배치 코드 복사'가 그 JSON을 복사합니다. 받은 코드의 숫자를 `KC`의 `spots` 좌표나 책의 `records[].at`에 옮겨 적으면 모든 기기에 반영됩니다.
 - **사건 3 배경**: 1권과 같은 숲속 달리기 코스라서, 1권 spread의 결승선 쪽 절반을 3:2로 잘라 `assets/img/scene/case03_race.webp`로 씁니다(`KASSET.bg.k3`). 반짝이도 그 그림의 결승선·바위에 맞췄습니다.
+- **사건 1·2·4–11 배경 (v29.3)**: ChatGPT로 만든 그림(2026-10-30)을 `assets/img/case/caseNN_<영웅>.webp`로 넣었습니다(`KASSET.bg.kN`, `js/app.js`의 `/* ===== v29.3 art: painted backgrounds` 블록). 반짝이 좌표도 같은 블록의 `SP`에서 그림 속 물건 위로 옮겼습니다(모든 화면에서 보이는 가로 16–85%, 세로 대부분 25–90%). 예전 그린 장면에 맞춰 부모가 🛠로 옮긴 위치는 한 번 지웁니다(`G.lay293`). 사건 12는 아직 그린 장면입니다.
+  - 그림에 없는 물건을 가리키던 반짝이 문장은 고쳤습니다: 사건 8 가짜 단서 벽시계 → 램프, 사건 10 '백' 풀통 의자 밑 → 나무통 옆(읽기 미션 문장도 같이), 풍선 → 깃발, 사건 11 수정 → 바위.
+  - 알려진 차이: 사건 9 그림은 물이 흐르는데 글은 "물이 흐르지 않아요"입니다 → 막힌 그림을 요청했고(`docs/IMAGE_REQUESTS.md` ③), 오면 지금 그림은 해결 장면(`KASSET.fix.k9`)에 씁니다. 사건 2 그림에는 무너진 오두막이 없지만, 기술 단계의 오두막 짓기(`kzHut`, 코드로 그린 조각)가 그 역할을 합니다.
 - 단서 그림 `KASSET.item.k1_a`(사건 id + 단서 k), 기술 소품 `KASSET.item.k1_box` · `k1_key`, 해결 후 변화 `KASSET.fix.k1 = {src, x, y, w}`(장면 기준 %). 현장 조사의 단서 표시는 반짝임만 보이고, 눌러야 물건이 나타납니다(그림만 보고 단서를 고르지 못하게).
 - 에셋 제작 기준과 1차 프롬프트: Claude 문서 "열두동물 한글 수비대 에셋 제작 가이드". 받은 파일 위치: `assets/img/npc/`, `assets/img/case/`, `assets/img/item/`, `audio/bgm/`, `audio/amb/`, `audio/sfx/`.
 
@@ -229,9 +248,24 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 - **아이패드 저장 정책:** 홈 화면 앱은 Safari의 '7일 동안 안 쓰면 저장소 삭제' 대상이 아닙니다(WebKit 정책). 그래도 `navigator.storage.persist()`를 요청합니다.
 - **앱스토어 앱:** 필요해지면 이 폴더를 Capacitor 같은 도구로 감싸면 됩니다. Mac, Xcode, Apple 개발자 계정이 필요하며 아직 시작하지 않았습니다.
 
+## 4-7. 3D 그림 아이콘 · 첫 화면 · 부모 잠금 (v29.3)
+
+- **3D 그림 아이콘**: 화면에 쓰인 이모지는 모두 `<span class="emj">`로 바뀌어 Microsoft Fluent Emoji 3D 그림(MIT 라이선스, `assets/img/emoji/LICENSE-fluent-emoji.txt`, 설정 화면 맨 아래에 표기)을 보여 줍니다. 그림은 160px 칸 8×8 판(`e0.webp`…, 약 1.8MB)에 모여 있고, `js/app.js`의 `var EMJ_MAP={…}`이 이모지 → (판, 칸)입니다. 글자를 넣는 순간 `MutationObserver`가 바꾸므로 다른 코드는 그대로 이모지를 쓰면 됩니다. 캔버스·입력칸·SVG·`.noemj` 안은 바꾸지 않습니다. 판을 못 불러오면 그 판의 그림만 원래 이모지로 돌아갑니다.
+  - 코드에서 화면 글자를 읽을 때는 `emjText(요소)`(그림을 이모지로 되돌린 글자)를 씁니다.
+  - **새 이모지를 글에 넣으면** `python tools/build_emoji_sheets.py`(git과 Pillow 필요, Fluent 저장소에서 필요한 그림만 받음) → `python tools/make_app.py`. 있던 그림의 칸은 그대로 두고 새 것만 뒤에 붙입니다. 3D 그림이 없는 기호(← ↑ → ★ ☆ ♪ ✓ ✕ 👫)는 원래 글자로 나옵니다.
+- **첫 화면**: 맨 위 큰 '☀️ 오늘의 모험' 버튼(다음 게임 이름·완료 표시) → 한글 섬 모험·한글 놀이터·사건 수사대 → '➕ 더보기'(모험 코스·연습 배틀·상점). `renderExtras`를 감싸서 만듭니다.
+- **부모 잠금** `pgate(go)`: 메뉴(설정)를 누르면 두 자리 + 두 자리 덧셈(12–38 + 11–37)을 풀어야 열리고, 맞히면 10분 동안 다시 묻지 않습니다(`GATE.until`, 저장 안 함).
+- **결과 화면 연출**: 놀이터 결과에 영웅이 두 번 뛰고(`.pgrhero`) 동전이 지갑으로 날아갑니다(`coinBurst`). 창은 톡 튀어나오고(`ovIn`, 움직임 줄이기 설정이면 끔) 버튼은 누르면 살짝 눌립니다.
+
 ## 5. 동화책 엔진 — 데이터 형식
 
 책 한 권 = `books/<id>/book.js` 하나 + 그림 폴더. 엔진 코드는 고치지 않습니다.
+
+- **2권 〈시골 쥐와 도시 쥐〉 (v29.3에 열림)**: `books/b2/`. ChatGPT 그림 8장(무대, 이야기 그림 1·2, 시골 쥐·도시 쥐 기본·놀람, 집고양이)에 맞춰 자리를 다시 잡았습니다. 이 무대는 식당이 사람 크기로 그려져 있고 넓은 화면에서는 무대 아래쪽 약 58%만 보이므로, 쥐는 식탁 위가 아니라 식탁 옆 바닥에 서고(받은 이야기 그림 2와 같음) 크기는 `h:26`, 고양이 `h:30`. 시골 집 문은 가로 14%, 길은 세로 약 75%.
+  - `page3.webp`는 **임시 그림**(무대 그림의 시골 쪽을 잘라 시골 쥐를 얹음). 진짜 그림이 오면 파일만 바꾸면 됩니다.
+  - 선택 그림(걷기·기쁨·뽐내기·덮치기·표지)은 기본 자세와 이야기 그림 1을 대신 씁니다. 오면 `poses`의 파일 이름만 바꿉니다.
+  - 목소리 `VOX.sb_country`·`VOX.sb_city`와 읽기 미션 `RMS.b2`는 `js/app.js`(끝부분)에 있습니다(`books/b2/book.js`보다 늦게 정의되는 것들이라서).
+  - 끝까지 자동 진행: `node tests/book-auto.js index.html b2` (휴대폰은 끝에 `phone`).
 
 `app.js`의 `BOOKS` 목록(12권: id, 주인 동물, 제목, 악당, 색)은 이미 채워져 있고, `BOOKDATA[id]`가 있으면 그 책이 열립니다.
 
@@ -309,7 +343,9 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 - 목소리 ID: `narrator`, `mentor`(거북이 스승님), 영웅 12명(`rat`…`pig`), 악당(`v_gray` 등), 동화 속 배우(`sb_rabbit`, `sb_turtle`).
 
 ### 녹음 음성 (AI 더빙)
-- **v29부터 녹음 범위를 줄였습니다.** 아이가 글을 직접 읽으므로 내레이터·거북이 스승님 대사는 기기 음성(🔊 누를 때만)으로 두고, 녹음은 `docs/dubbing_characters.csv/.md`(캐릭터 대사 157줄, 3,489자, 배역 25)만 하면 됩니다.
+- **v29부터 녹음 범위를 줄였습니다.** 아이가 글을 직접 읽으므로 내레이터·거북이 스승님 대사는 기기 음성(🔊 누를 때만)으로 두고, 녹음은 `docs/dubbing_characters.csv/.md`(캐릭터 대사 155줄, 3,489자, 배역 25)만 하면 됩니다.
+- **AI 녹음 팩 (v29.3)**: `python tools/voice_pack.py make` → `docs/voice_pack/`(배역별 대본 27개: 캐릭터 25 + 선택 2(거북이 스승님 42줄, 글자 소리 49개), `casting.csv`: 목소리 방향·오디션 문장·크레딧). 추천 도구는 타입캐스트(한국어 목소리, 미리듣기는 무료이고 다운로드할 때만 1글자 = 1크레딧, Basic 월 30,000크레딧). 배역마다 대본 전체를 한 파일로 받아 오면 `python tools/voice_pack.py split <폴더>`가 줄 사이 쉼을 찾아 파일명대로 자르고(쉼이 줄 안의 쉼과 비슷하면 경고), 배역마다 소리 크기를 맞춥니다. 그다음 `make_voice_manifest.py` → `make_app.py`.
+- 문장 나누기 고침 (v29.3): `'…올려요.'라고`처럼 따옴표 안에서 끝나는 문장을 두 조각으로 자르던 문제를 `sentSplit`으로 고쳐 비버 대사 2줄이 한 줄씩이 되었습니다(157 → 155줄, 사건 2·8 파일 번호가 하나씩 당겨짐. 녹음 전이라 영향 없음). 사건 추리 빈칸은 `blankRead`로 "무엇으로/무슨 글씨"처럼 조사를 맞춰 읽습니다.
   - 전체 대본: `dubbing_b1.csv`(117줄), `dubbing_cases.csv`(380줄). 파일명·화자·대사·연기 지시가 들어 있습니다.
   - 스승님 대사(42줄)는 선택입니다.
 - 글자 놀이 학습 소리: `docs/dubbing_letters.csv`(49개 = 자음 이름 14, 모음 10, 기본 글자 25). `say()`가 `narrator|글자` 열쇠로 찾고, 없으면 기기 음성을 씁니다(v29).
@@ -338,23 +374,34 @@ tests/                  book1-playthrough.js (1권), playground-autoplay.js (놀
 **정직**
 - 실제 음성 파일이 없으면 "음성 구현됨"이라고 말하지 않기.
 
+**작업 분담 (2026-10-30)**
+- 그림은 ChatGPT, 프로그램은 Claude. 프로그램을 올리기 전에 GitHub의 새 그림을 먼저 확인해 넣는다(1-1). 남이 올린 파일을 처리 없이 지우지 않는다.
+
 ## 8. 알려진 문제 · 할 일
 
 | 우선 | 내용 |
 |---|---|
-| 높음 | 사건 수사대 배경 11장(`case01_rat.png`, `case02_ox.png`, `case04`…`case12_pig.png`)을 받아 `KASSET.bg`에 연결하고 반짝임 위치를 그림에 맞추기. 사건 3은 1권 그림으로 대체(v29.1). 배경음악은 v28의 10곡으로 충분하고, 환경음·효과음·단서 그림·해결 후 편집본은 만들지 않기로 함(사용자와 정리, 2026-10-30) |
+| 높음 | 사건 배경: 1·2·4–11은 v29.3에 넣음. 남은 것: 사건 12 배경(`case12_pig.png`), 사건 9 막힌 개울 그림(지금 그림은 물이 흘러 글과 다름) → `docs/IMAGE_REQUESTS.md`. 오면 `KASSET.bg.k12`·반짝이 좌표, 사건 9는 지금 그림을 `KASSET.fix.k9`로 |
 | 높음 | 아이패드 실기기 점검 `docs/IPAD_CHECKLIST.md` (설치·오프라인·소리·마이크·백업). 자동 테스트는 크롬 엔진이라 Safari 고유 동작은 확인 못 함 |
-| 높음 | 더빙 파일 받아서 연결 + 설정에 "AI 생성 음성" 표기. 녹음 범위는 `docs/dubbing_characters.md`(157줄) |
+| 높음 | AI 녹음: 대본 팩(`docs/voice_pack/`)과 자르는 도구는 준비됨(v29.3). 녹음 파일을 받으면 `tools/voice_pack.py split` → 연결 → 설정에 "AI 생성 음성" 표기(쓴 도구 이름 포함) |
 | 중간 | 2–12권에도 읽기 미션 3개씩(`RMS.b2`…) — 책을 만들 때 같이 |
-| 높음 | 2권 〈시골 쥐와 도시 쥐〉: 데이터·읽기 미션은 초안 완료(`docs/drafts/b2.js`, 아직 안 불러옴). 꼭 필요한 그림 9장(spread, page1–3, country_stand/scared, city_stand/scared, cat_prowl)이 오면 `books/b2/book.js`로 옮겨 넣기(아래 '새 책 추가 체크리스트'). 3–12권은 미착수 |
+| 높음 | 2권 〈시골 쥐와 도시 쥐〉: v29.3에 열림. `page3.webp`는 임시 그림 → 진짜 그림이 오면 교체. 선택 그림 6장은 있으면 파일 이름만 바꿈. 3–12권은 미착수 |
 | 중간 | 영웅 능력 설명 일부가 옛 배틀 기준이라 지금 효과 없음 (예: 대장 호랑이 "타입 기술 +50%", 번개 쥐 "첫 방패 구슬") → 동화책·무기 배틀에 맞게 다시 정하기 |
 | 중간 | 흑묘 전신 그림 없음 (머리 그림만) · 액션 카드는 옛 잘라낸 그림 |
 | 중간 | 화면에 안 나오는 옛 코드 정리 (4장 참고) |
-| 중간 | 낱말 그림이 이모지라 기기(iOS/Android/Windows)마다 모양이 다름 → 출시 전 통일된 그림 세트 검토 |
+| 완료 | 낱말 그림 통일: v29.3에 Microsoft Fluent Emoji 3D(MIT)로 모든 이모지를 같은 3D 그림으로(4-7) |
 | 낮음 | 효과음은 합성음(WebAudio). 실제 녹음 효과음으로 바꿀지 결정 |
 | 낮음 | 로그인·결제·앱스토어 (미착수). 웹 앱 설치·오프라인·글꼴 포함은 v29에 완료 |
 | 낮음 | 음성 엔진이 없는 기기에서는 대사마다 글자 수만큼(한 글자 약 0.4초) 기다립니다. 사건 증인 3명이면 30초 넘게 걸릴 수 있음 → 건너뛰기 버튼으로 넘길 수 있음 |
 | 낮음 | 가로로 눕힌 휴대폰(높이 375–390px)에서는 화면이 위아래로 스크롤됨. 놀이터 시작 버튼은 자동으로 보이게 했지만 사건 수사대 질문 등은 아래로 내려야 보임 |
+
+### v29.3: 3D 그림 아이콘 + 게임다운 화면 + 새 그림(사건 배경 10장, 2권, 코스 소품) + AI 녹음 팩
+- 보호자 결정: 낱말 그림은 'A안'(Microsoft Fluent Emoji 3D, MIT) → 화면의 모든 이모지가 기기와 상관없이 같은 3D 그림(4-7).
+- 게임다운 화면: 첫 화면 맨 위에 큰 '오늘의 모험' 버튼(다음 게임 표시), 모험 코스·연습 배틀·상점은 '➕ 더보기' 안으로. 설정은 부모 잠금(두 자리 덧셈, 10분 동안 열림). 사건 '현장 조사'에서 그림이 빈 공간까지 커짐(`kzStageSize`). 놀이터 결과에 영웅이 뛰고 동전이 지갑으로 날아감. 창이 톡 튀어나오고 버튼이 눌리는 느낌.
+- 새 그림(ChatGPT, 2026-10-30): 사건 배경 10장(4-3), 2권 8장 + 임시 page3(5장), 모험 코스: '?' 블록 → 책 구슬, 깃발 → 책 문, 주황 벽돌 → 돌 블록(다른 유명 게임과 닮지 않게, 출시 전 할 일 해결). 그림이 안 열리면 예전 그림으로 그림.
+- AI 녹음 팩과 자르는 도구(6장). 문장 나누기·빈칸 읽기 고침(6장).
+- 보호자 결정: 앞으로 그림은 ChatGPT, 프로그램은 Claude(1-1). ChatGPT 요청서 `docs/IMAGE_REQUESTS.md`.
+- 테스트: 화면의 글자를 읽는 테스트는 이모지가 그림으로 바뀌므로 `emjText(요소)`로 읽습니다(`tests/helpers/pg-auto.js`의 짝꿍 카드 포함).
 
 ### v29.2: 오늘의 모험 '한 바퀴' + 아이패드 소리 깨우기
 - 보호자 요청: "오늘의 모험을 더 넣어도 된다, 스토리 모드를 뺀 전체 게임을 한 바퀴" → 기본을 게임 8개 한 바퀴 + 읽기 미션 3개 + 낱말 5개로(4-5). 설정에서 짧게로 되돌릴 수 있음.
@@ -445,6 +492,7 @@ node tests/chaos-sim.js 7 14 mix slow    # 무작위 시뮬레이션: 시드 7, 
 node tests/v29-features.js               # 읽기 도움·미션·오늘의 모험·부모 요약·백업 코드·마이크(가짜 인식기)
 node tests/spot-overlap.js               # 화면 5가지 × 사건 12개 + 1권: 반짝이가 가려지거나 그림 밖에 있는지, 🛠 위치 고치기
 node tests/today-lap.js                  # 오늘의 모험 한 바퀴: 카드에서 게임 8개 → 카드 복귀, 축하, 짧게 전환, 소리 확인
+node tests/book-auto.js index.html b2    # 동화책 하나를 데이터만 보고 끝까지 (b1, b2…; 휴대폰은 끝에 phone)
 python -m http.server 8000 &  node tests/app-offline.js   # 설치 가능·오프라인·코드 자동 갱신·업데이트 안내
 ```
 1권 테스트는 도서관 → 프롤로그 → 6단계 → 내 결말까지, 놀이터 테스트는 게임마다 결과 화면까지 자동으로 진행하고 `tests/out/`에 화면을 저장합니다. 실패하면 종료 코드 1. 놀이터 테스트는 6–8분 걸립니다.
@@ -460,5 +508,6 @@ python -m http.server 8000 &  node tests/app-offline.js   # 설치 가능·오�
 - 음성 기다리기: `narrate()`는 새 음성이 시작되면 앞 음성의 완료 콜백을 부르지 않습니다. 그래서 "음성이 끝나면 다음 단계"로 짠 흐름은 도움말·🔊·다른 대사가 끼어들면 멈출 수 있습니다. 동화책은 `bSpeak()`(끼어들면 끝난 것으로 처리)를 쓰고, 사건 수사대는 `kzSay()`(최대 대기 시간)나 감시 타이머를 쓰세요. 화면이 사라진 뒤에 도는 `setTimeout`은 요소·상태가 아직 있는지 먼저 확인하세요 (예: `if(DU!==D0)return`).
 - 화면 글자를 바꾸면 그 줄의 녹음 파일 연결이 끊깁니다(열쇠가 대사 글자). 바꾼 줄은 대본 CSV도 같이 고치고 다시 녹음하세요.
 - 영어/한국어 문구는 `K(en, ko)` 또는 `UI.en / UI.ko`에 함께 있습니다.
+- v29.3 블록(`js/app.js` 끝): 3D 그림 아이콘(`emj*`), `renderExtras`·`showSettings`·`kzFit`·`kzGo`·`pgResult`를 감싸고, 메뉴 버튼의 `onclick`을 부모 잠금으로 바꿉니다. 문장 나누기는 `sentSplit`(대사·동화책 공통), 추리 빈칸 읽기는 `blankRead`. 사건 배경과 반짝이 좌표는 `/* ===== v29.3 art` 블록, 코스 소품은 `drawTile`을 감싸고 깃발 자리에서 `drawGoal`을 부릅니다.
 - v29 블록은 원래 함수를 **감싸는** 방식입니다: `kzGo`, `kzReport`, `caseStart`, `bookEnter`, `goStep`, `bFinish`, `readPage`, `pgRec`, `pgResult`, `showPartner`, v29.1의 `kzFit`·`kzSearch`, v29.2의 `pgPlay`·`clearRun`·`failRun`·`closeRun`·`duWin`·`duLose`·`duClose` (원본은 `_kzGo0` 같은 이름으로 보관). 이 함수들을 고칠 때는 원본 정의를 고치면 감싼 쪽에도 그대로 적용됩니다. 처음 `renderAll()`이 v29 블록보다 먼저 실행되므로 `renderExtras`에서 부르는 `tdChip`/`tdHudSet`은 `function` 선언과 `var`만 씁니다(const를 쓰면 시작할 때 오류).
 - 앱에 들어가는 파일을 바꾸거나 더하면 `python tools/make_app.py`를 다시 실행하세요(4-6).

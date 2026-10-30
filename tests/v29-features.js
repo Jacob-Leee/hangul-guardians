@@ -14,13 +14,13 @@ const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(
  await p.goto('file://'+path.resolve(__dirname,'..','index.html'));await p.waitForTimeout(500);
  await p.addScriptTag({content:HELP('kz-auto.js')});await p.addScriptTag({content:HELP('pg-auto.js')});
  // 1. defaults for a fresh save
- let st=await p.evaluate(()=>({rd:G.rd,auto:G.autoRead,today:G.today&&G.today.d,days:typeof G.days,mic:G.mic,rmOff:G.rmOff,lap:tdIsLap(),hud:$("tdHud").textContent}));
+ let st=await p.evaluate(()=>({rd:G.rd,auto:G.autoRead,today:G.today&&G.today.d,days:typeof G.days,mic:G.mic,rmOff:G.rmOff,lap:tdIsLap(),hud:emjText($("tdHud"))}));
  ok('fresh save → reading help 3, auto read off, today = one lap (0/10)',st.rd===3&&st.auto===false&&st.lap===true&&st.hud==='☀️ 0/10',st);
  // the rest of this test checks the short 3-step flow (the lap has its own test: today-lap.js)
  await p.evaluate(()=>{G.tdLen="short";save();tdHudSet()});
  await p.evaluate(()=>document.querySelector('#spGo').click());await p.waitForTimeout(300);
  await p.evaluate(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await p.waitForTimeout(900);
- st=await p.evaluate(()=>({hud:$("tdHud").textContent,first:document.querySelector('#extras .xbtn').dataset.x,chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent}));
+ st=await p.evaluate(()=>({hud:emjText($("tdHud")),first:document.querySelector('#extras .xbtn').dataset.x,chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent}));
  ok('today button first + chip 0/3',st.first==='today'&&st.chip==='0/3'&&st.hud==='☀️ 0/3',st);
  await p.screenshot({path:`${OUTD}/v29_${phone?'P':'T'}_main.png`});
  // 2. settings rows
@@ -60,14 +60,14 @@ const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(
  await p.waitForTimeout(600);const coins0=await p.evaluate(()=>G.coins);
  await p.evaluate(()=>pgClose());await p.waitForTimeout(800);
  await p.evaluate(()=>{const c=$("lvOk");if(c&&!$("lvOv").hidden)c.click()});await p.waitForTimeout(800);
- st=await p.evaluate(()=>({T:G.today,win:!!document.querySelector('.tdwin'),D:G.days[dkey()],hud:$("tdHud").textContent}));
+ st=await p.evaluate(()=>({T:G.today,win:!!document.querySelector('.tdwin'),D:G.days[dkey()],hud:emjText($("tdHud"))}));
  await p.screenshot({path:`${OUTD}/v29_${phone?'P':'T'}_done.png`});
  ok('game → play step; all three → celebration + paid once',st.T.play===1&&st.win&&st.T.paid===1&&st.D.td===1&&st.hud==='☀️ ✓',{T:st.T,win:st.win,hud:st.hud});
  const coins1=await p.evaluate(()=>{$("tdX").click();tdCelebrate();const c=G.coins;$("tdOv").hidden=true;return c});ok('celebration pays only once',coins1>=coins0,{coins0,coins1});
  const coins2=await p.evaluate(()=>G.coins);ok('second celebration adds nothing',coins2===coins1,{coins1,coins2});
  // 6. weekly parent page
  await p.evaluate(()=>{G.days[dkey(new Date(Date.now()-864e5))]={min:12.5,rm:4,solo:3,qn:4,qok:4,skip:1,help:2,games:1,words:5,mic:0,wrong:{"사과":2},td:1};G.mdate={"사과":dkey()};showPartner()});await p.waitForTimeout(300);
- st=await p.evaluate(()=>({txt:$("pWeek").innerText,cols:document.querySelectorAll('.wkcol').length}));
+ st=await p.evaluate(()=>({txt:emjText($("pWeek")),cols:document.querySelectorAll('.wkcol').length}));
  ok('parent page: 7 day bars + missions + tips',st.cols===7&&/읽기 미션/.test(st.txt)&&/💡/.test(st.txt)&&/사과/.test(st.txt),st.txt.slice(0,160));
  await p.screenshot({path:`${OUTD}/v29_${phone?'P':'T'}_parent.png`,fullPage:true});
  await p.evaluate(()=>{$("parOv").hidden=true});
