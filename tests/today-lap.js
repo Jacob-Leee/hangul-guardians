@@ -1,5 +1,6 @@
-// Today's adventure, one-lap mode (v30.1): 9 games started from the card come back to the card, each counts once,
-// halfway note, words + story, celebration paid once; short mode still works; settings sound check.
+// Today's adventure, island-stones edition (v30.2): the card is gone — 11 sun stones on the island
+// (9 games + story + words). ☀️ guides to the next stone; each activity counts once; halfway note;
+// celebration paid once; sound check in settings.
 // node tests/today-lap.js [page.html] [phone]     (screenshots in tests/out/lap_*.png, exit code 1 on failure)
 const {chromium}=require('playwright');const fs=require('fs');const path=require('path');
 const OUTD=path.join(__dirname,'out');fs.mkdirSync(OUTD,{recursive:true});const HELP=f=>fs.readFileSync(path.join(__dirname,'helpers',f),'utf8');
@@ -16,60 +17,67 @@ const out=[];let bad=0;const ok=(n,c,x)=>{if(!c)bad++;out.push((c?'PASS ':'FAIL 
  await p.evaluate(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await p.waitForTimeout(600);
  await p.addScriptTag({content:HELP('pg-auto.js')});await p.addScriptTag({content:HELP('kz-auto.js')});
  const W=ms=>p.waitForTimeout(ms);const closeLv=()=>p.evaluate(()=>{const c=document.getElementById('lvOk');if(c&&!document.getElementById('lvOv').hidden)c.click()});
- let st=await p.evaluate(()=>({hud:emjText($("tdHud")),chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent,len:G.tdLen}));
- ok('default is one lap: HUD 0/11',st.hud==='☀️ 0/11'&&st.chip==='0/11',st);
- await p.evaluate(()=>tdOpen());await W(300);await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_card0.png`)});
- st=await p.evaluate(()=>({g:[...document.querySelectorAll('.tdg')].map(e=>e.dataset.tg),nx:(document.querySelector('.tdg.nx')||{}).dataset,rows:document.querySelectorAll('.tdlist > li').length}));
- ok('card shows 9 games, next = fishing',st.g.length===9&&st.nx&&st.nx.tg==='fish'&&st.rows===3,st);
- const lapN=()=>p.evaluate(()=>tdLapN(tdFresh()));
+ const ACTS=['fish','mole','course','pair','rain','battle','train','trace','fill','story','words'];
+ let st=await p.evaluate(()=>({hud:emjText($("tdHud")),chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent,lap:tdLap().length,tot:tdTotal()}));
+ ok('one lap only: HUD 0/11, 9 games, total 11',st.hud==='☀️ 0/11'&&st.chip==='0/11'&&st.lap===9&&st.tot===11,st);
+ st=await p.evaluate(()=>({n:document.querySelectorAll('.tdstone').length,done:document.querySelectorAll('.tdstone.done').length,nx:emjText(document.querySelector('.tdstone.nx .stn')),tag:(document.querySelector('.tdstone .tag')||{}).textContent}));
+ ok('11 stones on the island, none done, fishing glows first',st.n===11&&st.done===0&&(st.nx||'').includes('🎣')&&/0\/11/.test(st.tag||''),st);
+ await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_island0.png`)});
+ // ☀️ HUD: no card, toast the next stone, walk over and fishing opens by itself
+ await p.evaluate(()=>$("tdHud").click());await W(400);
+ st=await p.evaluate(()=>({td:!$("tdOv").hidden,toast:__toasts.join('|')}));
+ ok('☀️ shows no card and names the next stone',!st.td&&/다음/.test(st.toast),st);
+ let o=null;for(let i=0;i<30;i++){o=await p.evaluate(()=>({pg:!$("pgOv").hidden,g:PGS&&PGS.g}));if(o.pg)break;await W(400)}
+ ok('hero walks to the stone and fishing opens',o.pg&&o.g==='fish',o);
  const playPg=async()=>{for(let k=0;k<260;k++){const d=await p.evaluate(()=>!!document.querySelector('.pgres'));if(d)break;await p.evaluate(()=>PGAUTO(false));await W(250)}await W(700);await closeLv()};
- const backToCard=async()=>{for(let k=0;k<20;k++){const o=await p.evaluate(()=>!$("tdOv").hidden&&!!document.querySelector('.tdlist'));if(o)return true;await W(200)}return false};
- const order=[];
- for(let step=0;step<9;step++){const g=await p.evaluate(()=>tdNext());order.push(g);
-  await p.evaluate(()=>document.querySelector('[data-td="lap"]').click());await W(700);
-  if(g==='course'){const r=await p.evaluate(()=>!$("runOv").hidden);ok('course opens from the card',r);await p.evaluate(()=>clearRun());await W(400);
-   const lbl=await p.evaluate(()=>(document.querySelector('#rStage .rres .tbtns .btn')||{}).textContent);ok('course result offers today\'s adventure',/오늘의 모험/.test(lbl||''),lbl);
-   await p.evaluate(()=>document.querySelector('#rStage .rres .tbtns .btn').click())}
-  else if(g==='battle'){const r=await p.evaluate(()=>!$("duelOv").hidden);ok('practice battle opens from the card',r);
+ const toIsland=async()=>{await p.evaluate(()=>{const hb=document.getElementById('pgHubB');if(hb)hb.click();else pgClose()});await W(400);await closeLv()};
+ await playPg();
+ st=await p.evaluate(()=>({lbl:(document.getElementById('pgHubB')||{}).textContent}));
+ ok('stone game result offers the island',/섬으로/.test(st.lbl||''),st);
+ await toIsland();
+ st=await p.evaluate(()=>{renderAll();return {n:tdCount(),done:document.querySelectorAll('.tdstone.done').length,td:!$("tdOv").hidden}});
+ ok('fishing done: 1/11, stone checked, still no card',st.n===1&&st.done===1&&!st.td,st);
+ // the rest of the lap, invoking each stone directly (walking is covered above)
+ const hitStone=i=>p.evaluate(i=>{let xy=null;for(let y=0;y<H&&!xy;y++)for(let x=0;x<W&&!xy;x++)if(tdStoneAt(x,y)===i+1)xy=[x,y];const a=interactAt(xy[0],xy[1]);a&&a()},i);
+ for(let i=1;i<ACTS.length;i++){const k=ACTS[i];
+  if(k==='story'){await p.evaluate(()=>tdMark('story'));await W(400);await closeLv()}
+  else if(k==='course'){await hitStone(i);await W(900);
+   const r=await p.evaluate(()=>!$("runOv").hidden);ok('course stone opens the course',r);
+   await p.evaluate(()=>clearRun());await W(500);await p.evaluate(()=>closeRun());await W(400);await closeLv()}
+  else if(k==='battle'){await hitStone(i);await W(900);
+   const r=await p.evaluate(()=>!$("duelOv").hidden);ok('battle stone opens a practice battle',r);
    await p.evaluate(()=>{const go=document.getElementById('dGo');go&&go.click()});await W(600);
-   // retry must not pop the card over the battle
-   await p.evaluate(()=>{duLose()});await W(200);await p.evaluate(()=>document.getElementById('dRetry').click());await W(700);
-   const still=await p.evaluate(()=>({duel:!$("duelOv").hidden,td:!$("tdOv").hidden,TDR}));ok('battle retry keeps the battle (card not shown over it)',still.duel&&!still.td&&still.TDR==='battle',still);
-   await p.evaluate(()=>{const go=document.getElementById('dGo');go&&go.click()});await W(500);
-   await p.evaluate(()=>duWin());await W(500);const lbl=await p.evaluate(()=>(document.getElementById('dDone')||{}).textContent);ok('battle result offers today\'s adventure',/오늘의 모험/.test(lbl||''),lbl);
-   await p.evaluate(()=>document.getElementById('dDone').click())}
-  else{const r=await p.evaluate(()=>!$("pgOv").hidden&&PGS&&PGS.o&&PGS.o.td);ok(`${g}: playground game opens from the card`,!!r);await playPg();
-   const lbl=await p.evaluate(()=>(document.getElementById('pgHubB')||{}).textContent);ok(`${g}: result offers today's adventure`,/오늘의 모험/.test(lbl||''),lbl);
-   await p.evaluate(()=>document.getElementById('pgHubB').click())}
-  await W(500);await closeLv();const back=await backToCard();const n=await lapN();ok(`${g}: back on the card, lap ${n}/9`,back&&n===step+1,{back,n});
-  if(step===3){await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_card4.png`)});const t=await p.evaluate(()=>({rest:!!document.querySelector('.tdrest'),toasts:window.__toasts.join(' | ')}));ok('halfway note after 4 games',t.rest,t)}}
- ok('lap order fish…fill (trace included)',order.join()==='fish,mole,course,pair,rain,battle,train,trace,fill',order);
- // repeating a finished game does not count twice; back arrow returns to the card
- await p.evaluate(()=>document.querySelector('.tdg[data-tg="fish"]').click());await W(600);await p.evaluate(()=>{const s=document.querySelector('.pgintro #pgGo');s&&s.click()});await W(300);
- await p.evaluate(()=>document.getElementById('pgBack').click());await W(500);
- st=await p.evaluate(()=>({card:!$("tdOv").hidden,pg:!$("pgOv").hidden,n:tdCount()}));ok('back arrow from a card game returns to the card, no double count',st.card&&!st.pg&&st.n===9,st);
- // words then story → celebration once
- await p.evaluate(()=>document.querySelector('[data-td="words"]').click());await W(300);
- for(let k=0;k<30;k++){const r=await p.evaluate(()=>RMAUTO(false));if(r==='none')break;await W(1200)}
- st=await p.evaluate(()=>({n:tdCount(),hud:emjText($("tdHud"))}));ok('words done → 10/11',st.n===10&&st.hud==='☀️ 10/11',st);
- await p.evaluate(()=>{$("tdOv").hidden=true});const c0=await p.evaluate(()=>G.coins);
- await closeLv();await p.evaluate(()=>tdMark("story"));await W(900);await closeLv();await W(900);
+   await p.evaluate(()=>duWin());await W(600);await p.evaluate(()=>duClose());await W(400);await closeLv()}
+  else if(k==='words'){await hitStone(i);await W(500);
+   const r=await p.evaluate(()=>!$("rmOv").hidden);ok('words stone opens word review',r);
+   for(let k2=0;k2<30;k2++){const r2=await p.evaluate(()=>RMAUTO(false));if(r2==='none')break;await W(1200)}await W(600);await closeLv()}
+  else{await hitStone(i);await W(700);await playPg();await toIsland()}
+  const n=await p.evaluate(()=>tdCount());
+  ok(`${k}: counted once (${n}/11)`,n===i+1,{k,n});
+  if(i===3)await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_mid.png`)});
+  if(i===4){const t=await p.evaluate(()=>__toasts.join(' | '));ok('halfway note after 4 games',/절반/.test(t),t.slice(-130))}}
+ // all 11 → celebration queued once
+ await W(1200);await closeLv();await W(900);
  st=await p.evaluate(()=>({win:!!document.querySelector('.tdwin')&&!$("tdOv").hidden,paid:tdFresh().paid,hud:emjText($("tdHud")),td:G.days[dkey()].td,coins:G.coins}));
  await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_done.png`)});
- ok('all 11 → celebration, paid, HUD ✓',st.win&&st.paid===1&&st.hud==='☀️ ✓'&&st.td===1&&st.coins>c0,st);
- await p.evaluate(()=>document.getElementById('tdX').click());await W(300);const c1=await p.evaluate(()=>{tdCelebrate();const c=G.coins;$("tdOv").hidden=true;return c});ok('celebration pays once',c1===st.coins,{c1,c:st.coins});
- // a level-up screen that comes up first is not covered by the card; the card follows when it closes
- await p.evaluate(()=>{showLv(G.lv);tdBack("course")});await W(500);
- st=await p.evaluate(()=>({lv:!$("lvOv").hidden,td:!$("tdOv").hidden}));ok('level-up first, card waits',st.lv&&!st.td,st);
- await p.evaluate(()=>document.getElementById('lvOk').click());await W(900);
- st=await p.evaluate(()=>({lv:!$("lvOv").hidden,td:!$("tdOv").hidden}));ok('card opens after the level-up closes',!st.lv&&st.td,st);
- await p.evaluate(()=>{$("tdOv").hidden=true});
- // short mode from settings
- await p.evaluate(()=>{G.today={d:dkey(),play:0,story:0,words:0,rm:0,paid:0,lap:{}};save();showSettings()});await W(300);
- await p.evaluate(()=>document.querySelector('[data-tdl="0"]').click());await W(300);
- st=await p.evaluate(()=>({len:G.tdLen,hud:emjText($("tdHud"))}));ok('settings → short: HUD 0/3',st.len==='short'&&st.hud==='☀️ 0/3',st);
- // sound check button
+ ok('all 11 → celebration, paid, HUD ✓',st.win&&st.paid===1&&st.hud==='☀️ ✓'&&st.td===1,st);
+ await p.evaluate(()=>document.getElementById('tdX').click());await W(300);
+ const c1=await p.evaluate(()=>{tdCelebrate();const c=G.coins;$("tdOv").hidden=true;return c});
+ ok('celebration pays once',c1===st.coins,{c1,c:st.coins});
+ st=await p.evaluate(()=>{renderAll();return {done:document.querySelectorAll('.tdstone.done').length,nx:document.querySelectorAll('.tdstone.nx').length,tag:(document.querySelector('.tdstone .tag')||{}).textContent}});
+ ok('island shows 11 checked stones, nothing glowing',st.done===11&&st.nx===0&&/11\/11/.test(st.tag||''),st);
+ // repeating a finished stone works and never double counts
+ await hitStone(0);await W(700);
+ st=await p.evaluate(()=>({pg:!$("pgOv").hidden,g:PGS&&PGS.g}));ok('a done stone can be played again',st.pg&&st.g==='fish',st);
+ await p.evaluate(()=>{pgStop();$("pgOv").hidden=true;renderAll()});
+ const n2=await p.evaluate(()=>tdCount());ok('no double count on repeat',n2===11,n2);
+ // ☀️ while an overlay is open does nothing
+ st=await p.evaluate(()=>{showSettings();const t0=__toasts.length;tdOpen();const r={set:!$("setOv").hidden,quiet:__toasts.length===t0};$("setOv").hidden=true;const g=$("gateOv");if(g)g.hidden=true;return r});
+ ok('☀️ waits while another screen is open',st.set&&st.quiet,st);
+ // sound check button still in settings
+ await p.evaluate(()=>{showSettings()});await W(300);
  await p.evaluate(()=>document.getElementById('auTest').click());await W(700);
- st=await p.evaluate(()=>({stat:($("auStat")||{}).textContent,ctx:window.AC&&AC.state}));ok('sound check shows a status',!!st.stat,st);
- await p.evaluate(()=>{$("setOv").hidden=true;G.tdLen="lap";save()});
+ st=await p.evaluate(()=>({stat:($("auStat")||{}).textContent,tdl:!!$("setCard").querySelector('[data-tdl]')}));
+ ok('sound check shows a status; daily-length row is gone',!!st.stat&&st.tdl===false,st);
+ await p.evaluate(()=>{$("setOv").hidden=true});
  console.log(out.join('\n'));console.log('page errors',JSON.stringify(errs.slice(0,8)));if(errs.length)bad++;await b.close();process.exit(bad?1:0)})();

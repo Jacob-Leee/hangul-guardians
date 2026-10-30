@@ -4328,7 +4328,7 @@ function hqSync(){const h=hqG(),got=[];const give=s=>{const it=hqAward(s,true);i
  if(G.books)Object.keys(G.books).forEach(id=>{if(G.books[id]&&G.books[id].done)give("book_"+id)});
  Object.keys(PGAMES).forEach(g=>{[3,5].forEach(l=>{if(pgStars(g,l)>=1)give(`pg_${g}_${l}`)})});
  return got}
-function hqGiftNext(){if(HQGIFT||!HQQ.length)return;const q=HQQ.shift();HQGIFT=true;let ov=$("hqGiftOv");
+function hqGiftNext(){if(HQGIFT||!HQQ.length)return;if(typeof overlayOpen==='function'&&overlayOpen()){queue(hqGiftNext);return}const q=HQQ.shift();HQGIFT=true;let ov=$("hqGiftOv");
  if(!ov){ov=document.createElement("div");ov.id="hqGiftOv";ov.className="ov center";ov.innerHTML='<div class="card hqgift" id="hqGiftCard" role="dialog" aria-modal="true"></div>';document.body.appendChild(ov)}
  const it=q.it,room=q.room;
  $("hqGiftCard").innerHTML=room?`<div class="hqbox open">🚪</div><h2>${K("A new room!","새 방이 열렸어요!")}</h2><p class="hqgn">${hqN(room.n)}</p><p class="hqwhy">${K(`Your hero reached level ${room.lv}.`,`영웅이 레벨 ${room.lv}이 되었어요.`)}</p>
@@ -4823,14 +4823,86 @@ function tdGoStone(k){TDR=null;hush();
  if(k==="words")return rmWords(function(){});
  if(k==="course")return startRun();
  if(k==="battle")return practiceBattle();
- pgPlay(k,tdPgLv(k))}
+ pgPlay(k,tdPgLv(k),{isl:1})}
 var _ia0=interactAt;interactAt=function(x,y){var i=window.tdStoneAt(x,y);
  if(i){var k=tdActs()[i-1];return function(){sfx("tap");tdGoStone(k)}}
  return _ia0(x,y)};
 /* 돌을 처음 보여줄 때 한 번만 짧은 안내 */
+
+/* ── v30.2: 오늘의 모험 카드 제거 — 해님 돌이 하루 미션의 전부 ── */
+tdIsLap=function(){return true};
+tdBack=function(){};
+tdOpen=function(){if(typeof overlayOpen==="function"&&overlayOpen())return;
+ if(tdDone())return tdCelebrate();
+ var acts=tdActs(),st=stones(),i=-1;
+ for(var j=0;j<acts.length;j++)if(!stDone(acts[j])){i=j;break}
+ if(i<0)return;
+ toast("\u2600\uFE0F "+K("Next: ","다음: ")+stIc(acts[i])+" "+stName(acts[i]));
+ if(st[i]&&$("map")&&!$("map").hidden)goTo(st[i][0],st[i][1]);
+ else tdGoStone(acts[i])};
+/* 설정의 '오늘의 모험 분량' 줄 제거 (항상 한 바퀴) */
+var _set0=showSettings;showSettings=function(){_set0.apply(this,arguments);
+ try{var b=$("setCard").querySelector("[data-tdl]");if(b){var row=b.closest(".setrow");if(row)row.remove()}}catch(e){}};
+/* 돌에서 시작한 놀이터 게임: 결과·뒤로가 섬으로 돌아간다 */
+var _pgRes1=pgResult;pgResult=function(){_pgRes1.apply(this,arguments);var S=PGS;if(!S||!S.o||!S.o.isl)return;
+ var hb=$("pgHubB");if(hb){hb.className="btn pri";hb.textContent="\uD83C\uDFDD\uFE0F "+K("Back to the island","섬으로");
+  hb.onclick=function(){sfx("tap");pgStop();$("pgOv").hidden=true;renderAll()}}};
+var _pgPlay1=pgPlay;pgPlay=function(g,lv,o){_pgPlay1.apply(this,arguments);
+ if(o&&o.isl){var b=$("pgBack");if(b)b.onclick=function(){sfx("tap");pgStop();$("pgOv").hidden=true;renderAll()}}};
 var _rAll0=renderAll;renderAll=function(){_rAll0();
  if(!G.tdIslIntro&&!overlayOpen()&&$("map")&&!$("map").hidden){G.tdIslIntro=1;save();
   setTimeout(function(){if(!overlayOpen())toast("☀️ "+K("Sun stones are on the island now: tap one for today's adventure!","섬에 해님 돌이 생겼어요! 돌을 누르면 오늘의 모험이 시작돼요"))},900)}};
+})();
+
+/* ===== v30d: 우리 본부 — 비스듬히 내려다보는 둥근 3D 기지. 12영웅이 각자 일하고, 가운데 스승님. ===== */
+(function(){
+var JOBS={rat:["🔍",["is studying clues","돋보기로 단서를 연구하는 중!"]],
+ ox:["🏋️",["is training hard","아령으로 힘을 기르는 중!"]],
+ tiger:["🗺️",["is planning the next mission","다음 작전을 짜는 중!"]],
+ rabbit:["🥕",["is tending the garden","텃밭 당근을 돌보는 중!"]],
+ dragon:["🔭",["is watching the sky","망원경으로 하늘을 살피는 중!"]],
+ snake:["✉️",["is sorting the mail","편지를 가지런히 정리하는 중!"]],
+ horse:["📦",["is out on deliveries","소포를 씽씽 나르는 중!"]],
+ sheep:["🧶",["is knitting cloud wool","구름 실로 뜨개질하는 중!"]],
+ monkey:["📚",["is shelving the books","책을 제자리에 꽂는 중!"]],
+ rooster:["📯",["is polishing the morning horn","아침 나팔을 반짝반짝 닦는 중!"]],
+ dog:["🛡️",["is guarding the base","씩씩하게 기지를 지키는 중!"]],
+ pig:["🍪",["is baking snacks for everyone","모두의 간식을 굽는 중!"]]};
+function ensureOv(){var ov=$("hqOv");if(!ov){ov=document.createElement("div");ov.id="hqOv";ov.className="ov center";
+ ov.innerHTML='<div class="card hqc" id="hqCard"></div>';document.body.appendChild(ov)}return ov}
+window.hqBase=function(){var own=hqOwned();
+ var SLOT=[[34,29],[66,29],[18,37],[82,37],[50,26],[12,57],[88,57],[25,70],[75,70],[38,81],[62,81],[50,86]];
+ var pads=CHARS.map(function(c,i){var J=JOBS[c.id]||["⭐",["is helping","여기저기 돕는 중!"]];
+  var x=SLOT[i][0],y=SLOT[i][1],sc=(0.6+(y-26)/60*0.55).toFixed(2),z=10+Math.round(y);
+  return '<button class="hq3pad" data-h="'+c.id+'" aria-label="'+escH(L(c.n))+'" style="--x:'+x.toFixed(1)+'%;--y:'+y.toFixed(1)+'%;--s:'+sc+';--z:'+z+'"><span class="up"><i class="job">'+J[0]+'</i><img src="'+heroBody(c.id)+'" alt=""></span></button>'}).join("");
+ $("hqCard").innerHTML='<div class="hqhead"><h2>🏰 '+K("Our HQ","우리 본부")+'</h2><span class="hqcount">🎁 '+own.length+' / '+HQ_ITEMS.length+'</span><button class="btn" id="hqX">'+K("Close","닫기")+'</button></div>'
+ +'<div class="hq3wrap"><i class="hqcl c1"></i><i class="hqcl c2"></i><i class="hqstar s1">✦</i><i class="hqstar s2">✧</i><i class="hqstar s3">✦</i>'
+ +'<i class="hq3plat"></i><i class="hq3rim"></i>'+pads
+ +'<i class="hq3ped"></i><button class="hq3mentor" id="hqMentor" aria-label="'+K("Master Turtle","거북이 스승님")+'"><img src="'+(DA.mentor||PORT.mentor)+'" alt=""></button>'
+ +'</div>'
+ +'<p class="hqtip hq3tip" id="hqTip" hidden></p>'
+ +'<div class="hq3rooms"><b>🚪 '+K("Rooms","방 구경")+'</b>'+HQ_ROOMS.map(function(x){return '<button class="btn" data-r="'+x.id+'">'+(hqRoomOpen(x)?"":"🔒 ")+hqN(x.n)+'</button>'}).join("")+'</div>';
+ $("hqX").onclick=function(){sfx("tap");hush();$("hqOv").hidden=true;renderAll()};
+ $("hqCard").querySelectorAll(".hq3pad").forEach(function(b){b.onclick=function(){sfx("tap");
+  var id=b.dataset.h,c=CHARS.find(function(x){return x.id===id}),J=JOBS[id];
+  b.classList.remove("hi");void b.offsetWidth;b.classList.add("hi");
+  hqTip("💬 "+L(c.n)+" — "+K(J[1][0],J[1][1]))}});
+ $("hqMentor").onclick=function(){sfx("tap");
+  hqTip(K("Welcome to our HQ! Solve cases and read books to earn treasures.","우리 본부에 온 걸 환영해! 사건을 풀고 책을 읽으면 보물을 받아."),true)};
+ $("hqCard").querySelectorAll(".hq3rooms [data-r]").forEach(function(b){b.onclick=function(){sfx("tap");
+  var x=HQ_ROOMS.find(function(q){return q.id===b.dataset.r});
+  if(!hqRoomOpen(x)){hqTip(K("This room opens when your hero reaches level "+x.lv+".","영웅 레벨 "+x.lv+"이 되면 열려요."),true);return}
+  _hqOpen0(x.id)}})};
+var _hqOpen0=hqOpen;
+hqOpen=function(roomId,itemId){if(roomId)return _hqOpen0(roomId,itemId);
+ hqG();hqSync();var ov=ensureOv();ov.hidden=false;hqBase();
+ var h=hqG();if(!h.intro){h.intro=1;save();setTimeout(function(){if(!$("hqOv").hidden)hqTip(K("Welcome to our round base! Everyone is busy — tap a friend to say hello.","둥근 기지에 온 걸 환영해! 친구를 누르면 인사할 수 있어."))},400)}};
+/* 방 화면 머리에 '기지로' 버튼 */
+var _hqDraw0=hqDraw;hqDraw=function(){_hqDraw0.apply(this,arguments);
+ try{var head=$("hqCard").querySelector(".hqhead");
+  if(head&&!head.querySelector("#hqHome")){var b=document.createElement("button");b.className="btn";b.id="hqHome";
+   b.textContent="⬅ "+K("Base","기지");head.insertBefore(b,head.querySelector("#hqX"));
+   b.onclick=function(){sfx("tap");hqOpen()}}}catch(e){}};
 })();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

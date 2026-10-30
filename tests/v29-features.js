@@ -19,11 +19,11 @@ const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(
  let st=await p.evaluate(()=>({rd:G.rd,auto:G.autoRead,today:G.today&&G.today.d,days:typeof G.days,mic:G.mic,rmOff:G.rmOff,lap:tdIsLap(),hud:emjText($("tdHud"))}));
  ok('fresh save → reading help 3, auto read off, today = one lap (0/11)',st.rd===3&&st.auto===false&&st.lap===true&&st.hud==='☀️ 0/11',st);
  // the rest of this test checks the short 3-step flow (the lap has its own test: today-lap.js)
- await p.evaluate(()=>{G.tdLen="short";save();tdHudSet()});
+ /* v30.2: 하루 분량은 항상 한 바퀴 — 돌로 진행 */
  await p.evaluate(()=>document.querySelector('#spGo').click());await p.waitForTimeout(300);
  await p.evaluate(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await p.waitForTimeout(900);
  st=await p.evaluate(()=>({hud:emjText($("tdHud")),first:document.querySelector('#extras .xbtn').dataset.x,chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent}));
- ok('today button first + chip 0/3',st.first==='today'&&st.chip==='0/3'&&st.hud==='☀️ 0/3',st);
+ ok('today button first + chip 0/11',st.first==='today'&&st.chip==='0/11'&&st.hud==='☀️ 0/11',st);
  await p.screenshot({path:`${OUTD}/v29_${phone?'P':'T'}_main.png`});
  // 2. settings rows
  await p.evaluate(()=>showSettings());await p.waitForTimeout(200);
@@ -51,20 +51,22 @@ const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(
  await p.evaluate(()=>{hush();caseClose()});await p.waitForTimeout(400);
  // 5. today's adventure: words then a game → celebration once
  await p.evaluate(()=>{const c=$("lvOk");if(c&&!$("lvOv").hidden)c.click()});await p.waitForTimeout(200);
- await p.evaluate(()=>tdOpen());await p.waitForTimeout(200);await p.screenshot({path:`${OUTD}/v29_${phone?'P':'T'}_today.png`});
- st=await p.evaluate(()=>[...document.querySelectorAll('.tdlist li')].map(li=>li.className+':'+li.querySelector('b').textContent));ok('today card: story done, play/words open',st.length===3&&st[1].startsWith('done')&&!st[0].startsWith('done'),st);
- await p.evaluate(()=>document.querySelector('[data-td="words"]').click());await p.waitForTimeout(300);
+ await p.evaluate(()=>renderAll());await p.waitForTimeout(300);await p.screenshot({path:`${OUTD}/v29_${phone?'P':'T'}_today.png`});
+ st=await p.evaluate(()=>({card:!$("tdOv").hidden,stones:document.querySelectorAll('.tdstone').length,story:document.querySelectorAll('.tdstone.done').length}));
+ ok('no card — 11 stones on the island, story stone checked',!st.card&&st.stones===11&&st.story===1,st);
+ await p.evaluate(()=>{let xy=null;const acts=tdLap().concat(['story','words']);for(let y=0;y<H&&!xy;y++)for(let x=0;x<W&&!xy;x++){const i=tdStoneAt(x,y);if(i&&acts[i-1]==='words')xy=[x,y]}const a=interactAt(xy[0],xy[1]);a&&a()});await p.waitForTimeout(400);
  await p.screenshot({path:`${OUTD}/v29_${phone?'P':'T'}_words.png`});
  for(let k=0;k<30;k++){const r=await p.evaluate(()=>RMAUTO(false));if(r==='none')break;await p.waitForTimeout(1250)}
- st=await p.evaluate(()=>({T:G.today,D:G.days[dkey()],td:!$("tdOv").hidden}));ok('5 words reviewed → words step done, card back',st.T.words===1&&st.D.words===5&&st.td,{T:st.T,words:st.D.words});
- await p.evaluate(()=>document.querySelector('[data-td="play"]').click());await p.waitForTimeout(500);
+ st=await p.evaluate(()=>({T:G.today,D:G.days[dkey()],td:!$("tdOv").hidden}));ok('5 words reviewed from the stone → words step done, no card',st.T.words===1&&st.D.words===5&&!st.td,{T:st.T,words:st.D.words});
+ await p.evaluate(()=>{const T=tdFresh();tdLap().slice(0,-1).forEach(g=>T.lap[g]=1);save();tdHudSet()});
+ await p.evaluate(()=>{let xy=null;for(let y=0;y<H&&!xy;y++)for(let x=0;x<W&&!xy;x++){const i=tdStoneAt(x,y);if(i===9)xy=[x,y]}const a=interactAt(xy[0],xy[1]);a&&a()});await p.waitForTimeout(600);
  for(let k=0;k<200;k++){const d=await p.evaluate(()=>!!document.querySelector('.pgres')||!PGS);if(d)break;await p.evaluate(()=>PGAUTO(false));await p.waitForTimeout(300)}
  await p.waitForTimeout(600);const coins0=await p.evaluate(()=>G.coins);
  await p.evaluate(()=>pgClose());await p.waitForTimeout(800);
  await p.evaluate(()=>{const c=$("lvOk");if(c&&!$("lvOv").hidden)c.click()});await p.waitForTimeout(800);
  st=await p.evaluate(()=>({T:G.today,win:!!document.querySelector('.tdwin'),D:G.days[dkey()],hud:emjText($("tdHud"))}));
  await p.screenshot({path:`${OUTD}/v29_${phone?'P':'T'}_done.png`});
- ok('game → play step; all three → celebration + paid once',st.T.play===1&&st.win&&st.T.paid===1&&st.D.td===1&&st.hud==='☀️ ✓',{T:st.T,win:st.win,hud:st.hud});
+ ok('last stone → celebration + paid once',st.T.lap.fill===1&&st.win&&st.T.paid===1&&st.D.td===1&&st.hud==='☀️ ✓',{T:st.T,win:st.win,hud:st.hud});
  const coins1=await p.evaluate(()=>{$("tdX").click();tdCelebrate();const c=G.coins;$("tdOv").hidden=true;return c});ok('celebration pays only once',coins1>=coins0,{coins0,coins1});
  const coins2=await p.evaluate(()=>G.coins);ok('second celebration adds nothing',coins2===coins1,{coins1,coins2});
  // 6. weekly parent page
