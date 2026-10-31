@@ -23,7 +23,7 @@ const out=[];const ok=(name,cond,extra)=>{out.push((cond?'PASS ':'FAIL ')+name+(
  await p.evaluate(()=>document.querySelector('#spGo').click());await p.waitForTimeout(300);
  await p.evaluate(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await p.waitForTimeout(900);
  st=await p.evaluate(()=>({hud:tdChip(),first:document.querySelector('#extras .xbtn').dataset.x,chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent}));
- ok('today button first + chip 0/12',st.first==='today'&&st.chip==='0/12',st);
+ ok('Today banner removed from the home menu',st.first!=='today'&&!st.chip,st);
  await p.screenshot({path:`${OUTD}/v29_${phone?'P':'T'}_main.png`});
  // 2. settings rows
  await p.evaluate(()=>showSettings());await p.waitForTimeout(200);

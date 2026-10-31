@@ -4820,7 +4820,7 @@ function stName(k){return k==="story"?K("Read a story","이야기 읽기"):k==="
 var _rEnts0=renderEnts;renderEnts=function(){_rEnts0();var ents=$("ents");if(!ents)return;
  try{var acts=tdActs(),st=stones(),nxt=-1,h="";
   acts.forEach(function(k,i){if(!st[i])return;var d=stDone(k),nx=!d&&nxt<0;if(nx)nxt=i;
-   h+='<div class="ent tdstone'+(d?" done":"")+(nx?" nx":"")+'" style="'+pos(st[i][0],st[i][1])+'" aria-label="'+escH(stName(k))+(d?" ✓":"")+'"><div class="sp"><span class="stn">'+stIc(k)+(d?'<i class="ck">✓</i>':"")+'</span>'+(nx?'<span class="sunb">☀️</span>':"")+'</div>'+(i===0?'<span class="tag">☀️ '+tdCount()+'/'+tdTotal()+'</span>':"")+'</div>'});
+   h+='<div class="ent tdstone'+(d?" done":"")+(nx?" nx":"")+'" style="'+pos(st[i][0],st[i][1])+'" aria-label="'+escH(stName(k))+(d?" ✓":"")+'"><div class="sp"><span class="stn">'+stIc(k)+(d?'<i class="ck">✓</i>':"")+'</span>'+(nx?'<span class="sunb">☀️</span>':"")+'</div></div>'});
   ents.insertAdjacentHTML("beforeend",h)}catch(e){}};
 function tdGoStone(k){TDR=null;hush();
  if(k==="story"){var st=tdStory();if(st.kind==="book")openBook("b1");else{openCases();caseStart(st.i)}return}
@@ -4854,6 +4854,8 @@ var _pgRes1=pgResult;pgResult=function(){_pgRes1.apply(this,arguments);var S=PGS
 var _pgPlay1=pgPlay;pgPlay=function(g,lv,o){_pgPlay1.apply(this,arguments);
  if(o&&o.isl){var b=$("pgBack");if(b)b.onclick=function(){sfx("tap");pgStop();$("pgOv").hidden=true;renderAll()}}};
 try{var _hudB=$("tdHud");if(_hudB)_hudB.remove()}catch(e){}
+var _rExt9=renderExtras;renderExtras=function(){_rExt9.apply(this,arguments);
+ try{var ex=$("extras"),t=ex&&ex.querySelector('[data-x="today"]');if(t)t.remove()}catch(e){}};
 /* 다른 화면이 열려 있을 때 메뉴(부모 잠금)가 그 위로 겹치지 않게 */
 try{var _mb=$("menuBtn");if(_mb)_mb.addEventListener("click",function(e){if(overlayOpen()){e.stopImmediatePropagation();e.preventDefault()}},true)}catch(e){}
 var _rAll0=renderAll;renderAll=function(){_rAll0();

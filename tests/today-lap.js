@@ -18,13 +18,13 @@ const out=[];let bad=0;const ok=(n,c,x)=>{if(!c)bad++;out.push((c?'PASS ':'FAIL 
  await p.addScriptTag({content:HELP('pg-auto.js')});await p.addScriptTag({content:HELP('kz-auto.js')});
  const W=ms=>p.waitForTimeout(ms);const closeLv=()=>p.evaluate(()=>{const c=document.getElementById('lvOk');if(c&&!document.getElementById('lvOv').hidden)c.click()});
  const ACTS=['fish','mole','course','pair','rain','battle','train','trace','opp','fill','story','words'];
- let st=await p.evaluate(()=>({hud:!!$("tdHud"),chip:(document.querySelector('#extras .xbtn .tdp')||{}).textContent,lap:tdLap().length,tot:tdTotal()}));
- ok('sun chip removed; one lap: 10 games, total 12',st.hud===false&&st.chip==='0/12'&&st.lap===10&&st.tot===12,st);
- st=await p.evaluate(()=>({n:document.querySelectorAll('.tdstone').length,done:document.querySelectorAll('.tdstone.done').length,nx:emjText(document.querySelector('.tdstone.nx .stn')),tag:(document.querySelector('.tdstone .tag')||{}).textContent}));
- ok('12 stones on the island, none done, fishing glows first',st.n===12&&st.done===0&&(st.nx||'').includes('🎣')&&/0\/12/.test(st.tag||''),st);
+ let st=await p.evaluate(()=>({hud:!!$("tdHud"),banner:!!document.querySelector('#extras [data-x="today"]'),lap:tdLap().length,tot:tdTotal()}));
+ ok('sun chip + Today banner removed; one lap: 10 games, total 12',st.hud===false&&st.banner===false&&st.lap===10&&st.tot===12,st);
+ st=await p.evaluate(()=>({n:document.querySelectorAll('.tdstone').length,done:document.querySelectorAll('.tdstone.done').length,nx:emjText(document.querySelector('.tdstone.nx .stn')),tag:!!document.querySelector('.tdstone .tag')}));
+ ok('12 stones on the island, none done, fishing glows first, no counter tag',st.n===12&&st.done===0&&(st.nx||'').includes('🎣')&&st.tag===false,st);
  await p.screenshot({path:path.join(OUTD,`lap_${phone?'P':'T'}_island0.png`)});
  // ☀️ HUD: no card, toast the next stone, walk over and fishing opens by itself
- await p.evaluate(()=>{const b=document.querySelector('#extras .xbtn .tdp');(b?b.closest('.xbtn'):null)?tdOpen():tdOpen()});await W(400);
+ await p.evaluate(()=>tdOpen());await W(400);
  st=await p.evaluate(()=>({td:!$("tdOv").hidden,toast:__toasts.join('|')}));
  ok('today button shows no card and names the next stone',!st.td&&/다음/.test(st.toast),st);
  let o=null;for(let i=0;i<30;i++){o=await p.evaluate(()=>({pg:!$("pgOv").hidden,g:PGS&&PGS.g}));if(o.pg)break;await W(400)}
@@ -64,8 +64,8 @@ const out=[];let bad=0;const ok=(n,c,x)=>{if(!c)bad++;out.push((c?'PASS ':'FAIL 
  await p.evaluate(()=>document.getElementById('tdX').click());await W(300);
  const c1=await p.evaluate(()=>{tdCelebrate();const c=G.coins;$("tdOv").hidden=true;return c});
  ok('celebration pays once',c1===st.coins,{c1,c:st.coins});
- st=await p.evaluate(()=>{renderAll();return {done:document.querySelectorAll('.tdstone.done').length,nx:document.querySelectorAll('.tdstone.nx').length,tag:(document.querySelector('.tdstone .tag')||{}).textContent}});
- ok('island shows 12 checked stones, nothing glowing',st.done===12&&st.nx===0&&/12\/12/.test(st.tag||''),st);
+ st=await p.evaluate(()=>{renderAll();return {done:document.querySelectorAll('.tdstone.done').length,nx:document.querySelectorAll('.tdstone.nx').length}});
+ ok('island shows 12 checked stones, nothing glowing',st.done===12&&st.nx===0,st);
  // repeating a finished stone works and never double counts
  await hitStone(0);await W(700);
  st=await p.evaluate(()=>({pg:!$("pgOv").hidden,g:PGS&&PGS.g}));ok('a done stone can be played again',st.pg&&st.g==='fish',st);
