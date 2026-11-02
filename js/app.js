@@ -4979,6 +4979,39 @@ var _rAll0=renderAll;renderAll=function(){_rAll0();
  if(!G.tdIslIntro&&!overlayOpen()&&$("map")&&!$("map").hidden){G.tdIslIntro=1;save();
   setTimeout(function(){if(!overlayOpen())toast("☀️ "+K("Sun stones are on the island now: tap one for today's adventure!","섬에 해님 돌이 생겼어요! 돌을 누르면 오늘의 모험이 시작돼요"))},900)}};
 })();
+/* ── v30.7 강제 업데이트: 자동 적용(기본 켬) + 설정 '앱' 줄에 지금 확인 버튼/토글 ── */
+function appAutoUp(){return G.autoUp!==0}
+var _aub0=appUpdateBar;appUpdateBar=function(){if(APP.waiting&&appAutoUp()){
+  var busy=["libOv","stOv","dlgOv","chalOv","batOv","runOv","duelOv","caseOv","bookOv","pgOv","rmOv","lvOv","evoOv"].some(function(id){var e=$(id);return e&&!e.hidden});
+  if(busy){queue(appUpdateBar);return}
+  toast("🔄 "+K("New version found — updating!","새 버전 발견 — 바로 업데이트!"));try{save()}catch(e){}
+  setTimeout(appApplyUpdate,800);return}
+ _aub0.apply(this,arguments)};
+function appForceUpdate(btn){var done=false,lbl="🔄 "+K("Check for updates","지금 새 버전 확인");
+ var fin=function(msg){if(done)return;done=true;if(btn){btn.disabled=false;btn.textContent=lbl}if(msg)toast(msg)};
+ if(!appMode())return fin(K("This claude.ai copy is always the latest after a reload.","이 화면(claude.ai)은 새로고침만 해도 항상 최신이에요"));
+ if(!("serviceWorker" in navigator)||!APP.reg)return fin(K("The app copy isn't ready yet — try again in a moment.","앱 준비가 아직 안 됐어요. 잠시 뒤 다시 눌러 주세요"));
+ if(btn){btn.disabled=true;btn.textContent="⏳ "+K("Checking…","확인 중…")}
+ var go=function(){fin();try{var b=$("appBar");if(b)b.hidden=true}catch(e){}
+  toast("🔄 "+K("New version found — updating…","새 버전 발견 — 업데이트 중…"));try{save()}catch(e){}setTimeout(appApplyUpdate,800)};
+ if(APP.waiting)return go();
+ var t0=Date.now();try{APP.reg.update().catch(function(){})}catch(e){}
+ (function poll(){if(APP.waiting)return go();
+  if(Date.now()-t0>15000)return fin("✓ "+K("You're already on the latest version.","지금이 최신 버전이에요"));
+  setTimeout(poll,500)})()}
+var _set7=showSettings;showSettings=function(){_set7.apply(this,arguments);
+ try{var st=$("appSt");if(!st||$("upChk"))return;var row=st.closest(".setrow");if(!row)return;
+  var b=document.createElement("button");b.className="btn";b.id="upChk";b.textContent="🔄 "+K("Check for updates","지금 새 버전 확인");
+  b.onclick=function(){sfx("tap");appForceUpdate(b)};
+  var seg=document.createElement("div");seg.className="box seg";seg.setAttribute("role","group");
+  seg.innerHTML='<button data-aup="1" aria-pressed="'+(appAutoUp()?"true":"false")+'">'+K("Auto-update","자동 업데이트")+'</button>'
+   +'<button data-aup="0" aria-pressed="'+(appAutoUp()?"false":"true")+'">'+K("Ask first","물어보고 받기")+'</button>';
+  seg.querySelectorAll("[data-aup]").forEach(function(x){x.onclick=function(){sfx("tap");G.autoUp=+x.dataset.aup;save();
+   seg.querySelectorAll("[data-aup]").forEach(function(y){y.setAttribute("aria-pressed",String(y===x))});
+   if(appAutoUp()&&APP.waiting)appUpdateBar()}});
+  var sm=document.createElement("small");sm.textContent=K("Auto-update: when a new version is found (at launch or when you come back to the app), it installs by itself and restarts in a few seconds — progress is saved. 'Ask first' shows the update bar and waits. 'Check for updates' looks right now.",
+   "자동 업데이트: 새 버전이 보이면(앱을 켤 때나 다시 돌아왔을 때) 몇 초 안에 저절로 설치하고 다시 켜져요 — 진행 기록은 저장돼요. '물어보고 받기'는 업데이트 띠를 먼저 보여주고 기다려요. '지금 새 버전 확인'은 그 자리에서 바로 찾아봐요.");
+  row.appendChild(b);row.appendChild(seg);row.appendChild(sm)}catch(e){}};
 
 /* ===== v30d: 우리 본부 — 비스듬히 내려다보는 둥근 3D 기지. 12영웅이 각자 일하고, 가운데 스승님. ===== */
 (function(){

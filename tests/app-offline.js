@@ -41,13 +41,26 @@ const path=require('path');const BASE=process.env.BASE||'http://localhost:8000/'
   await p.reload();await p.waitForTimeout(1500);
   const m2=await p.evaluate(()=>[...document.scripts].length>0&&typeof G==='object');ok('next launch runs fine with the refreshed code',m2)}
  finally{fs.writeFileSync(ajs,origJs)}
- // update: a changed build appears on the server
+ // force-check button: already on the latest version
+ st=await p.evaluate(()=>{window.__t=[];const t0=toast;window.toast=m=>{__t.push(String(m));return t0(m)};showSettings();const g=$("gateOv");if(g)g.hidden=true;const b=$("upChk"),sg=!!document.querySelector('[data-aup]');b&&b.click();return {btn:!!b,sg}});
+ ok('settings has the update button and the auto toggle',st.btn&&st.sg,st);
+ {let msg=null;const t2=Date.now();while(Date.now()-t2<20000){msg=await p.evaluate(()=>__t.find(m=>/최신 버전|latest version/.test(m))||null);if(msg)break;await p.waitForTimeout(500)}
+  ok("'check now' on the latest build says it is the latest",!!msg,msg)}
+ await p.evaluate(()=>{$("setOv").hidden=true});
+ // update 1: auto-update (default ON) installs a changed build and restarts by itself
  const swp=APPDIR+'/sw.js';const orig=fs.readFileSync(swp,'utf8');fs.writeFileSync(swp,orig.replace(/const VERSION = "([0-9a-f]+)"/,'const VERSION = "$1-next"'));
- try{await p.evaluate(()=>APP.reg.update());let bar=null;const t1=Date.now();while(Date.now()-t1<60000){bar=await p.evaluate(()=>{const b=$("appBar");return b&&!b.hidden?b.textContent:null});if(bar)break;await p.waitForTimeout(500)}
-  ok('update bar appears when a new build is published',!!bar&&/새 버전|new version/.test(bar),bar);
+ try{await Promise.all([p.waitForNavigation({timeout:60000}).catch(()=>null),p.evaluate(()=>APP.reg.update())]);
+  let v=null;const t1=Date.now();while(Date.now()-t1<30000){v=await p.evaluate(async()=>(await caches.keys()).filter(k=>k.startsWith('hg-'))).catch(()=>null);if(v&&v.length===1&&/-next$/.test(v[0]))break;await p.waitForTimeout(600)}
+  ok('auto-update installs the new build and restarts by itself',!!v&&v.length===1&&/-next$/.test(v[0]),v);
+  await p.waitForTimeout(1000);
+  // update 2: with 'ask first' the bar comes up and waits for the tap
+  await p.evaluate(()=>{G.autoUp=0;save()});
+  fs.writeFileSync(swp,orig.replace(/const VERSION = "([0-9a-f]+)"/,'const VERSION = "$1-nx2"'));
+  await p.evaluate(()=>APP.reg.update());let bar=null;const t3=Date.now();while(Date.now()-t3<60000){bar=await p.evaluate(()=>{const b=$("appBar");return b&&!b.hidden?b.textContent:null});if(bar)break;await p.waitForTimeout(500)}
+  ok('update bar appears when a new build is published (ask-first mode)',!!bar&&/새 버전|new version/.test(bar),bar);
   await p.screenshot({path:OUTD+'/pwa_update.png'});
   await Promise.all([p.waitForNavigation({timeout:30000}).catch(()=>null),p.evaluate(()=>document.querySelector('#appBar [data-go]').click())]);await p.waitForTimeout(1500);
-  const v=await p.evaluate(async()=>(await caches.keys()).filter(k=>k.startsWith('hg-')));ok('after update only the new cache is left',v.length===1&&/-next$/.test(v[0]),v)}
+  const v2=await p.evaluate(async()=>(await caches.keys()).filter(k=>k.startsWith('hg-')));ok('after update only the new cache is left',v2.length===1&&/-nx2$/.test(v2[0]),v2)}
  finally{fs.writeFileSync(swp,orig)}
  ok('no page errors',errs.filter(e=>!/favicon|ERR_INTERNET_DISCONNECTED|net::ERR/.test(e)).length===0,errs.slice(0,6));
  console.log(R.join('\n'));await b.close();process.exit(R.some(x=>x.startsWith('FAIL'))?1:0)})();

@@ -27,7 +27,7 @@ function screens(info){const S=[
  ['home','renderAll()',700,'body'],
  ['hq_base','["rmOv","setOv","tdOv","pgOv","caseOv","bookOv","duelOv","runOv"].forEach(x=>{const e=$(x);if(e)e.hidden=true});hush();hqOpen()',900,'#hqOv'],
  ['home2','$("hqOv").hidden=true;renderAll()',500,'body'],
- ['settings','$("hqOv").hidden=true;$("tdOv").hidden=true;showSettings()',700,'#setOv'],
+ ['settings','var _h=$("hqOv");if(_h)_h.hidden=true;var _t=$("tdOv");if(_t)_t.hidden=true;showSettings()',700,'#setOv'],
  ['pghub','["setOv","tdOv","hqOv"].forEach(x=>{const e=$(x);if(e)e.hidden=true});pgHub()',700,'#pgOv']];
  info.pg.forEach(g=>S.push(['pg_'+g,`["tdOv","hqOv"].forEach(x=>{const e=$(x);if(e)e.hidden=true});pgPlay(${JSON.stringify(g)},3);setTimeout(()=>{const b=document.querySelector('#pgGo');b&&b.click()},300)`,1900,'#pgOv']));
  S.push(['wordbook','pgStop();wbBook()',700,'#pgOv']);
