@@ -2395,3 +2395,97 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 @keyframes dflsh{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
 .fsent.swapq{background:#FFF4D8;border-radius:12px;padding:10px 12px}
 @media (prefers-reduced-motion:reduce){.ddice.roll .die,.dproj.foe,.dfoe.foeatk,#dStage.gm-quake,.dopts.gm-mix .dop{animation:none}}
+
+/* ===== v32-3: 카드 프레임·수수께끼·도감·숫자 카드 대결 ===== */
+.ccard{--gc:#3E7CB1;position:relative;width:180px;aspect-ratio:63/88;border-radius:12px;background:
+ linear-gradient(145deg,color-mix(in srgb,var(--gc) 82%,#fff),color-mix(in srgb,var(--gc) 70%,#000)) border-box;
+ border:7px solid transparent;background-clip:padding-box;box-shadow:0 6px 14px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden;color:#1E2436}
+.ccard::before{content:"";position:absolute;inset:-7px;z-index:-1;border-radius:12px;background:linear-gradient(145deg,color-mix(in srgb,var(--gc) 90%,#fff),color-mix(in srgb,var(--gc) 55%,#000))}
+.ccard .chead{display:flex;align-items:center;gap:4px;padding:4px 7px;background:rgba(255,255,255,.9);font-size:12px}
+.ccard .chead b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ccard .cgrp{margin-left:auto;background:var(--gc);color:#fff;border-radius:7px;padding:0 6px;font-size:9.5px;flex:0 0 auto}
+.ccard .cart{flex:1;min-height:0;background:radial-gradient(circle at 50% 35%,#FFF6DE,#E8D9B8);display:flex;align-items:flex-end;justify-content:center;border:2px solid rgba(255,255,255,.7);margin:3px 5px 0;border-radius:6px;overflow:hidden}
+.ccard .cart img{max-width:92%;max-height:96%;object-fit:contain;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25))}
+.ccard .cfoot{font-size:9px;line-height:1.35;padding:4px 7px 6px;background:rgba(255,255,255,.88);min-height:34px;display:flex;align-items:center}
+.ccard .cfoil{position:absolute;inset:0;pointer-events:none;border-radius:6px}
+.ccard.r1,.ccard.r1::before{--gc:#9FB2C8}
+.ccard.r1::before{background:linear-gradient(130deg,#DCE6F2,#8FA3BC 30%,#F4F9FF 50%,#7E93AE 70%,#D5E1EF)}
+.ccard.r1 .cfoil{background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.5) 46%,transparent 60%);background-size:260% 100%;animation:cfoil 3.2s ease-in-out infinite}
+.ccard.r2,.ccard.r2::before{--gc:#C89A2E}
+.ccard.r2::before{background:linear-gradient(130deg,#FFE9A8,#D4A017 28%,#FFF7D0 50%,#B8860B 72%,#FFE9A8)}
+.ccard.r2 .cfoil{background:linear-gradient(120deg,transparent 28%,rgba(255,244,190,.75) 46%,rgba(255,255,255,.35) 52%,transparent 64%);background-size:260% 100%;animation:cfoil 2.6s ease-in-out infinite}
+.ccard.r2::after{content:"✨";position:absolute;right:6px;top:26px;font-size:14px;animation:v30tw 2.2s ease-in-out infinite}
+@keyframes cfoil{0%,100%{background-position:130% 0}50%{background-position:-30% 0}}
+.ccard.mini{width:104px;border-width:4px}
+.ccard.mini::before{inset:-4px}
+.ccard.mini .cfoot{display:none}
+.ccard.mini .chead b{font-size:9.5px}
+.ccard.mini .cgrp{display:none}
+.ccard.big{width:min(240px,62vw)}
+.ccard.dark .cart img{filter:brightness(0) opacity(.5)}
+.ccard.dark{filter:saturate(.15) brightness(.82)}
+.ccard.dark .q{position:absolute;inset:0;display:grid;place-items:center;font-size:40px;color:#fff;text-shadow:0 2px 4px #000;font-weight:900}
+.ccard.cback{background:#28406E;border-color:#1B2B4C;display:grid;place-items:center}
+.ccard.cback::before{background:#1B2B4C}
+.ccard.cback span{font-size:46px;filter:drop-shadow(0 0 8px rgba(255,255,255,.4))}
+/* 칩 */
+#cardChip{position:fixed;right:12px;bottom:76px;z-index:55;border:3px solid #F2B04C;background:#FFF6DC;border-radius:16px;padding:7px 12px;font-size:22px;display:flex;align-items:center;gap:5px;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.15);animation:hq3bob 2.6s ease-in-out infinite}
+#cardChip b{font-size:15px;background:#E2504C;color:#fff;border-radius:10px;padding:0 7px}
+/* 수수께끼 개봉 */
+.cardov{z-index:70}
+.cardcard{max-width:560px}
+.cardcard.wide{max-width:780px}
+.cdrid{font-size:clamp(16px,2.6vmin,21px);line-height:1.6;background:#FFF4D8;border-radius:12px;padding:12px 14px;margin:10px 0 6px}
+.cdtip{font-size:13px;color:#6B5E48;margin:0 0 10px}
+.cdopts{display:flex;gap:12px;justify-content:center;margin:8px 0}
+.cdface{width:120px;height:120px;border-radius:16px;border:3.5px solid #C9BBA0;background:#FFF9EC;cursor:pointer;display:grid;place-items:center;overflow:hidden}
+.cdface img{max-width:88%;max-height:90%;object-fit:contain}
+.cdface:active{transform:scale(.96)}
+.cdface.no{animation:hqPing .5s ease;border-color:#E2504C;opacity:.55;pointer-events:none}
+.cdstage{display:flex;flex-direction:column;align-items:center;gap:8px}
+.cdflip{position:relative;width:min(240px,62vw);aspect-ratio:63/88;perspective:900px;margin:4px auto}
+.cdflip .ccard{position:absolute;inset:0;width:100%;backface-visibility:hidden;transition:transform .8s cubic-bezier(.3,1.3,.5,1)}
+.cdflip .back2{transform:rotateY(180deg)}
+.cdflip.go .cback{transform:rotateY(-180deg)}
+.cdflip.go .back2{transform:rotateY(0)}
+.cdrank{font-weight:900;font-size:18px;margin:2px 0}
+.cdrank.r1{color:#6E86A6}.cdrank.r2{color:#B8860B}
+/* 도감 */
+.cbh{margin:12px 0 6px;font-size:15px}
+.cbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:8px;justify-items:center}
+.cbslot{border:0;background:none;padding:0;cursor:pointer;position:relative}
+.cbslot.lock{cursor:default}
+.cbbig{position:absolute;inset:0;background:rgba(14,18,34,.8);display:grid;place-items:center;border-radius:20px;z-index:4}
+.cbbin{display:flex;flex-direction:column;align-items:center;gap:10px;max-width:86%}
+.cbbin .cdrid{background:#FFF9EC}
+#cdBookB .cdn{background:#E2504C;color:#fff;border-radius:9px;padding:0 6px;font-style:normal;font-size:12px}
+/* 숫자 카드 대결 */
+.nc{display:flex;flex-direction:column;gap:8px;align-items:center;width:100%}
+.ncfoe{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap}
+.ncv{position:relative;width:118px;aspect-ratio:63/88;border-radius:12px;border:4px solid #E2504C;background:#2E2436;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;box-shadow:0 6px 12px rgba(0,0,0,.3)}
+.ncv img{max-width:94%;max-height:94%;object-fit:contain}
+.ncv.hit{animation:dquake .5s ease}
+.ncv .nw{position:absolute;left:50%;bottom:4px;translate:-50%;background:rgba(27,34,51,.85);color:#fff;border-radius:8px;padding:0 8px;font-size:13px}
+.num{position:absolute;left:5px;top:5px;background:#fff;border-radius:9px;font-weight:900;font-size:22px;padding:0 8px;box-shadow:0 2px 3px rgba(0,0,0,.35);color:#1E2436;z-index:2}
+.ncpips{position:absolute;right:5px;top:5px;background:rgba(255,255,255,.92);border-radius:8px;padding:3px 4px;display:grid;grid-template-columns:repeat(3,7px);gap:2.5px;z-index:2}
+.ncpips i{width:7px;height:7px;border-radius:50%;background:#E2504C}
+.nchc .ncpips i{background:#3550B8}
+.ncfoe .vs{font-size:24px;font-weight:900;color:#F2B04C}
+.ncnext{display:flex;flex-direction:column;align-items:center;font-size:11.5px;color:#6B5E48;background:#F3EAD8;border-radius:10px;padding:5px 10px}
+.ncnext b{font-size:22px}
+.nchp{font-size:15px;background:#FFF;border:2px solid #E5DCC8;border-radius:12px;padding:3px 9px}
+.ncask{margin:0;font-weight:800;font-size:clamp(14px,2.6vmin,18px);background:#FFF4D8;border-radius:10px;padding:6px 12px}
+.nchand{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+.nchc{position:relative;width:96px;aspect-ratio:63/88;border-radius:11px;border:3.5px solid #6C8BF0;background:#FFF9EC;cursor:pointer;overflow:hidden;padding:0;transition:translate .15s,box-shadow .15s}
+.nchc img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:4px}
+.nchc.sel{border-color:#FFD23F;translate:0 -10px;box-shadow:0 0 0 3px #FFD23F,0 10px 14px rgba(0,0,0,.35)}
+.nchc.hintg{animation:hqGlow 1.2s ease-in-out infinite;border-color:#FFD23F}
+.nchc.fly{translate:0 -70px;opacity:0;transition:translate .4s ease,opacity .4s ease}
+.nccrit{position:absolute;left:50%;top:14%;translate:-50%;background:#FFF8E8;border:4px solid #F2B04C;border-radius:16px;padding:12px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 14px 30px rgba(0,0,0,.45);z-index:5;min-width:min(320px,80%)}
+.nccrit .pic{font-size:46px}
+.ncw{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ncwo{font:inherit;font-size:20px;font-weight:800;background:#fff;border:3px solid #3550B8;border-radius:12px;padding:8px 16px;cursor:pointer}
+.ncwo:active{transform:scale(.96)}
+.nccritfx{position:absolute;left:50%;top:-12px;translate:-50%;font-size:22px;color:#E2504C;text-shadow:0 2px 0 #fff;animation:hqPop .8s ease}
+@media (max-width:480px){.cdface{width:88px;height:88px}.nchc{width:76px}.ncv{width:96px}}
+@media (prefers-color-scheme:dark){.cdrid{background:#3A3014;color:#F0E8D8}.cdface{background:#2E2718;border-color:#4A3F28}.ncask{background:#3A3014;color:#F0E8D8}.nchc{background:#2E2718}.nccrit{background:#241E12;color:#F0E8D8}.ncwo{background:#2E2718;color:#F0E8D8}.ncnext{background:#352C19}.nchp{background:#241E12;border-color:#4A3F28}}

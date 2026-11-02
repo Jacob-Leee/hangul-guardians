@@ -14,7 +14,7 @@ const url='file://'+path.resolve(__dirname,'..','index.html'),out=path.join(__di
  await p.evaluate(()=>{G.lang='ko';showTitle();document.querySelector('#tBtns .btn.pri').click()});await p.waitForTimeout(800);
  await p.evaluate(()=>pgHub());await p.waitForTimeout(500);await p.screenshot({path:path.join(out,'hub.png')});
  const res={};let fail=0;
- for(const g of ['fish','asm','pair','train','fill','trace','dict','opp'])for(const lv of [1,5]){
+ for(const g of ['fish','asm','ncard','pair','train','fill','trace','dict','opp'])for(const lv of [1,5]){
   await p.evaluate(([g,lv])=>pgPlay(g,lv),[g,lv]);await p.waitForTimeout(400);let n=0,ok=false;const t0=Date.now();
   while(Date.now()-t0<45000){const r=await p.evaluate(w=>PGAUTO(w),n===3);if(r==='done'){ok=true;break}if(r==='click')n++;if(n===4)await p.screenshot({path:path.join(out,`${g}${lv}_play.png`)});await p.waitForTimeout(g==='pair'?520:g==='train'?380:g==='dict'?200:300)}
   await p.waitForTimeout(900);await p.screenshot({path:path.join(out,`${g}${lv}_result.png`)});

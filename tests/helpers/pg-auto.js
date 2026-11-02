@@ -46,6 +46,18 @@ function drawStrokes(ink,strokes){const r=ink.getBoundingClientRect(),sx=r.width
 window.PGDRAW=drawStrokes;
 window.PGAUTO=function(wrong){const S=PGS;
  if(S&&!document.querySelector('.pgres')&&!document.querySelector('.pgintro')&&!S.lock){
+  if(S.g==='ncard'){const A=document.getElementById('pgArea');
+   const crit=document.querySelector('.nccrit');
+   if(crit){const ans=A.__nc&&A.__nc.word&&A.__nc.word.ans;
+    const b=[...crit.querySelectorAll('.ncwo:not(:disabled)')].find(e=>wrong?e.dataset.t!==ans:e.dataset.t===ans);
+    return b?(b.click(),'click'):'wait'}
+   if(!A||!A.__nc||!A.__nc.pick||!A.__nc.pick.length)return 'wait';
+   if(document.querySelector('.nchc.fly'))return 'wait';
+   if(wrong){const bad=[...A.querySelectorAll('.nchc')].find(e=>A.__nc.pick.indexOf(+e.dataset.i)<0&&!e.classList.contains('sel'));
+    return bad?(bad.click(),'click'):'wait'}
+   const nxt=A.__nc.pick.find(i=>{const b=A.querySelector('.nchc[data-i="'+i+'"]');return b&&!b.classList.contains('sel')});
+   if(nxt==null)return 'wait';
+   const b=A.querySelector('.nchc[data-i="'+nxt+'"]');return b?(b.click(),'click'):'wait'}
   if(S.g==='asm'){const st=document.querySelector('.asm3');const H=st&&st.__asm;if(!H||!H.need)return 'wait';
    const b=[...document.querySelectorAll('.asmblk:not(.used)')].find(e=>wrong?e.dataset.ch!==H.need:e.dataset.ch===H.need);
    return b?(b.click(),'click'):'wait'}

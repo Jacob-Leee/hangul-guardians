@@ -6111,5 +6111,324 @@ duIntro=function(){_di32.apply(this,arguments);
   if(n>0){var el=document.querySelector("#dQ .dintro .wcard p");
    if(el)el.insertAdjacentHTML("beforeend","<br>🎖️ "+K("Weapon Master: "+n+" / 12 heroes at Lv4","무기 마스터 도전: Lv4 영웅 "+n+" / 12")+(G.wxMaster?" ✅":""))}}catch(e){}};
 })();
+
+/* ===== v32-3: 카드 수집(포켓몬식 프레임·수수께끼 개봉·도감) + 🎴 숫자 카드 대결 ===== */
+(function(){
+/* ---------- 카드 카탈로그 53종: id, 이름, 그림, 묶음, 수수께끼(읽기 힌트 한 문장) ---------- */
+var CG={hero:["영웅","#3E7CB1"],vil:["악당","#7E57C2"],frd:["사건 친구","#43A047"],book:["동화책","#E88A3A"]};
+function C(id,nm,img,grp,rid){return {id:id,nm:nm,img:img,grp:grp,rid:rid}}
+var H="assets/img/hero/",N="assets/img/npc/",V="assets/img/villain/",B="books/";
+window.CARDS=[
+ C("rat","번개 쥐",H+"rat.webp","hero","돋보기를 들고 아주 작은 단서도 번개처럼 빨리 찾아내는 꼬마 탐정은 누구일까요?"),
+ C("ox","강철 소",H+"ox.webp","hero","무거운 것도 번쩍 드는 힘이 세고 튼튼한 황소 영웅은 누구일까요?"),
+ C("tiger","대장 호랑이",H+"tiger.webp","hero","수비대를 이끄는 씩씩한 줄무늬 대장은 누구일까요?"),
+ C("rabbit","달빛 토끼",H+"rabbit.webp","hero","귀가 길고 하트 활로 빛의 화살을 쏘는 영웅은 누구일까요?"),
+ C("dragon","하늘 용",H+"dragon.webp","hero","여의주 지팡이를 들고 하늘을 나는 초록 영웅은 누구일까요?"),
+ C("snake","바람 뱀",H+"snake.webp","hero","다리가 없어도 바람처럼 스르륵 미끄러져 다니는 영웅은 누구일까요?"),
+ C("horse","질주 말",H+"horse.webp","hero","네 다리로 누구보다 빨리 달리는 갈기 휘날리는 영웅은 누구일까요?"),
+ C("sheep","구름 양",H+"sheep.webp","hero","구름처럼 포근한 털로 친구들을 지켜 주는 영웅은 누구일까요?"),
+ C("monkey","재주 원숭이",H+"monkey.webp","hero","긴 꼬리로 나무에 매달려 재주를 부리는 장난꾸러기 영웅은 누구일까요?"),
+ C("rooster","새벽 닭",H+"rooster.webp","hero","아침마다 제일 먼저 일어나 꼬끼오 하고 외치는 영웅은 누구일까요?"),
+ C("dog","용감한 개",H+"dog.webp","hero","방패를 들고 친구들을 끝까지 지키는 충성스러운 영웅은 누구일까요?"),
+ C("pig","든든 돼지",H+"pig.webp","hero","거품 대포를 쏘고 맛있는 쿠키도 구워 주는 분홍 영웅은 누구일까요?"),
+ C("mentor","거북이 스승님",H+"mentor.webp","hero","등딱지에 지혜를 가득 담고 천천히 걸으며 가르쳐 주시는 분은 누구일까요?"),
+ C("v_black","흑묘",N+"v_black.webp","vil","그림자처럼 까맣고 몰래 숨어서 책의 문장을 바꾸는 대장 고양이는 누구일까요?"),
+ C("v_white","백묘",V+"white.webp","vil","눈처럼 하얗고 새침하게 얼음을 부리는 고양이는 누구일까요?"),
+ C("v_tiger","호랑이냥",V+"tiger.webp","vil","어흥 하고 힘자랑을 제일 좋아하는 줄무늬 고양이는 누구일까요?"),
+ C("v_gray","회색냥",V+"gray.webp","vil","일하기 싫어서 꾀만 부리는 재빠른 잿빛 고양이는 누구일까요?"),
+ C("v_purple","보라냥",V+"purple.webp","vil","낱말을 몰래 바꿔치기하는 장난꾸러기 보라색 고양이는 누구일까요?"),
+ C("v_fat","뚱냥",V+"fat.webp","vil","쿠키와 치즈를 너무 좋아해서 배가 통통한 고양이는 누구일까요?"),
+ C("squirrel","다람쥐",N+"squirrel.webp","frd","가을마다 도토리를 모아 창고에 차곡차곡 쌓아 두는 친구는 누구일까요?"),
+ C("beaver","비버",N+"beaver.webp","frd","튼튼한 이빨로 나무를 다듬어 강가에 집을 짓는 친구는 누구일까요?"),
+ C("spider","거미 스피니",N+"spider.webp","frd","여덟 개의 다리로 반짝이는 그물을 짜는 생일 주인공 친구는 누구일까요?"),
+ C("mole","고슴도치",N+"mole.webp","frd","등에 뾰족뾰족한 가시가 있고 달리기 대회에서 일 등을 한 친구는 누구일까요?"),
+ C("gull","갈매기",N+"gull.webp","frd","바닷가에서 끼룩끼룩 울며 조개 잔치에 친구들을 초대한 새는 누구일까요?"),
+ C("raccoon","너구리",N+"raccoon.webp","frd","눈 주위가 까만 안경을 쓴 것 같고 가게를 보는 친구는 누구일까요?"),
+ C("bk_rabbit","이야기 토끼",B+"b1/rabbit_stand.webp","book","달리기가 아주 빠르지만 낮잠을 자다가 경주에서 지고 만 친구는 누구일까요?"),
+ C("bk_turtle","이야기 거북이",B+"b1/turtle_stand.webp","book","느려도 쉬지 않고 엉금엉금 걸어서 결승점에 먼저 도착한 친구는 누구일까요?"),
+ C("bk_country","시골 쥐",B+"b2/country_stand.webp","book","조용한 시골의 참나무 집에서 보리밥을 맛있게 먹는 친구는 누구일까요?"),
+ C("bk_city","도시 쥐",B+"b2/city_stand.webp","book","반짝이는 도시의 큰 집에 살면서 맛있는 것을 자랑하는 친구는 누구일까요?"),
+ C("bk_cat","집고양이",B+"b2/cat_prowl.webp","book","도시의 부엌에 살금살금 나타나 쥐 친구들을 깜짝 놀라게 한 동물은 누구일까요?"),
+ C("bk_boy","게으른 소년 돌이",B+"b3/boy_stand.webp","book","낮잠만 자다가 신기한 소 모자를 쓰고 진짜 소가 되어 버린 아이는 누구일까요?"),
+ C("bk_old","탈 할아버지",B+"b3/old_stand.webp","book","지게에 신기한 탈을 가득 지고 다니며 게으름을 고쳐 주는 분은 누구일까요?"),
+ C("bk_sis","누나 해순이",B+"b4/sis_stand.webp","book","동생과 함께 동아줄을 타고 하늘로 올라가 따뜻한 해가 된 아이는 누구일까요?"),
+ C("bk_bro","동생 달이",B+"b4/bro_stand.webp","book","떡을 좋아하고 누나와 함께 하늘로 올라가 밤의 달이 된 아이는 누구일까요?"),
+ C("bk_tig","떡 좋아하는 호랑이",B+"b4/tig_stand.webp","book","떡 하나 주면 안 잡아먹지 하면서 엄마 흉내를 낸 동물은 누구일까요?"),
+ C("bk_yong","꼬마 용 이슬이",B+"b5/yong_stand.webp","book","비 주문을 열심히 배워서 시든 꽃밭에 단비를 내려 준 아기 용은 누구일까요?"),
+ C("bk_cloud","구름 할머니",B+"b5/cloud_stand.webp","book","구름으로 만들어진 몸으로 비 주문을 가르쳐 주시는 분은 누구일까요?"),
+ C("bk_post","우체부 뱀 슈룩이",B+"b6/post_stand.webp","book","우체부 모자를 쓰고 숲속 친구들에게 편지를 배달하는 친구는 누구일까요?"),
+ C("bk_owl","부엉이 부부장",B+"b6/owl_stand.webp","book","밤에도 눈이 밝고 생일 초대장을 애타게 기다린 새는 누구일까요?"),
+ C("bk_dal","배달 말 다그닥이",B+"b7/dal_stand.webp","book","시원한 여름 바람을 수레에 싣고 풍차 마을로 배달한 친구는 누구일까요?"),
+ C("bk_mill","풍차 마을 아저씨",B+"b7/mill_stand.webp","book","밀짚모자를 쓰고 풍차 마을에서 바람을 기다린 곰 아저씨는 누구일까요?"),
+ C("bk_shep","양치기 소년 메에",B+"b8/shep_stand.webp","book","늑대가 나타났다고 거짓말을 하다가 참말의 소중함을 배운 아이는 누구일까요?"),
+ C("bk_lamb","아기 양 뭉게",B+"b8/lamb_stand.webp","book","구름처럼 하얗고 파란 방울을 단 아주 작은 양은 누구일까요?"),
+ C("bk_mon","사서 원숭이 또로",B+"b9/mon_stand.webp","book","안경을 쓰고 도서관 책을 글자 순서대로 정리하는 친구는 누구일까요?"),
+ C("bk_pand","꼬마 판다 포포",B+"b9/pand_stand.webp","book","빨간 가방을 메고 공룡책을 제일 좋아하는 까만 눈 친구는 누구일까요?"),
+ C("bk_hen","빨간 암탉",B+"b10/hen_stand.webp","book","혼자서 밀을 심고 빵을 구워 친구들과 나눠 먹은 부지런한 새는 누구일까요?"),
+ C("bk_duck","오리 둥둥",B+"b10/duck_stand.webp","book","일은 돕기 싫어하면서 갓 구운 빵 냄새는 제일 좋아한 새는 누구일까요?"),
+ C("bk_bird","참새 짹짹",B+"b10/bird_stand.webp","book","울타리에서 짹짹 놀기만 하다가 함께 일하기로 한 작은 새는 누구일까요?"),
+ C("bk_pup","강아지 콩이",B+"b11/pup_stand.webp","book","뼈다귀를 물고 외나무다리에서 물속 그림자를 본 친구는 누구일까요?"),
+ C("bk_p1","첫째 솔솔이",B+"b12/p1_stand.webp","book","지푸라기로 집을 제일 빨리 지은 느긋한 첫째 돼지는 누구일까요?"),
+ C("bk_p2","둘째 뚝딱이",B+"b12/p2_stand.webp","book","나무 망치로 뚝딱뚝딱 나무 집을 지은 둘째 돼지는 누구일까요?"),
+ C("bk_p3","셋째 차근이",B+"b12/p3_stand.webp","book","벽돌을 차근차근 쌓아 튼튼한 집을 지은 똑똑한 셋째 돼지는 누구일까요?"),
+ C("bk_wolf","입김 센 늑대",B+"b12/wolf_stand.webp","book","볼을 크게 부풀려 후후 불어 지푸라기 집을 날려 버린 동물은 누구일까요?")];
+var CARD_BY={};CARDS.forEach(function(c){CARD_BY[c.id]=c});
+var RANKN=[["Normal","노멀"],["Silver","실버"],["Gold","골드"]];
+function cardsG(){G.cards=G.cards||{};G.cards.own=G.cards.own||{};G.cards.q=G.cards.q||[];return G.cards}
+function cardOwnedN(){return Object.keys(cardsG().own).length}
+/* ---------- 카드 HTML (포켓몬식 프레임, 전부 코드) ---------- */
+window.cardHTML=function(id,rank,cls){var c=CARD_BY[id];if(!c)return "";
+ var gc=CG[c.grp];
+ return '<div class="ccard r'+(rank||0)+' '+(cls||'')+'" style="--gc:'+gc[1]+'" data-cid="'+id+'">'
+  +'<div class="chead"><b>'+escH(c.nm)+'</b><span class="cgrp">'+gc[0]+'</span></div>'
+  +'<div class="cart"><img src="'+c.img+'" alt="" loading="lazy"></div>'
+  +'<div class="cfoot">'+escH(c.rid)+'</div>'
+  +'<i class="cfoil"></i></div>'}
+function cardBackHTML(cls){return '<div class="ccard cback '+(cls||'')+'"><span>🐾</span></div>'}
+/* ---------- 획득 큐 + 칩 ---------- */
+window.cardQueue=function(id,r){if(!CARD_BY[id])return;var cd=cardsG();cd.q.push({id:id,r:r||0});save();cardChip();
+ try{toast("🎴 "+K("A new card arrived! Open it from the card button.","새 카드가 도착했어! 🎴 단추를 눌러 열어 봐."))}catch(e){}};
+window.cardPickDraw=function(){var own=cardsG().own,q=cardsG().q.map(function(x){return x.id});
+ var fresh=CARDS.filter(function(c){return own[c.id]==null&&q.indexOf(c.id)<0});
+ var pool=fresh.length?fresh:CARDS;return pool[Math.floor(Math.random()*pool.length)].id};
+window.cardChip=function(){var n=cardsG().q.length,el=document.getElementById("cardChip");
+ if(!n){if(el)el.remove();return}
+ if(!el){el=document.createElement("button");el.id="cardChip";document.body.appendChild(el);
+  el.onclick=function(){sfx("tap");cardOpenNext()}}
+ el.innerHTML="🎴<b>"+n+"</b>"};
+var _ra33=renderAll;renderAll=function(){_ra33.apply(this,arguments);try{cardChip()}catch(e){}};
+/* ---------- 수수께끼 개봉 ---------- */
+function cardOv(){var ov=document.getElementById("cardOv");
+ if(!ov){ov=document.createElement("div");ov.id="cardOv";ov.className="crsov cardov";document.body.appendChild(ov)}
+ return ov}
+window.cardOpenNext=function(){
+ var cd=cardsG();if(!cd.q.length)return cardBook();
+ var q=cd.q[0],c=CARD_BY[q.id],ov=cardOv();
+ /* 보기 얼굴 3개: 정답 + 같은 묶음 우선 2 */
+ var others=shuffle(CARDS.filter(function(x){return x.id!==q.id&&x.grp===c.grp}));
+ if(others.length<2)others=others.concat(shuffle(CARDS.filter(function(x){return x.id!==q.id&&x.grp!==c.grp})));
+ var opts=shuffle([c].concat(others.slice(0,2)));
+ ov.innerHTML='<div class="crscard cardcard"><div class="crshead"><h2>🎴 '+K("Card riddle","카드 수수께끼")+'</h2><span class="crsn">'+K("Left: ","남은 카드 ")+cd.q.length+'</span><button class="btn" id="cdX">'+K("Later","나중에")+'</button></div>'
+  +'<p class="cdrid">📖 '+escH(c.rid)+'</p>'
+  +'<p class="cdtip">'+K("Read the riddle out loud, then tap the right friend!","수수께끼를 소리 내어 읽고, 맞는 친구를 골라 봐!")+'</p>'
+  +'<div class="cdopts">'+opts.map(function(o){return '<button class="cdface" data-id="'+o.id+'"><img src="'+o.img+'" alt=""></button>'}).join('')+'</div>'
+  +'<div class="cdstage" hidden></div></div>';
+ ov.hidden=false;
+ document.getElementById("cdX").onclick=function(){sfx("tap");ov.hidden=true};
+ ov.querySelectorAll(".cdface").forEach(function(b){b.onclick=function(){
+  if(b.dataset.id!==q.id){sfx("bad");b.classList.add("no");
+   ov.querySelector(".cdtip").textContent=K("Almost! Read the riddle once more, slowly.","아까워! 수수께끼를 한 번 더 천천히 읽어 봐.");return}
+  sfx("star");
+  /* 등급 결정: 중복이면 한 단계 승급 */
+  var own=cardsG().own,cur=own[q.id],up=cur!=null;
+  var rank=up?Math.min(2,Math.max(cur+1,q.r)):q.r;
+  own[q.id]=rank;cardsG().q.shift();save();cardChip();
+  var st=ov.querySelector(".cdstage");st.hidden=false;
+  ov.querySelector(".cdopts").hidden=true;ov.querySelector(".cdrid").textContent="✅ "+c.nm+"!";
+  ov.querySelector(".cdtip").textContent=K("You read it right — the card is yours!","수수께끼를 읽고 맞혔어! 카드는 네 거야!");
+  st.innerHTML='<div class="cdflip">'+cardBackHTML("big")+cardHTML(q.id,rank,"big back2")+'</div>'
+   +'<p class="cdrank r'+rank+'">'+(up?K("Rank up! ","등급 업! "):"")+(G.lang==="ko"?RANKN[rank][1]:RANKN[rank][0])+(rank===2?" ✨":rank===1?" ⭐":"")+'</p>'
+   +'<div class="tbtns">'+(cardsG().q.length?'<button class="btn pri" id="cdNext">🎴 '+K("Next card","다음 카드")+' ('+cardsG().q.length+')</button>':'')
+   +'<button class="btn" id="cdBook">📚 '+K("Card book","카드 도감")+'</button><button class="btn" id="cdDone">'+K("Done","닫기")+'</button></div>';
+  setTimeout(function(){var f=st.querySelector(".cdflip");if(f)f.classList.add("go")},150);
+  try{burstAt(st)}catch(e){}
+  var nx=document.getElementById("cdNext");if(nx)nx.onclick=function(){sfx("tap");cardOpenNext()};
+  document.getElementById("cdBook").onclick=function(){sfx("tap");cardBook()};
+  document.getElementById("cdDone").onclick=function(){sfx("tap");ov.hidden=true};
+ }});
+};
+/* ---------- 카드 도감 ---------- */
+window.cardBook=function(){
+ var ov=cardOv(),own=cardsG().own,grps=["hero","vil","frd","book"];
+ ov.innerHTML='<div class="crscard cardcard wide"><div class="crshead"><h2>📚 '+K("Card book","카드 도감")+'</h2><span class="crsn">'+cardOwnedN()+' / '+CARDS.length+'</span><button class="btn" id="cbX">'+K("Close","닫기")+'</button></div>'
+  +(cardsG().q.length?'<button class="btn pri" id="cbOpen">🎴 '+K("Open new cards","새 카드 열기")+' ('+cardsG().q.length+')</button>':'')
+  +grps.map(function(g){var list=CARDS.filter(function(c){return c.grp===g});
+    return '<h3 class="cbh" style="color:'+CG[g][1]+'">'+CG[g][0]+' <small>'+list.filter(function(c){return own[c.id]!=null}).length+'/'+list.length+'</small></h3>'
+     +'<div class="cbgrid">'+list.map(function(c){var r=own[c.id];
+       return r!=null?'<button class="cbslot has" data-id="'+c.id+'">'+cardHTML(c.id,r,"mini")+'</button>'
+        :'<div class="cbslot lock"><div class="ccard mini dark"><div class="cart"><img src="'+c.img+'" alt=""></div><span class="q">?</span></div></div>'}).join('')+'</div>'}).join('')
+  +'</div>';
+ ov.hidden=false;
+ document.getElementById("cbX").onclick=function(){sfx("tap");ov.hidden=true};
+ var op=document.getElementById("cbOpen");if(op)op.onclick=function(){sfx("tap");cardOpenNext()};
+ ov.querySelectorAll(".cbslot.has").forEach(function(b){b.onclick=function(){sfx("tap");
+  var id=b.dataset.id,c=CARD_BY[id];
+  var big=document.createElement("div");big.className="cbbig";
+  big.innerHTML='<div class="cbbin">'+cardHTML(id,own[id],"big")+'<p class="cdrid">📖 '+escH(c.rid)+'</p><button class="btn pri">'+K("OK","좋아!")+'</button></div>';
+  big.onclick=function(e){if(e.target===big||e.target.tagName==="BUTTON")big.remove()};
+  ov.appendChild(big)}});
+};
+/* 놀이터 허브에 카드 도감 단추 */
+var _hub33=pgHub;pgHub=function(){_hub33.apply(this,arguments);
+ try{var wb=document.getElementById("wlBook");
+  if(wb&&!document.getElementById("cdBookB")){var b=document.createElement("button");b.className="btn";b.id="cdBookB";
+   b.innerHTML="🎴 "+K("Card book","카드 도감")+" <small>"+cardOwnedN()+"/"+CARDS.length+"</small>"+(cardsG().q.length?" <em class='cdn'>"+cardsG().q.length+"</em>":"");
+   b.onclick=function(){sfx("tap");if(cardsG().q.length)cardOpenNext();else cardBook()};
+   wb.parentElement.appendChild(b)}}catch(e){}};
+/* ---------- 획득 연결 ---------- */
+var BOOKCARD={b1:"bk_turtle",b2:"bk_country",b3:"bk_boy",b4:"bk_sis",b5:"bk_yong",b6:"bk_post",b7:"bk_dal",b8:"bk_shep",b9:"bk_mon",b10:"bk_hen",b11:"bk_pup",b12:"bk_p3"};
+var FRDCYC=["squirrel","beaver","mole","spider","gull","raccoon"];
+var _hqA33=hqAward;
+hqAward=function(src,quiet){
+ var fresh=!(hqG().got&&hqG().got[src]);var it=_hqA33.apply(this,arguments);
+ if(it&&fresh){try{
+  var m;
+  if(m=src.match(/^book_(b\d+)$/)){if(BOOKCARD[m[1]])cardQueue(BOOKCARD[m[1]],0)}
+  else if(m=src.match(/^case_k(\d+)$/)){cardQueue(FRDCYC[(+m[1]-1)%6],0)}
+  else if(/^(run|lap)_/.test(src)){cardQueue(cardPickDraw(),0)}
+ }catch(e){}}
+ return it};
+/* 배틀 첫 승 → 그 악당 카드 (보스 별3이면 골드) */
+var _dw33=duWin;duWin=function(){var D=DU,fresh=!!D&&!D.done;_dw33.apply(this,arguments);
+ try{if(D&&fresh){G.vilWin=G.vilWin||{};
+  if(!G.vilWin[D.vil]){G.vilWin[D.vil]=1;save();cardQueue("v_"+D.vil,D.boss?(duStars.call?duStars():1)>=3?2:1:0)}}}catch(e){}};
+/* 놀이터: 단계 첫 2★ → 뽑기, 첫 3★ → 실버 뽑기, 받아쓰기 5단계 첫 2★ → 골드 */
+var _pgr33=pgResult;
+pgResult=function(){var S=PGS,g=S&&S.g,lv=S&&S.lv,prev=(g&&typeof pgStars==="function")?pgStars(g,lv):9;
+ _pgr33.apply(this,arguments);
+ try{if(S&&g&&!S.o.stage){var now=pgStars(g,lv);
+  if(g==="dict"&&lv===5&&now>=2&&prev<2)cardQueue(cardPickDraw(),2);
+  else if(now>=2&&prev<2)cardQueue(cardPickDraw(),now>=3?1:0);
+  else if(now>=3&&prev<3)cardQueue(cardPickDraw(),1);}}catch(e){}};
+/* 코스 10 첫 완주 → 골드 뽑기 */
+var _cr33=clearRun;clearRun=function(){var b4=!!(G.crs&&G.crs.s&&G.crs.s[10]);_cr33.apply(this,arguments);
+ try{if(!b4&&G.crs&&G.crs.s&&G.crs.s[10])cardQueue(cardPickDraw(),2)}catch(e){}};
+/* ---------- 🎴 숫자 카드 대결 ---------- */
+PGAMES.ncard={ic:"🎴",n:{en:"Number Card Duel",ko:"숫자 카드 대결"},tag:{en:"Think & win",ko:"생각해서 이기기"},
+ how:{en:"Beat the villain's card with numbers, then read the word for a critical hit!",ko:"숫자로 악당 카드를 이기고, 낱말까지 읽으면 크리티컬! 다음 카드를 보고 아껴 쓰는 게 비법이야."},
+ lv:["nc1","nc2","nc3","nc4","nc5"],goal:5};
+PGCOL.ncard=["#B39DDB","#5E35B1"];
+LADDER.nc1={n:"더 큰 수",math:"cmp",items:function(){return WORDS2.map(function(x){return {t:x.w,p:x.p}})}};
+LADDER.nc2={n:"두 수의 합",math:"sum",items:LADDER.nc1.items};
+LADDER.nc3={n:"10 만들기",math:"ten",items:LADDER.nc1.items};
+LADDER.nc4={n:"같은 수로 막기",math:"same",items:LADDER.nc1.items};
+LADDER.nc5={n:"섞어서",math:"mix",items:LADDER.nc1.items};
+var NC_W=["영","하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉","열","열하나","열둘"];
+function ncPips(v){var out='<span class="ncpips">';for(var i=0;i<v;i++)out+='<i></i>';return out+'</span>'}
+function ncArtPool(){var own=Object.keys(cardsG().own);
+ if(own.length>=4)return shuffle(own.slice());
+ return shuffle(["rat","tiger","rabbit","dog","dragon","sheep","monkey","pig"])}
+function ncMode(S,i){var m=S.lad.math;if(m==="same")return i%2?"same":"cmp";
+ if(m==="mix")return ["cmp","sum","ten","same","sum"][i%5];return m}
+function ncVFor(hand,mode){ /* 지금 손패로 풀 수 있는 악당 수 */
+ var vs=hand.map(function(c){return c.v});
+ if(mode==="cmp"){var mx=Math.max.apply(null,vs);var v=1+Math.floor(Math.random()*Math.max(1,mx-1));return Math.min(v,mx-1)||1}
+ if(mode==="same")return vs[Math.floor(Math.random()*vs.length)];
+ if(mode==="ten"){var h=vs[Math.floor(Math.random()*vs.length)];return 10-h}
+ /* sum: 손패 두 장 합 중 하나 */
+ var sums=[];for(var i=0;i<vs.length;i++)for(var j=i+1;j<vs.length;j++)sums.push(vs[i]+vs[j]);
+ return sums[Math.floor(Math.random()*sums.length)]}
+function ncSolvable(hand,mode,V){var vs=hand.map(function(c){return c.v});
+ if(mode==="cmp")return vs.some(function(x){return x>V});
+ if(mode==="same")return vs.indexOf(V)>=0;
+ if(mode==="ten")return vs.indexOf(10-V)>=0;
+ for(var i=0;i<vs.length;i++)for(var j=i+1;j<vs.length;j++)if(vs[i]+vs[j]===V)return true;return false}
+PGM.ncard=function(){
+ var A,NC;
+ function card(i,c,sel){return '<button class="nchc'+(sel?' sel':'')+'" data-i="'+i+'">'
+  +'<img src="'+(CARD_BY[c.art]?CARD_BY[c.art].img:DA.hs[c.art]||PORT[c.art])+'" alt="">'
+  +'<span class="num">'+c.v+'</span>'+ncPips(c.v)+'</button>'}
+ function draw(){return {v:1+Math.floor(Math.random()*6),art:NC.arts[NC.ai++%NC.arts.length]}}
+ function render(){
+  var S=PGS,m=NC.mode,V=NC.V;
+  var ask=m==="cmp"?K("Play a BIGGER card!","악당보다 더 큰 카드를 내!")
+   :m==="same"?K("Block with the SAME number!","똑같은 수 카드로 막아!")
+   :m==="ten"?K("Make 10 together!","악당 수와 더해서 10을 만들어!")
+   :K("Pick TWO cards that add up to it!","두 장을 더해서 똑같이 만들어!");
+  A.innerHTML='<div class="nc"><div class="ncfoe">'
+   +'<div class="ncv"><img src="'+(DA.vb[NC.vil]||PORT["v_"+NC.vil])+'" alt=""><span class="num">'+V+'</span>'+ncPips(V)+'<span class="nw">'+(NC_W[V]||V)+'</span></div>'
+   +'<span class="vs">VS</span>'
+   +'<div class="ncnext"><small>'+K("Next","다음 카드")+'</small><b>'+NC.next+'</b></div>'
+   +'<div class="nchp">'+"😼"+"❤️".repeat(Math.max(0,S.goal-S.done))+"🤍".repeat(S.done)+'</div></div>'
+   +'<p class="ncask">'+ask+'</p>'
+   +'<div class="nchand">'+NC.hand.map(function(c,i){return card(i,c,NC.sel.indexOf(i)>=0)}).join('')+'</div></div>';
+  A.__nc={mode:m,V:V,pick:ncSolution(),word:null};
+  A.querySelectorAll(".nchc").forEach(function(b){b.onclick=function(){tap(+b.dataset.i,b)}});
+ }
+ function ncSolution(){var vs=NC.hand.map(function(c){return c.v}),m=NC.mode,V=NC.V;
+  if(m==="cmp"){var best=-1,bi=-1;vs.forEach(function(x,i){if(x>V&&(best<0||x<best)){best=x;bi=i}});return bi>=0?[bi]:[]}
+  if(m==="same")return [vs.indexOf(V)];
+  if(m==="ten")return [vs.indexOf(10-V)];
+  for(var i=0;i<vs.length;i++)for(var j=i+1;j<vs.length;j++)if(vs[i]+vs[j]===V)return [i,j];return []}
+ function tap(i,el){
+  var S=PGS;if(!S||S.lock||NC.busy)return;var m=NC.mode,need2=m==="sum";
+  var k=NC.sel.indexOf(i);
+  if(k>=0){NC.sel.splice(k,1);el.classList.remove("sel");return}
+  NC.sel.push(i);el.classList.add("sel");sfx("tap");
+  if(!need2||NC.sel.length===2)judge();
+ }
+ function judge(){
+  var S=PGS,m=NC.mode,V=NC.V,vs=NC.sel.map(function(i){return NC.hand[i].v});
+  var okv=m==="cmp"?vs[0]>V:m==="same"?vs[0]===V:m==="ten"?vs[0]+V===10:vs[0]+vs[1]===V;
+  if(!okv){sfx("bad");NC.clean=false;S.miss++;
+   A.querySelectorAll(".nchc.sel").forEach(function(b){b.classList.add("pgno");b.classList.remove("sel")});
+   NC.sel=[];
+   var tip=m==="cmp"?K("Count the dots — which is bigger?","점을 세어 봐. 어느 쪽이 더 많아?")
+    :m==="same"?K("Find the exactly same number.","점이 똑같은 카드를 찾아봐.")
+    :m==="ten"?K("Count up to ten together!","더해서 열이 되는지 세어 봐!")
+    :K("Add the two cards out loud!","두 카드를 소리 내어 더해 봐!");
+   pgMsg(tip,1);
+   if(S.miss>=2){ /* 살짝 힌트: 정답 카드 반짝 */
+    var sol=ncSolution();sol.forEach(function(i){var b=A.querySelector('.nchc[data-i="'+i+'"]');if(b)b.classList.add("hintg")})}
+   return}
+  /* 숫자 성공 */
+  NC.busy=true;sfx("ok");
+  var exact=m==="cmp"&&(function(){var sol=ncSolution();return sol.length&&NC.hand[sol[0]].v===vs[0]})();
+  if(exact)pgBanner(K("Perfect pick! ⭐","딱 맞게 냈다! ⭐"),"combo");
+  var selEls=[].slice.call(A.querySelectorAll(".nchc.sel"));
+  selEls.forEach(function(b){b.classList.add("fly")});
+  var foe=A.querySelector(".ncv");
+  setTimeout(function(){if(PGS!==S)return;
+   foe.classList.add("hit");sfx("hit");
+   /* 읽기 크리티컬 */
+   var it=pgPick(S.pool,S.recent);S.recent=[it.t].concat(S.recent).slice(0,3);S.target=it;
+   var opts=shuffle([it.t].concat(shuffle(WORDS2.filter(function(x){return x.w!==it.t})).slice(0,2).map(function(x){return x.w})));
+   var cr=document.createElement("div");cr.className="nccrit";
+   cr.innerHTML='<b>⚡ '+K("Read for a CRITICAL!","낱말을 읽으면 크리티컬!")+'</b><span class="pic">'+it.p+'</span><button class="spk" id="ncSpk">🔊</button>'
+    +'<div class="ncw">'+opts.map(function(o){return '<button class="ncwo" data-t="'+escH(o)+'">'+escH(o)+'</button>'}).join('')+'</div>';
+   A.appendChild(cr);A.__nc.word={ans:it.t};
+   var spk=document.getElementById("ncSpk");if(spk)spk.onclick=function(){say(it.t)};
+   setTimeout(function(){if(PGS===S)say(it.t)},350);
+   var first=true;
+   cr.querySelectorAll(".ncwo").forEach(function(b){b.onclick=function(){
+    if(b.dataset.t===it.t){
+     var crit=first;pgRec(it.t,crit);sfx(crit?"star":"ok");say(it.t);
+     if(crit){var d=document.createElement("b");d.className="nccritfx";d.textContent="⚡x2!";foe.appendChild(d);setTimeout(function(){d.remove()},900)}
+     if(NC.clean&&crit)S.firstOK++;
+     cr.remove();finish()}
+    else{first=false;NC.clean=false;sfx("bad");b.classList.add("pgno");b.disabled=true;pgMsg(K("Listen and try again!","다시 듣고 골라 봐!"),1);say(b.dataset.t)}
+   }});
+  },430);
+ }
+ function finish(){
+  var S=PGS;S.done++;S.streak++;pgDots();pgBuddy();pgMsg(K("Got it!","이겼다!"));
+  /* 카드 소비 + 보충 */
+  NC.sel.sort(function(a,b){return b-a}).forEach(function(i){NC.hand.splice(i,1)});
+  NC.sel=[];while(NC.hand.length<4)NC.hand.push(draw());
+  NC.busy=false;
+  pgT(function(){pgNext()},700);
+ }
+ return {
+  setup:function(){A=document.getElementById("pgArea");
+   NC={vil:pick(["gray","black","white","fat","purple","tiger"]),hand:[],sel:[],arts:ncArtPool(),ai:0,busy:false,clean:true,next:null};
+   while(NC.hand.length<4)NC.hand.push(draw());},
+  next:function(){var S=PGS;S.first=true;S.miss=0;S.hint=false;NC.clean=true;NC.sel=[];NC.busy=false;
+   var m=ncMode(S,S.done);
+   var V=(NC.next!=null&&ncSolvable(NC.hand,m,NC.nextMode===m?NC.next:-999))?NC.next:ncVFor(NC.hand,m);
+   if(NC.next!=null&&V!==NC.next)pgBanner(K("The villain swapped cards!","악당이 카드를 바꿨다!"));
+   NC.mode=m;NC.V=V;
+   /* 다음 카드 예고(같은 모드 가정) */
+   var nm=ncMode(S,S.done+1);NC.nextMode=nm;NC.next=ncVFor(NC.hand,nm);
+   S.target=null;render();pgDots();
+   pgMsg("");},
+  target:function(){},
+  prompt:function(){return '<span class="lab">🎴 '+K("Number card duel","숫자 카드 대결")+'</span><span class="pic">😼</span>'},
+  say:function(){var m=NC&&NC.mode;narrate([m==="sum"?K("Add two cards!","두 장을 더해서 똑같이!"):m==="ten"?K("Make ten!","더해서 10을 만들어!"):m==="same"?K("Block with the same!","똑같은 수로 막아!"):K("Play a bigger card!","더 큰 카드를 내!")],null)},
+  hint:function(){var sol=ncSolution();sol.forEach(function(i){var b=A.querySelector('.nchc[data-i="'+i+'"]');if(b)b.classList.add("hintg")})},
+  acc:function(){var S=PGS;return S.firstOK/S.goal},
+  stop:function(){}
+ };
+};
+})();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

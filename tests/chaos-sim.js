@@ -60,7 +60,7 @@ const VW={tablet:{width:1024,height:768},phone:{width:390,height:844},tabletP:{w
  await E(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await W(900);await health();
  // ---------- scenarios ----------
  const S={
-  async pg(){const g=pickA(['fish','asm','pair','dict','train','fill','trace','opp']),lv=1+Math.floor(rnd()*5);scen='pg '+g+lv;trace.push(scen);await closeAll();
+  async pg(){const g=pickA(['fish','asm','ncard','pair','dict','train','fill','trace','opp']),lv=1+Math.floor(rnd()*5);scen='pg '+g+lv;trace.push(scen);await closeAll();
    await E(([g,lv])=>{pgPlay(g,lv)},[g,lv]);await W(400);const quitAt=rnd()<.3?4+Math.floor(rnd()*30):-1;let n=0;
    await until(()=>({done:!!document.querySelector('.pgres')||!PGS,d:PGS&&PGS.done}),70000,async()=>{n++;if(n===quitAt){trace.push('quit pg');await E(()=>{const b=$("pgBack");b&&b.click()});return}
     const r=await E(w=>typeof PGAUTO==='function'?PGAUTO(w):'none',rnd()<.15);if(rnd()<.25)await chaos()});
