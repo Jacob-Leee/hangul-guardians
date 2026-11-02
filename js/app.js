@@ -1228,7 +1228,7 @@ function hitBlock(cx,cy){
  if(m.s===gate.target){
   RUN.cols[cx][cy]="U";rec(m.s,true);say(m.s);sfx("star");gate.opened=true;RUN.cur++;
   Object.keys(RUN.meta).forEach(k=>{if(RUN.meta[k].g===m.g){const [a,b]=k.split(",").map(Number);if(RUN.cols[a][b]==="L")RUN.cols[a][b]="U"}});
-  RUN.check={x:(gate.cx+1)*T,y:5*T};part({x:cx*T+T/2,y:cy*T-10,vy:-220,txt:m.s,life:1.1,big:1});msgRun(u.gateOpen);
+  RUN.check={x:(gate.cx+1)*T,y:5*T};if(RUN.pk){if(RUN.pk.heal&&RUN.hearts<maxHearts()+((RUN.pk.heart)||0)){RUN.hearts++;part({x:RUN.p.x+RUN.p.w/2,y:RUN.p.y-10,txt:"❤️",life:.9})}if(RUN.pk.burst)RUN.burstT=2.6;}part({x:cx*T+T/2,y:cy*T-10,vy:-220,txt:m.s,life:1.1,big:1});msgRun(u.gateOpen);
  }else{
   RUN.cols[cx][cy]="U";rec(gate.target,false);say(m.s);sfx("bad");gate.hint=true;
   if(G.easy){RUN.wrong=(RUN.wrong||0)+1;msgRun(K(`That was '${m.s}'. Listen again!`,`그건 '${m.s}'(이)야. 다시 들어 봐!`));const tg=gate.target;setTimeout(()=>{if(RUN&&!RUN.done)say(tg)},1000)}
@@ -1251,11 +1251,11 @@ function moveBody(b,dt,onHead){
 }
 function hurtP(dir){
  const p=RUN.p;if(p.inv>0||RUN.done)return;
- RUN.hearts--;p.inv=1.5;p.vx=dir*260;p.vy=-420;sfx("bad");runHUD();if(RUN.hearts<=0)failRun();
+ if(RUN.pk&&RUN.pk.shield&&!RUN.pkShield){RUN.pkShield=1;p.inv=2;p.vx=dir*220;p.vy=-320;sfx("tap");part({x:p.x+p.w/2,y:p.y-8,txt:"🛡️",life:.9});msgRun(K("The shield blocked it!","방패가 막아 줬어!"));runHUD();return}RUN.hearts--;p.inv=((RUN.pk&&RUN.pk.inv)||1.5);p.vx=dir*260;p.vy=-420;sfx("bad");runHUD();if(RUN.hearts<=0)failRun();
 }
 function runUpdate(dt){
  const p=RUN.p,k=RUN.keys;RUN.t+=dt;
- const acc=p.on?2400:1500,max=G.char==="horse"?325:(G.easy?220:260);let KR=k.r,KL=k.l;
+ const acc=p.on?2400:1500,max=((RUN.pk&&RUN.pk.spd)||(G.easy?220:260))*(RUN.burstT>0?1.25:1);let KR=k.r,KL=k.l;
  if(G.easy&&(RUN.auto||RUN.goal!=null)){const g=RUN.gates[RUN.cur],sg=g&&RUN.signs.find(q=>q.g===RUN.cur),stopX=sg?sg.x+T/2:1e9;
   if(RUN.goal!=null){const tx=RUN.goal*T+T/2-p.w/2;if(Math.abs(tx-p.x)>5){KR=tx>p.x;KL=tx<p.x}else{KR=KL=false;p.vx=0;if(p.on){k.j=1;RUN.jPrev=0;setTimeout(()=>{if(RUN)RUN.keys.j=0},340);RUN.goal=null}}}
   else if(!KL&&p.x+p.w<stopX)KR=true;}
@@ -1264,26 +1264,26 @@ function runUpdate(dt){
  else{const f=(p.on?2200:600)*dt;p.vx=Math.abs(p.vx)<=f?0:p.vx-Math.sign(p.vx)*f}
  if(k.j&&!RUN.jPrev)p.buf=.14;RUN.jPrev=k.j;
  p.buf=Math.max(0,p.buf-dt);p.coy=p.on?.1:Math.max(0,p.coy-dt);p.inv=Math.max(0,p.inv-dt);p.sq=Math.max(0,p.sq-dt);
- if(p.buf>0&&p.coy>0){p.vy=G.char==="rabbit"?-900:-820;p.buf=0;p.coy=0;sfx("tap")}
- if(!k.j&&p.vy<-320)p.vy=-320;
+ if(p.buf>0&&p.coy>0){p.vy=-820*((RUN.pk&&RUN.pk.jump)||1);p.buf=0;p.coy=0;sfx("tap")}else if(p.buf>0&&p.dbl&&!p.on){p.dbl=0;p.buf=0;p.vy=-760;sfx("tap");part({x:p.x+p.w/2,y:p.y+p.h,txt:"✨",life:.5})}
+ if(!k.j&&p.vy<-320)p.vy=-320;if(p.on)p.dbl=(RUN.pk&&RUN.pk.dbl)||0;if(RUN.pk&&RUN.pk.glide&&k.j&&!p.on&&p.vy>150)p.vy=150;RUN.burstT=Math.max(0,(RUN.burstT||0)-dt);
  const was=p.on;moveBody(p,dt,hitBlock);if(p.on&&!was)p.sq=.12;
  const prog=G.easy&&KR&&RUN.goal==null&&p.x<=(RUN.progX==null?-1e9:RUN.progX)+3;if(!prog)RUN.progX=p.x;
  if(prog){RUN.stuck=(RUN.stuck||0)+dt;if(RUN.stuck>1){msgRun(K("Tap the screen to jump!","화면을 톡 눌러서 점프!"));document.querySelector('.pbtn2.big').classList.add("nudge");}}else if(RUN.stuck){RUN.stuck=0;document.querySelector('.pbtn2.big').classList.remove("nudge")}
  if(RUN.done)return;
- if(p.y>ROWS*T+60){RUN.hearts--;runHUD();if(RUN.hearts<=0){failRun();return}p.x=RUN.check.x;p.y=RUN.check.y;p.vx=p.vy=0;p.inv=1.5;sfx("bad")}
+ if(p.y>ROWS*T+60){if(RUN.pk&&RUN.pk.save&&!RUN.pkSave){RUN.pkSave=1;sfx("ok");part({x:RUN.check.x+14,y:RUN.check.y,txt:"🫧",life:.9});msgRun(K("Bubble bounce!","거품이 퐁! 구해 줬어!"))}else{RUN.hearts--;runHUD();if(RUN.hearts<=0){failRun();return}sfx("bad")}p.x=RUN.check.x;p.y=RUN.check.y;p.vx=p.vy=0;p.inv=1.5}
  RUN.trail.push({x:p.x,y:p.y,f:p.face});if(RUN.trail.length>16)RUN.trail.shift();
  const g=RUN.gates[RUN.cur];
  RUN.signs.forEach(sg=>{if(g&&sg.g===RUN.cur&&!RUN.said[sg.g]&&p.x>sg.x-4*T){RUN.said[sg.g]=1;if(G.easy){msgRun(K("Listen! Tap the letter block that makes this sound.","잘 들어 봐! 이 소리 나는 글자 블록을 콕 눌러."));const tg=g.target;sayUI("Which block makes this sound?","어떤 글자일까?",()=>say(tg))}else{say(g.target);msgRun(t().gateMsg)}}});
  RUN.gates.forEach(gt=>{if(gt.opened&&gt.anim<1)gt.anim=Math.min(1,gt.anim+dt*1.6)});
  for(const key in RUN.bumps){RUN.bumps[key]-=dt;if(RUN.bumps[key]<=0)delete RUN.bumps[key]}
- RUN.coinE.forEach(c=>{if(!c.taken&&Math.abs(p.x+p.w/2-c.x)<24&&Math.abs(p.y+p.h/2-c.y)<34){c.taken=true;RUN.coins++;sfx("tap");runHUD()}});
+ RUN.coinE.forEach(c=>{if(!c.taken&&Math.abs(p.x+p.w/2-c.x)<((RUN.pk&&RUN.pk.mag)||24)&&Math.abs(p.y+p.h/2-c.y)<((RUN.pk&&RUN.pk.mag)||34)){c.taken=true;RUN.coins++;sfx("tap");runHUD()}});
  RUN.mobs.forEach(m=>{
   if(!m.alive){m.sq-=dt;return}
   if(Math.abs(m.x-p.x)>15*T)return;
   if(m.on){const ax=m.vx>0?Math.floor((m.x+m.w+2)/T):Math.floor((m.x-2)/T),by=Math.floor((m.y+m.h+2)/T);if(!solid(ax,by))m.vx=-m.vx}
   moveBody(m,dt);if(m.y>ROWS*T+80){m.alive=false;m.sq=0;return}
   if(overlap(p,m)){
-   if(G.easy||(p.vy>60&&p.y+p.h-m.y<22)){m.alive=false;m.sq=.35;p.vy=G.easy&&p.on?-300:-540;RUN.coins+=2;sfx("hit");part({x:m.x+17,y:m.y-6,txt:"+2",life:.7});runHUD()}
+   if(G.easy||(p.vy>60&&p.y+p.h-m.y<22)){m.alive=false;m.sq=.35;p.vy=(G.easy&&p.on?-300:-540)*((RUN.pk&&RUN.pk.stomp)||1);RUN.coins+=(RUN.pk&&RUN.pk.stomp?4:2);sfx("hit");part({x:m.x+17,y:m.y-6,txt:"+2",life:.7});runHUD()}
    else hurtP(m.x<p.x?1:-1);
   }
  });
@@ -2942,7 +2942,7 @@ function stageFail(i){
 function practiceBattle(){duel({practice:true,tier:G.easy?1:2})}
 
 function renderExtras(){
- const X=[["today","☀️",K("Today's adventure","오늘의 모험"),()=>tdOpen()],[G.view==="island"?"lib2":"island",G.view==="island"?"📚":"🏝️",G.view==="island"?K("Story Library","이야기 도서관"):K("Hangul Island","한글 섬 모험"),()=>{G.view=G.view==="island"?"library":"island";save();renderAll()}],["play","🎪",K("Playground","한글 놀이터"),()=>pgHub()],["case","🔎",K("Case Squad","사건 수사대"),()=>openCases()],["course","🌀",K("Free course","모험 코스"),()=>startRun()],["battle","⚔️",K("Practice battle","연습 배틀"),()=>practiceBattle()],["shop","🦝",K("Shop","상점"),()=>showShop()]];
+ const X=[["today","☀️",K("Today's adventure","오늘의 모험"),()=>tdOpen()],[G.view==="island"?"lib2":"island",G.view==="island"?"📚":"🏝️",G.view==="island"?K("Story Library","이야기 도서관"):K("Hangul Island","한글 섬 모험"),()=>{G.view=G.view==="island"?"library":"island";save();renderAll()}],["play","🎪",K("Playground","한글 놀이터"),()=>pgHub()],["case","🔎",K("Case Squad","사건 수사대"),()=>openCases()],["course","🌀",K("Adventure courses","모험 코스"),()=>window.courseMap?courseMap():startRun()],["battle","⚔️",K("Practice battle","연습 배틀"),()=>practiceBattle()],["shop","🦝",K("Shop","상점"),()=>showShop()]];
  $("extras").innerHTML=X.map(([k,ic,n])=>`<button class="xbtn" data-x="${k}"><span class="ic">${ic}</span>${n}${k==="today"?tdChip():""}${(k==="case"&&!(G.cases&&G.cases.k1))||(k==="play"&&!G.pgIntro)?'<span class="new">NEW</span>':""}</button>`).join("");
  $("extras").querySelectorAll(".xbtn").forEach((b,i)=>b.onclick=()=>{if(overlayOpen())return;sfx("tap");X[i][3]()});tdHudSet();
 }
@@ -5812,6 +5812,142 @@ distract=function(s,n){var d=HSTK.dcp(s);if(!d||!d.f)return _dis0(s,n);
 var _set31=showSettings;showSettings=function(){_set31.apply(this,arguments);
  try{var c=$("setCard");[1,2].forEach(function(v){var b=c.querySelector('[data-wl="'+v+'"]');if(b)b.remove()});
   var rb=c.querySelector("[data-rl]");if(rb){var row=rb.closest(".setrow");if(row)row.remove()}}catch(e){}};
+})();
+
+
+/* ===== v32 (2026-11-03): 모험 코스 지도 10코스 + 영웅 특성 12종 ===== */
+(function(){
+/* ---------- 영웅 특성 (모험 코스 전용) — patch40이 기본 물리에 RUN.pk 훅을 심어 둠 ---------- */
+window.PERKS={
+ rat:{e:"🧲",n:["Coin magnet","코인 자석"],d:["Pulls coins from afar","코인이 멀리서도 끌려와요"],mag:88},
+ ox:{e:"💪",n:["Sturdy ox","튼튼 황소"],d:["One extra heart","하트가 1칸 더 많아요"],heart:1},
+ tiger:{e:"🔥",n:["Tough tiger","끈질긴 호랑이"],d:["Longer safe time after a bump","부딪혀도 한참 동안 끄떡없어요"],inv:2.6},
+ rabbit:{e:"⤴️",n:["High jump","높이 점프"],d:["Jumps higher","더 높이 뛰어요"],jump:1.11},
+ dragon:{e:"✨",n:["Double jump","더블 점프"],d:["Jump once more in the air!","공중에서 한 번 더 점프!"],dbl:1},
+ snake:{e:"🪂",n:["Wind glide","바람 활강"],d:["Hold jump to float down","점프를 꾹 누르면 천천히 내려와요"],glide:1},
+ horse:{e:"💨",n:["Full gallop","질주"],d:["The fastest runner","달리기가 제일 빨라요"],spd:325},
+ sheep:{e:"❤️",n:["Cozy heal","포근 회복"],d:["Opening a gate heals one heart","문을 열면 하트 1칸 회복"],heal:1},
+ monkey:{e:"🤸",n:["Bouncy stomp","통통 튀기"],d:["Bounce higher off monsters, double coins","몬스터를 밟으면 더 높이! 코인도 2배"],stomp:1.25},
+ rooster:{e:"🌅",n:["Dawn dash","새벽 질주"],d:["A speed burst after each gate","문을 열면 잠깐 빨라져요"],burst:1},
+ dog:{e:"🛡️",n:["Guard shield","수호 방패"],d:["Blocks one bump for free","한 번은 다치지 않아요"],shield:1},
+ pig:{e:"🫧",n:["Bubble rescue","거품 구조"],d:["One free bounce out of a pit","구덩이에 빠지면 한 번 퐁! 살아나요"],save:1}};
+function perkLine(id){var p=PERKS[id];return p?p.e+" "+L2(p.n)+" — "+L2(p.d):""}
+function L2(a){return G.lang==="ko"?a[1]:a[0]}
+
+/* ---------- 코스 지도 10코스 (받침 테마는 WORDS2 실제 분포 기준) ---------- */
+var CRS_J=" ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ";
+function crsJongs(w){var out=[];[].slice.call(w).forEach(function(ch){var p=sylParts(ch);if(p&&p.t)out.push(CRS_J[p.t])});return out}
+window.COURSE10=[
+ {ic:"🌾",n:["Field of ㄴ","ㄴ받침 들판"],f:"ㄴ"},
+ {ic:"☁️",n:["Sky road of ㅇ","ㅇ받침 하늘길"],f:"ㅇ"},
+ {ic:"💧",n:["Brook of ㄹ","ㄹ받침 개울"],f:"ㄹ"},
+ {ic:"⛰️",n:["Hill of ㄱ·ㅁ","ㄱ·ㅁ받침 동산"],f:"ㄱㄲㅁ"},
+ {ic:"🏡",n:["Double-batchim town","받침 두 번 마을"],two:1},
+ {ic:"🐘",n:["Long-word forest","긴 낱말 숲"],len:3},
+ {ic:"🌈",n:["Mix-up meadow","섞어서 초원"]},
+ {ic:"🪨",n:["Boulder pass","바위 고개"]},
+ {ic:"🌪️",n:["Windy ridge","바람 언덕"]},
+ {ic:"👑",n:["The last adventure","마지막 모험"]}];
+function crsPool(n){
+ var C=COURSE10[n-1],base=WORDS2.filter(function(x){return x.w.length>=2&&x.w.length<=3});
+ var pool=base;
+ if(C.f)pool=base.filter(function(x){return crsJongs(x.w).some(function(j){return C.f.indexOf(j)>=0})});
+ else if(C.two)pool=base.filter(function(x){return crsJongs(x.w).length>=2});
+ else if(C.len)pool=base.filter(function(x){return x.w.length>=C.len});
+ return pool.length>=2?pool:base;
+}
+function crsStars(n){G.crs=G.crs||{};G.crs.s=G.crs.s||{};return G.crs.s[n]||0}
+function crsOpen(n){return n===1||crsStars(n-1)>0}
+
+window.courseMap=function(){
+ var ov=document.getElementById("crsOv");
+ if(!ov){ov=document.createElement("div");ov.id="crsOv";ov.className="crsov";document.body.appendChild(ov)}
+ var doneN=COURSE10.filter(function(_,i){return crsStars(i+1)>0}).length;
+ ov.innerHTML='<div class="crscard">'
+  +'<div class="crshead"><h2>🌀 '+K("Adventure courses","모험 코스")+'</h2><span class="crsn">⭐ '+doneN+' / 10</span><button class="btn" id="crsX">'+K("Close","닫기")+'</button></div>'
+  +'<p class="crspk">'+perkLine(G.char)+'</p>'
+  +'<div class="crsgrid">'+COURSE10.map(function(C,i){var n=i+1,st=crsStars(n),open=crsOpen(n);
+    return '<button class="crsnode'+(open?'':' lock')+(st?' done':'')+'" data-c="'+n+'">'
+     +'<span class="ic">'+(open?C.ic:"🔒")+'</span><b>'+n+'. '+L2(C.n)+'</b>'
+     +'<span class="st">'+(st?'⭐'.repeat(st)+'☆'.repeat(3-st):(open?K("2 words · Go!","낱말 2개 · 도전!"):K("Clear the one before","앞 코스를 깨면 열려요")))+'</span></button>'}).join('')
+  +'</div><div class="tbtns"><button class="btn" id="crsRnd">🎲 '+K("Any course","아무 낱말이나 달리기")+'</button></div></div>';
+ ov.hidden=false;
+ document.getElementById("crsX").onclick=function(){sfx("tap");ov.hidden=true};
+ document.getElementById("crsRnd").onclick=function(){sfx("tap");ov.hidden=true;startRun()};
+ ov.querySelectorAll(".crsnode").forEach(function(b){b.onclick=function(){var n=+b.dataset.c;sfx("tap");
+  if(!crsOpen(n)){toast(K("Clear course "+(n-1)+" first!","먼저 "+(n-1)+"번 코스를 깨야 열려요!"));return}
+  ov.hidden=true;startRun(null,{crs:n})}});
+};
+
+/* ---------- 코스 달리기: 특성 적용 + 낱말 2개 이어 달리기 + 지형 변화 ---------- */
+var CV=null; /* buildLevel 난이도 (코스 번호) */
+var _bl32=buildLevel;
+buildLevel=function(word){
+ if(!CV)return _bl32.call(this,word);
+ var lv=_bl32.call(this,word),n=CV,cols=lv.cols;
+ /* 뒤 코스일수록: 구덩이 한 칸 넓게(쉬움 모드는 그대로 메움), 몬스터 추가 */
+ try{
+  if(n>=4){var extra=Math.min(3,1+((n-4)/3|0));var flats=[];
+   cols.forEach(function(c,x){if(c[7]==="#"&&c[4]==="."&&c[5]==="."&&c[6]===".")flats.push(x)});
+   for(var i=1;i<=extra;i++){var x=flats[((flats.length/(extra+1))*i|0)];
+    if(x&&x>16)lv.ents.push({k:"mob",x:x*T})}}
+  if(n>=7){ /* 디딤돌 몇 개를 공중 블록으로 — 다리 아래 틈 */
+   var g0=lv.gates[0];if(g0&&!G.easy){var cx=g0.cx-7;if(cx>14&&cols[cx]&&cols[cx+1]){
+    [cx,cx+1].forEach(function(x){cols[x][7]=".";cols[x][8]=".";});cols[cx][5]="#";cols[cx+1][5]="#"}}}
+ }catch(e){}
+ return lv;
+};
+var _sr32=startRun;
+startRun=function(word,opt){
+ opt=opt||{};CV=opt.crs||null;
+ if(opt.crs&&!word){var pool=crsPool(opt.crs).filter(function(x){return !opt.not||x.w!==opt.not});
+  if(!pool.length)pool=crsPool(opt.crs);word=pool[Math.floor(Math.random()*pool.length)]}
+ var r=_sr32.call(this,word);
+ CV=null;
+ if(RUN){
+  RUN.pk=PERKS[G.char]||null;
+  if(RUN.pk&&RUN.pk.heart){RUN.hearts+=RUN.pk.heart;runHUD()}
+  if(opt.crs){RUN.crs=opt.crs;RUN.leg=opt.leg||0;
+   if(opt.hearts!=null){RUN.hearts=opt.hearts;RUN.coins=opt.coins||0;runHUD()}
+   if(RUN.leg===0){RUN.reviewed=true; /* 첫 낱말은 깃발 복습 생략(두 번째 낱말에서 복습) */
+    var C=COURSE10[opt.crs-1];msgRun(C.ic+" "+L2(C.n)+" · "+K("Word 1 of 2!","낱말 ① / ②!"))}
+   else msgRun(K("Second word! Almost there!","두 번째 낱말! 조금만 더!"));
+  }
+  if(RUN.pk){G.pkSeen=G.pkSeen||{};if(!G.pkSeen[G.char]){G.pkSeen[G.char]=1;save();
+   setTimeout(function(){if(RUN&&!RUN.done)msgRun(perkLine(G.char))},1200)}}
+ }
+ return r;
+};
+/* 하트 표시가 특성(+1)까지 그리도록 */
+var _hud32=runHUD;
+runHUD=function(){_hud32.apply(this,arguments);
+ try{if(RUN&&RUN.pk&&RUN.pk.heart){var mx=maxHearts()+RUN.pk.heart;
+  document.getElementById("rHearts").textContent="❤️".repeat(Math.max(0,RUN.hearts))+"🤍".repeat(Math.max(0,mx-RUN.hearts))}}catch(e){}};
+var _cr32=clearRun;
+clearRun=function(){
+ if(RUN&&!RUN.done&&RUN.crs&&!STAGE){
+  if((RUN.leg||0)===0){ /* 첫 낱말 끝 → 바로 두 번째 낱말로 */
+   RUN.done="leg";RUN.keys={l:0,r:0,j:0};
+   var crs=RUN.crs,h=RUN.hearts,cn=RUN.coins,w0=RUN.word,wr=RUN.wrong||0;
+   sfx("star");say(w0.w);
+   runResult('<div class="big">'+w0.p+'</div><h3>'+K("First word done!","첫 낱말 통과!")+'</h3><p class="rw">'+w0.w+'</p>',
+    [[K("Next word","다음 낱말")+" →",1,function(){startRun(null,{crs:crs,leg:1,hearts:h,coins:cn,not:w0.w,wrong:wr})}]]);
+   return;
+  }
+  /* 두 번째 낱말 끝 → 별 기록 */
+  var st=G.easy?(((RUN.wrong||0)===0)?3:((RUN.wrong||0)<=2?2:1))
+    :(RUN.hearts>=maxHearts()+((RUN.pk&&RUN.pk.heart)||0)?3:(RUN.hearts>=2?2:1));
+  G.crs=G.crs||{};G.crs.s=G.crs.s||{};
+  var n=RUN.crs,old=G.crs.s[n]||0;if(st>old)G.crs.s[n]=st;save();
+  var opened=old===0&&n<10;
+  setTimeout(function(){toast(COURSE10[n-1].ic+" "+L2(COURSE10[n-1].n)+" "+"⭐".repeat(st)+(opened?" · "+K("Course "+(n+1)+" open!",(n+1)+"번 코스가 열렸어요!"):""))},900);
+ }
+ _cr32.apply(this,arguments);
+};
+/* 코스 달리기에서 '다음 코스' 단추를 누르면 지도로 */
+var _closeRun32=closeRun;
+closeRun=function(){var wasCrs=!!(RUN&&RUN.crs&&!STAGE);_closeRun32.apply(this,arguments);
+ if(wasCrs&&window.courseMap)setTimeout(function(){if(!document.querySelector("#runOv:not([hidden])"))courseMap()},150)};
 })();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
