@@ -3210,8 +3210,8 @@ function wbBook(tier){pgStop();$("pgOv").hidden=false;tier=tier||0;const kn=WB.f
  $("pgCard").querySelectorAll("[data-say]").forEach(b=>b.onclick=()=>say(b.dataset.say));
 }
 /* --- 레벨 테스트: read a word, tap its picture; 3 words per level, keep climbing while 2 of 3 are right --- */
-function wbTest(){pgStop();$("pgOv").hidden=false;const T={tier:1,i:0,ok:0,set:null,busy:false,tok:{}};PGS={dead:false,timers:[],raf:0,tok:T};
- const done=lv=>{G.wl=lv;save();sfx("star");
+function wbTest(){pgStop();$("pgOv").hidden=false;const T={tier:3,i:0,ok:0,set:null,busy:false,tok:{}};PGS={dead:false,timers:[],raf:0,tok:T};
+ const done=lv=>{lv=Math.max(3,lv);G.wl=lv;save();sfx("star");
   $("pgCard").innerHTML=`<div class="wbtest"><div class="wtres"><div class="bigic">📖</div><h2>${K("Start at word level "+lv,"낱말 레벨 "+lv+"에서 시작해요!")}</h2><p>${K("Level "+lv,lv+"단계")} · ${WB_NAMES[lv]}</p><small>${K("The level rises by itself as words are learned in the playground.","놀이터에서 낱말을 익히면 레벨이 저절로 올라가요.")}</small><div class="tbtns"><button class="btn pri big" id="wtDone">🎪 ${K("To the playground","놀이터로")}</button></div></div></div>`;
   $("wtDone").onclick=()=>{sfx("tap");pgHub()};narrate(["낱말 레벨 "+lv+"에서 시작해 보자!"],null,"ko",{voice:G.char})};
  const show=()=>{if(!T.set)T.set=shuffle(WB.filter(w=>w.lv===T.tier)).slice(0,3);const w=T.set[T.i];
@@ -3371,7 +3371,7 @@ PGM.rain=()=>{let D=[],A,last=0,spawnT=0,lanes=4;
  return M};
 /* letter train: put the pieces in order — jamo into a letter, letters into a word, word blocks into a sentence */
 PGM.train=()=>{let parts=[],k=0,B=[],cars=[];
- const syl=()=>PGS.lv<=2,sent=()=>!!(PGS.target&&PGS.target.parts);
+ const syl=()=>!!(PGS.lad&&PGS.lad.syl),sent=()=>!!(PGS.target&&PGS.target.parts);
  const tap=b=>{const S=PGS;if(!S||S.lock||b.used)return;
   if(b.t!==parts[k])return pgWrong(b.el,{t:b.t});
   b.used=true;sfx2("pop");const car=cars[k],slot=car.querySelector(".slot");b.el.classList.remove("pghint");
@@ -4702,32 +4702,18 @@ RMS.b12.forEach((m,i)=>{m.id="b12_"+i});
 HQ_ITEMS.push({id:"goldbrick",e:"🧱",n:["Golden brick","황금 벽돌"],src:"book_b12"});
 
 
-/* ===== v30a: 낚시·두더지 분위기 업 — 잔잔한 배경 생물 + 연속 정답 무지개 ===== */
-(function(){
-var _fish0=PGM.fish;PGM.fish=function(){var M=_fish0(),_s=M.setup;
- M.setup=function(){_s();var A=$("pgArea").querySelector(".pond3");if(!A)return;
-  A.insertAdjacentHTML("beforeend",'<i class="lily a"></i><i class="lily b"></i><span class="pbfly" aria-hidden="true">🦋</span><span class="jumpf" aria-hidden="true">🐟</span>')};
- return M};
-var _mole0=PGM.mole;PGM.mole=function(){var M=_mole0(),_s=M.setup;
- M.setup=function(){_s();var A=$("pgArea").querySelector(".meadow");if(!A)return;
-  A.insertAdjacentHTML("beforeend",'<span class="pbfly" aria-hidden="true">🦋</span><span class="lbug" aria-hidden="true">🐞</span><i class="seed s1"></i><i class="seed s2"></i><i class="seed s3"></i>')};
- return M};
-/* 3연속 정답 배너가 뜰 때, 낚시·두더지 무대에는 무지개도 뜬다 */
-var _ban0=pgBanner;pgBanner=function(t,cls){_ban0(t,cls);
- if(cls!=="combo"||!PGS)return;var A=$("pgArea");if(!A)return;var sc=A.querySelector(".pond3,.meadow");if(!sc)return;
- var r=document.createElement("i");r.className="pgrbow";sc.appendChild(r);setTimeout(function(){try{r.remove()}catch(e){}},2300)};
-})();
-
-/* ===== v30b(v30.4): 따라 쓰기 — 획순을 가르치고, 모든 획을 다 써야 성공 =====
-   글자를 폰트 통짜가 아니라 획(stroke) 단위로 그린다. 획마다 번호가 붙고, 연필 시범이
-   순서를 보여 주며, 반짝이는 획부터 차례대로 덮어야 다음 획이 열린다. 받침 글자는
-   초성→중성→종성 순서로 자동 배치된다. 획 하나라도 빠지면 절대 성공하지 않는다. */
-(function(){
+/* ===== v30h(v31): 한글 획 사전 + 받아쓰기 채점기 (따라 쓰기·받아쓰기 공용) =====
+   - 자모 획 사전: 기본 자음 14·모음 10 + 쌍자음 + 겹모음(ㅐ ㅔ ㅘ ㅚ ㅝ ㅢ …) + 겹받침(ㄳ ㄺ ㅄ …)
+   - charParts(ch): 글자 하나를 초성·중성(·중성2)·종성 부분으로 나누고 부분마다 상자와 획을 준다 (0~100 좌표)
+   - match(ch, 아이 획): 받아쓰기 채점. 부분마다 아이 글씨를 그 자모 크기로 맞춘 뒤, 획 방향까지 보고
+     '정답 획이 모두 덮였는지(빠진 획 없음)'와 '아이 획이 모두 정답 근처인지(군더더기 없음)'를 따진다.
+     그래서 꽃 자리에 꼿(ㅊ→ㅅ), 곰 자리에 고(받침 빠짐), ㅏ 자리에 ㅑ 같은 철자 실수는 통과하지 못한다.
+   브라우저와 node(보정 시험) 양쪽에서 돈다. */
+(function(root){
 var JN={"ㄱ":"기역","ㄴ":"니은","ㄷ":"디귿","ㄹ":"리을","ㅁ":"미음","ㅂ":"비읍","ㅅ":"시옷","ㅇ":"이응","ㅈ":"지읒","ㅊ":"치읓","ㅋ":"키읔","ㅌ":"티읕","ㅍ":"피읖","ㅎ":"히읗",
 "ㅏ":"아","ㅑ":"야","ㅓ":"어","ㅕ":"여","ㅗ":"오","ㅛ":"요","ㅜ":"우","ㅠ":"유","ㅡ":"으","ㅣ":"이"};
-function trSay(t){if(t.length===1&&JN[t])say(JN[t]);else say(t)}
 function circ(cx,cy,r){var p=[];for(var i=0;i<=12;i++){var a=-Math.PI/2+i/12*2*Math.PI;p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)])}return p}
-/* 자모 획 사전 (100×100 상자, 표준 획순 근사) */
+/* 자모 획 사전 (100×100 상자, 표준 획순 근사) — v30.4 따라 쓰기와 같은 값 */
 var STK={
 "ㄱ":[[[18,16],[76,16],[76,86]]],
 "ㄴ":[[[22,14],[22,82],[84,82]]],
@@ -4752,26 +4738,209 @@ var STK={
 "ㅜ":[[[10,30],[90,30]],[[50,32],[50,84]]],
 "ㅠ":[[[10,28],[90,28]],[[36,30],[36,82]],[[64,30],[64,82]]],
 "ㅡ":[[[10,50],[90,50]]],
-"ㅣ":[[[50,6],[50,92]]]};
-function jstk(j){if(STK[j])return STK[j];
- var D={"ㄲ":"ㄱ","ㄸ":"ㄷ","ㅃ":"ㅂ","ㅆ":"ㅅ","ㅉ":"ㅈ"}[j];
- if(D){var out=[];[[0,0],[52,0]].forEach(function(o){STK[D].forEach(function(st){out.push(st.map(function(p){return [o[0]+p[0]*.48,p[1]]}))})});return out}
- return null}
+"ㅣ":[[[50,6],[50,92]]],
+/* 세로 줄이 둘인 모음 (ㅣ→짧은 획→ㅣ / 짧은 획→ㅣ→ㅣ) */
+"ㅐ":[[[28,6],[28,92]],[[28,48],[58,48]],[[66,6],[66,92]]],
+"ㅒ":[[[28,6],[28,92]],[[28,34],[58,34]],[[28,60],[58,60]],[[66,6],[66,92]]],
+"ㅔ":[[[12,48],[38,48]],[[42,6],[42,92]],[[72,6],[72,92]]],
+"ㅖ":[[[12,34],[38,34]],[[12,60],[38,60]],[[42,6],[42,92]],[[72,6],[72,92]]]};
+/* 섞인 모음 = 가로 모음 + 세로 모음 */
+var MIX={"ㅘ":["ㅗ","ㅏ"],"ㅙ":["ㅗ","ㅐ"],"ㅚ":["ㅗ","ㅣ"],"ㅝ":["ㅜ","ㅓ"],"ㅞ":["ㅜ","ㅔ"],"ㅟ":["ㅜ","ㅣ"],"ㅢ":["ㅡ","ㅣ"]};
+/* 겹자음(쌍자음·겹받침) = 두 자음을 반 폭으로 나란히 */
+var DBL={"ㄲ":"ㄱㄱ","ㄸ":"ㄷㄷ","ㅃ":"ㅂㅂ","ㅆ":"ㅅㅅ","ㅉ":"ㅈㅈ",
+ "ㄳ":"ㄱㅅ","ㄵ":"ㄴㅈ","ㄶ":"ㄴㅎ","ㄺ":"ㄹㄱ","ㄻ":"ㄹㅁ","ㄼ":"ㄹㅂ","ㄽ":"ㄹㅅ","ㄾ":"ㄹㅌ","ㄿ":"ㄹㅍ","ㅀ":"ㄹㅎ","ㅄ":"ㅂㅅ"};
+function place(stks,b){return stks.map(function(st){return st.map(function(p){return [b[0]+p[0]/100*b[2],b[1]+p[1]/100*b[3]]})})}
+var CACHE={};
+function jstk(j){if(STK[j])return STK[j];if(CACHE[j])return CACHE[j];var out=null;
+ if(DBL[j]){var a=STK[DBL[j][0]],b=STK[DBL[j][1]];
+  if(a&&b)out=place(a,[0,0,48,100]).concat(place(b,[52,0,48,100]))}
+ else if(MIX[j]){var h=STK[MIX[j][0]],s=STK[MIX[j][1]],wide="ㅐㅔ".indexOf(MIX[j][1])>=0;
+  if(h&&s)out=place(h,[0,40,wide?56:62,52]).concat(place(s,wide?[50,0,50,100]:[58,0,42,100]))}
+ if(out)CACHE[j]=out;return out}
 var CHO="ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ",JUNG="ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ",JONG="\u0000ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ";
 function dcp(ch){var c=ch.charCodeAt(0)-0xAC00;if(c<0||c>11171)return null;
  return {c:CHO[c/588|0],v:JUNG[(c%588)/28|0],f:(c%28)?JONG[c%28]:null}}
-/* 글자 하나 → [획 polyline(0~100 좌표)] 목록. 모르는 글자는 null(폰트 통짜 모드로 대체) */
-function charStrokes(ch){
- if(jstk(ch))return jstk(ch).map(function(st){return st.map(function(p){return [12+p[0]*.76,10+p[1]*.8]})});
+function comp(c,v,f){var i=CHO.indexOf(c),j=JUNG.indexOf(v),k=f?JONG.indexOf(f):0;if(i<0||j<0||k<0)return null;return String.fromCharCode(0xAC00+(i*21+j)*28+k)}
+var HORIZ="ㅗㅛㅜㅠㅡ",WIDEV="ㅐㅒㅔㅖ";
+/* 글자 하나 → 부분 목록 [{role:'c'|'v'|'vh'|'vs'|'f'|'j', j:자모, box:[x,y,w,h], strokes}] (0~100). 모르는 글자는 null */
+function charParts(ch){
+ if(jstk(ch))return [{role:"j",j:ch,box:[12,10,76,80],strokes:jstk(ch).map(function(st){return st.map(function(p){return [12+p[0]*.76,10+p[1]*.8]})})}];
  var d=dcp(ch);if(!d)return null;
- var sc=jstk(d.c),sv=jstk(d.v),sf=d.f?jstk(d.f):[];
- if(!sc||!sv||(d.f&&!sf))return null;
- var horiz="ㅗㅛㅜㅠㅡ".indexOf(d.v)>=0,B;
- if(horiz)B=d.f?{c:[26,4,48,34],v:[10,38,80,28],f:[18,70,64,27]}:{c:[22,6,56,46],v:[8,54,84,40]};
- else B=d.f?{c:[10,6,42,48],v:[56,4,34,54],f:[16,62,68,33]}:{c:[8,10,46,80],v:[56,6,36,88]};
- var out=[];function put(stks,b){stks.forEach(function(st){out.push(st.map(function(p){return [b[0]+p[0]/100*b[2],b[1]+p[1]/100*b[3]]}))})}
- put(sc,B.c);put(sv,B.v);if(d.f)put(sf,B.f);
+ var sc=jstk(d.c),sf=d.f?jstk(d.f):[];if(!sc||(d.f&&!sf))return null;
+ var parts=[];function add(role,j,b){var s=jstk(j);parts.push({role:role,j:j,box:b,strokes:place(s,b)})}
+ if(MIX[d.v]){var wide=WIDEV.indexOf(MIX[d.v][1])>=0;
+  if(d.f){add("c",d.c,[10,4,40,30]);add("vh",MIX[d.v][0],[6,34,wide?50:56,26]);add("vs",MIX[d.v][1],wide?[54,2,40,60]:[62,2,30,60]);add("f",d.f,[16,66,68,30])}
+  else{add("c",d.c,[8,4,46,42]);add("vh",MIX[d.v][0],[4,48,wide?52:60,36]);add("vs",MIX[d.v][1],wide?[54,2,42,94]:[62,2,32,94])}}
+ else if(HORIZ.indexOf(d.v)>=0){
+  if(d.f){add("c",d.c,[26,4,48,34]);add("v",d.v,[10,38,80,28]);add("f",d.f,[18,70,64,27])}
+  else{add("c",d.c,[22,6,56,46]);add("v",d.v,[8,54,84,40])}}
+ else if(WIDEV.indexOf(d.v)>=0){
+  if(d.f){add("c",d.c,[6,6,40,48]);add("v",d.v,[48,4,46,54]);add("f",d.f,[16,62,68,33])}
+  else{add("c",d.c,[6,10,42,80]);add("v",d.v,[50,6,44,88])}}
+ else{
+  if(d.f){add("c",d.c,[10,6,42,48]);add("v",d.v,[56,4,34,54]);add("f",d.f,[16,62,68,33])}
+  else{add("c",d.c,[8,10,46,80]);add("v",d.v,[56,6,36,88])}}
+ return parts}
+function charStrokes(ch){var ps=charParts(ch);if(!ps)return null;var out=[];ps.forEach(function(p){out=out.concat(p.strokes)});return out}
+
+/* ───────── 받아쓰기 채점 ───────── */
+function plen(pl){var L=0;for(var i=1;i<pl.length;i++)L+=Math.hypot(pl[i][0]-pl[i-1][0],pl[i][1]-pl[i-1][1]);return L}
+/* 일정 간격으로 다시 찍고, 점마다 그 자리 획 방향(0~π)을 붙인다. 짧은 획(점 찍기)은 방향 없음 */
+function resample(pl,step,shortLen,span){var L=plen(pl),out=[];
+ if(pl.length<2||L<1e-6){out.push({x:pl[0][0],y:pl[0][1],a:null});return out}
+ var noDir=L<shortLen;
+ out.push({x:pl[0][0],y:pl[0][1],a:null});
+ var acc=0,next=step;
+ for(var i=1;i<pl.length;i++){var a0=pl[i-1],a1=pl[i],d=Math.hypot(a1[0]-a0[0],a1[1]-a0[1]);if(d<1e-9)continue;
+  while(acc+d>=next){var f=(next-acc)/d;out.push({x:a0[0]+(a1[0]-a0[0])*f,y:a0[1]+(a1[1]-a0[1])*f,a:null});next+=step}
+  acc+=d}
+ var e=pl[pl.length-1],lp=out[out.length-1];if(Math.hypot(e[0]-lp.x,e[1]-lp.y)>step*.4)out.push({x:e[0],y:e[1],a:null});
+ if(!noDir){/* 방향은 앞뒤로 조금 떨어진 점끼리(흔들림 무시) */
+  var k=Math.max(1,Math.round((span||step*2)/step)),n=out.length;
+  for(var j=0;j<n;j++){var A=out[Math.max(0,j-k)],B=out[Math.min(n-1,j+k)];
+   if(A===B){A=out[Math.max(0,j-1)];B=out[Math.min(n-1,j+1)]}
+   out[j].a=(A===B)?null:ang([A.x,A.y],[B.x,B.y])}}
  return out}
+function ang(p,q){var a=Math.atan2(q[1]-p[1],q[0]-p[0]);if(a<0)a+=Math.PI;if(a>=Math.PI)a-=Math.PI;return a}
+function adiff(a,b){if(a==null||b==null)return 0;var d=Math.abs(a-b);return Math.min(d,Math.PI-d)}
+function bbox(pts){var x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;pts.forEach(function(p){var x=p.x!=null?p.x:p[0],y=p.y!=null?p.y:p[1];if(x<x0)x0=x;if(y<y0)y0=y;if(x>x1)x1=x;if(y>y1)y1=y});
+ return {x0:x0,y0:y0,x1:x1,y1:y1,w:x1-x0,h:y1-y0,cx:(x0+x1)/2,cy:(y0+y1)/2}}
+var CFG={r:.22,rMin:5,rMd:.5,rAdd:2.5,aTol:50*Math.PI/180,recS:.6,recP:.76,preS:.5,preP:.76,extra:2,stray:.3,loopCn:2,margin:0,dupSep:9};
+/* 아이 획(0~100 좌표의 polyline 목록)을 글자 ch와 비교한 점수 (절대 기준) */
+function core(ch,kid,opt){opt=opt||{};var C=Object.assign({},CFG,opt.cfg||{});
+ var parts=charParts(ch);if(!parts)return {ok:false,why:"unknown",parts:[]};
+ kid=(kid||[]).filter(function(s){return s&&s.length});
+ if(!kid.length)return {ok:false,why:"empty",parts:[]};
+ /* 1) 전체 맞추기: 아이 글씨 전체를 정답 글자 크기·자리로 (비율은 유지) */
+ var T=[];parts.forEach(function(p){p.strokes.forEach(function(s){s.forEach(function(q){T.push(q)})})});
+ var tb=bbox(T),allK=[];kid.forEach(function(s){s.forEach(function(q){allK.push(q)})});var kb=bbox(allK);
+ var sx=tb.w/Math.max(kb.w,1),sy=tb.h/Math.max(kb.h,1),g=Math.sqrt(Math.max(.05,sx)*Math.max(.05,sy));g=Math.max(.5,Math.min(2,g));
+ var K0=kid.map(function(s){return s.map(function(q){return [tb.cx+(q[0]-kb.cx)*g,tb.cy+(q[1]-kb.cy)*g]})});
+ /* 2) 아이 획마다 가장 가까운 부분에 배정 (부분의 정답 획까지 평균 거리) */
+ var TP=parts.map(function(p){var pts=[];p.strokes.forEach(function(s){resample(s,2,0).forEach(function(q){pts.push(q)})});return pts});
+ function near(q,pts){var m=1e9;for(var i=0;i<pts.length;i++){var d=Math.hypot(pts[i].x-q.x,pts[i].y-q.y);if(d<m)m=d}return m}
+ var assign=parts.map(function(){return []}),stray=0;
+ K0.forEach(function(s,si){var rs=resample(s,2,0),best=-1,bc=1e9,mins=1e9;
+  parts.forEach(function(p,pi){var c=0;rs.forEach(function(q){c+=near(q,TP[pi])});c/=rs.length;if(c<bc){bc=c;best=pi}});
+  rs.forEach(function(q){mins=Math.min(mins,near(q,TP[best]))});
+  /* 글자에서 아주 멀리 떨어진 아주 짧은 점(실수로 톡)은 빼 준다 */
+  if(plen(s)<3&&mins>C.stray*Math.max(tb.w,tb.h)){stray++;return}
+  assign[best].push(s)});
+ /* 3) 부분마다: 아이 글씨를 정답 자모 상자에 맞춘 뒤, 방향까지 같은 점끼리 덮였는지 */
+ var res=parts.map(function(p,pi){var ks=assign[pi],o={role:p.role,j:p.j,ok:false,rec:0,pre:0,n:ks.length};
+  if(!ks.length){o.why="missing";return o}
+  var pb=bbox([].concat.apply([],p.strokes)),D=Math.max(pb.w,pb.h,8),r=Math.max(C.rMin,Math.min(C.r*D,C.rMd*Math.min(pb.w,pb.h)+C.rAdd)),shortT=.12*D;
+  var kpts=[].concat.apply([],ks),cb=bbox(kpts);
+  var fx=pb.w/Math.max(cb.w,.5),fy=pb.h/Math.max(cb.h,.5);
+  if(pb.w<.25*pb.h)fx=fy;else if(pb.h<.25*pb.w)fy=fx;
+  else{var rr=fx/fy;if(rr>1.6||rr<.625){var gm=Math.sqrt(fx*fy),cl=Math.max(.625,Math.min(1.6,rr));fx=gm*Math.sqrt(cl);fy=gm/Math.sqrt(cl)}}
+  fx=Math.max(.35,Math.min(3,fx));fy=Math.max(.35,Math.min(3,fy));
+  var KS=ks.map(function(s){return resample(s.map(function(q){return [pb.cx+(q[0]-cb.cx)*fx,pb.cy+(q[1]-cb.cy)*fy]}),D/40,.09*D,D/14)});
+  var TS=p.strokes.map(function(s){return resample(s,D/40,shortT,D/14)});
+  /* 아이 점 하나는 가장 가까운(방향도 맞는) 정답 획 하나에만 쓰인다 → 한 획이 나란한 두 획을 함께 덮는 일(ㅏ↔ㅑ)이 없다 */
+  var ownD=[],own=KS.map(function(S){var dl=[];var o2=S.map(function(q){var bi=-1,bd=1e9;
+   for(var t=0;t<TS.length;t++){var T2=TS[t];for(var k=0;k<T2.length;k++){var z=T2[k];
+    if(Math.abs(z.x-q.x)>r||Math.abs(z.y-q.y)>r)continue;var dd=Math.hypot(z.x-q.x,z.y-q.y);
+    if(dd<=r&&adiff(z.a,q.a)<=C.aTol&&dd<bd){bd=dd;bi=t}}}dl.push(bd);return bi});ownD.push(dl);return o2});
+  /* 정답 점마다: 그 획에 배정된 아이 점 중 가장 가까운 거리 */
+  function bestD(z,t){var m=1e9;for(var i=0;i<KS.length;i++){var S=KS[i],O=own[i];for(var k=0;k<S.length;k++){if(O[k]!==t)continue;var q=S[k];
+    if(Math.abs(z.x-q.x)>r||Math.abs(z.y-q.y)>r)continue;var dd=Math.hypot(z.x-q.x,z.y-q.y);if(dd<=r&&adiff(z.a,q.a)<=C.aTol&&dd<m)m=dd}}return m}
+  function covT(z,t){return bestD(z,t)<=r}
+  var tc=0,tn=0,minS=1,soft=0;TS.forEach(function(S,t){var c=0;S.forEach(function(z){var d2=bestD(z,t);if(d2<=r){c++;soft+=1-d2/r}});tc+=c;tn+=S.length;minS=Math.min(minS,c/S.length)});
+  var kc=0,kn=0,minK=1,ksoft=0;KS.forEach(function(S,i){var c=0;own[i].forEach(function(o2,k){if(o2>=0){c++;ksoft+=1-ownD[i][k]/r}});kc+=c;kn+=S.length;minK=Math.min(minK,c/S.length)});
+  o.rec=tc/Math.max(1,tn);o.pre=kc/Math.max(1,kn);o.recS=minS;o.preS=minK;o.recSoft=soft/Math.max(1,tn);o.preSoft=ksoft/Math.max(1,kn);
+  /* 같은 정답 획을 서로 다른 아이 획 둘이 겹쳐 덮으면(ㅏ 자리에 ㅑ, 군더더기 줄) 실패 — 단, 같은 자리 덧칠은 괜찮다 */
+  var dup=false;
+  if(C.dupSep<5)TS.forEach(function(S,t){var sets=KS.map(function(K2,i){var m=new Uint8Array(S.length),n=0;
+    S.forEach(function(z,zi){for(var k=0;k<K2.length;k++){if(own[i][k]!==t)continue;var q=K2[k];
+     if(Math.abs(z.x-q.x)>r||Math.abs(z.y-q.y)>r)continue;if(Math.hypot(z.x-q.x,z.y-q.y)<=r&&adiff(z.a,q.a)<=C.aTol){m[zi]=1;n++;break}}});return {m:m,n:n,i:i}});
+   sets=sets.filter(function(X){var tot=0,mine=0;own[X.i].forEach(function(o2){if(o2>=0){tot++;if(o2===t)mine++}});return tot&&mine>=.5*tot});
+   for(var a=0;a<sets.length&&!dup;a++)for(var b=a+1;b<sets.length&&!dup;b++){var A=sets[a],B=sets[b];if(A.n<.25*S.length||B.n<.25*S.length)continue;
+    var ov=0;for(var zi=0;zi<S.length;zi++)if(A.m[zi]&&B.m[zi])ov++;
+    if(ov<=.4*Math.min(A.n,B.n))continue;
+    /* 두 획 사이 거리: 덧칠(아주 가까움)이면 봐준다 */
+    /* 겹친 구간에서만 두 획 사이 거리를 잰다: 펜을 뗐다 이어 쓴 획(꺾이는 곳에서 만남)은 가깝고, ㅑ의 두 짧은 획은 멀다 */
+    var sum=0,cnt=0;
+    function nearOwn(z,i){var m=1e9,hit=null;KS[i].forEach(function(q,k){if(own[i][k]!==t)return;var dd=Math.hypot(q.x-z.x,q.y-z.y);if(dd<m){m=dd;hit=q}});return hit}
+    for(var zi2=0;zi2<S.length;zi2++){if(!(A.m[zi2]&&B.m[zi2]))continue;var qa=nearOwn(S[zi2],A.i),qb=nearOwn(S[zi2],B.i);if(qa&&qb){sum+=Math.hypot(qa.x-qb.x,qa.y-qb.y);cnt++}}
+    if(cnt&&sum/cnt>C.dupSep*D)dup=true}});
+  /* 모양: 동그라미 자리(ㅇ)에 모난 글씨, 모난 자모 자리에 매끈한 고리 → 실패 */
+  var shapeBad=false,corners=0,loops=0;
+  ks.forEach(function(s2){var R0=resample(s2,D/30,0,D/10),R2=R0.map(function(q,k){var a=R0[Math.max(0,k-1)],b=R0[Math.min(R0.length-1,k+1)];return {x:(a.x+q.x+b.x)/3,y:(a.y+q.y+b.y)/3}}),cn=0,W=5;
+   for(var k=W;k<R2.length-W;k++){var p0=R2[k-W],p1=R2[k],p2=R2[k+W];var a1=Math.atan2(p1.y-p0.y,p1.x-p0.x),a2=Math.atan2(p2.y-p1.y,p2.x-p1.x),tt=Math.abs(a2-a1);if(tt>Math.PI)tt=2*Math.PI-tt;
+    if(tt>1.0){cn++;k+=W}}
+   corners+=cn;var bb=bbox(s2.map(function(q){return {x:q[0],y:q[1]}}));
+   /* 고리 = 한 바퀴(약 360°) 돌고 끝이 처음 근처로 돌아온 매끈한 획. ⊐처럼 반 바퀴(180°) 도는 획은 고리가 아니다 */
+   var turn=0,W2=3;for(var k2=W2;k2+W2<R2.length;k2+=1){var u0=R2[k2-W2],u1=R2[k2],u2=R2[k2+W2];var b1=Math.atan2(u1.y-u0.y,u1.x-u0.x),b2=Math.atan2(u2.y-u1.y,u2.x-u1.x),dt=b2-b1;
+    while(dt>Math.PI)dt-=2*Math.PI;while(dt<-Math.PI)dt+=2*Math.PI;turn+=dt}
+   turn=Math.abs(turn)/W2;
+   if(turn>4.6&&Math.hypot(s2[0][0]-s2[s2.length-1][0],s2[0][1]-s2[s2.length-1][1])<.5*Math.max(bb.w,bb.h,1)&&cn<=C.loopCn)loops++});
+  o.cn=corners;o.loops=loops;
+  if(p.j==="ㅇ"&&(corners>=3||ks.length>=3||(ks.length===2&&corners>=2)))shapeBad=true;
+  if("ㄱㄴㄷㄹㅁㅂㅋㅌㅍ".indexOf(p.j)>=0&&loops>0)shapeBad=true;
+  if(opt.debug){o.dbg={T:TS.map(function(S,t){return S.map(function(z){return [z.x,z.y,covT(z,t)?1:0,z.a]})}),K:KS.map(function(S,i){return S.map(function(q,k){return [q.x,q.y,own[i][k]>=0?1:0,q.a]})}),r:r}}
+  o.dup=dup;o.minK=minK;
+  if(ks.length>p.strokes.length+C.extra||dup)o.why="extra";
+  else if(shapeBad)o.why="shape";
+  else if(minS<C.recS||o.rec<C.recP)o.why="shape";
+  else if(minK<C.preS||o.pre<C.preP)o.why="extra";
+  else o.ok=true;
+  return o});
+ var bad=res.filter(function(x){return !x.ok});
+ var S=0;res.forEach(function(x){S+=(x.n?(x.recSoft+x.preSoft)/2*(.5+.5*x.recS)*(x.ok?1:.6):0)});S/=Math.max(1,res.length);
+ return {ok:!bad.length,parts:res,stray:stray,S:S,why:bad.length?(bad[0].role+":"+bad[0].why):"ok"}}
+/* 헷갈리는 철자 후보 (소리가 같거나 모양이 비슷한 것) */
+/* 헷갈리는 철자 후보: 소리가 같은 받침(ㄷ·ㅅ·ㅈ·ㅊ·ㅌ·ㅎ / ㄱ·ㅋ·ㄲ / ㅂ·ㅍ) + 획 하나를 더하거나 뺀 자모(ㅈ↔ㅊ, ㄹ→ㅋ, ㅏ↔ㅐ …) */
+var CONF={c:{"ㄱ":"ㅋㄲㄴ","ㅋ":"ㄱㄲ","ㄲ":"ㄱㅋ","ㄷ":"ㅌㄸㄴㄹ","ㅌ":"ㄷㄸㄹ","ㄸ":"ㄷㅌ","ㅂ":"ㅍㅃㅁ","ㅍ":"ㅂㅃ","ㅃ":"ㅂㅍ","ㅅ":"ㅆㅈ","ㅆ":"ㅅ","ㅈ":"ㅊㅉㅅ","ㅊ":"ㅈㅉㅅ","ㅉ":"ㅈㅊ","ㅇ":"ㅎㅁ","ㅎ":"ㅇㅊ","ㄴ":"ㄷㄹㄱ","ㄹ":"ㄷㄴㅋㄱ","ㅁ":"ㅂㅇㄷㄴ"},
+ v:{"ㅏ":"ㅑㅓㅐㅣ","ㅑ":"ㅏㅕㅒ","ㅓ":"ㅕㅏㅔㅣ","ㅕ":"ㅓㅑㅖ","ㅗ":"ㅛㅜㅚㅘㅡ","ㅛ":"ㅗㅠ","ㅜ":"ㅠㅗㅟㅝㅡ","ㅠ":"ㅜㅛ","ㅡ":"ㅜㅗㅢ","ㅣ":"ㅏㅓ","ㅐ":"ㅔㅒㅏ","ㅔ":"ㅐㅖㅓ","ㅒ":"ㅐㅖㅑ","ㅖ":"ㅔㅒㅕ",
+  "ㅘ":"ㅙㅚㅗ","ㅙ":"ㅘㅚㅞ","ㅚ":"ㅙㅟㅗㅘ","ㅝ":"ㅞㅟㅜ","ㅞ":"ㅝㅙ","ㅟ":"ㅚㅢㅜ","ㅢ":"ㅟㅡ"},
+ f:{"ㄱ":"ㅋㄲㄳㄺㄴ","ㅋ":"ㄱㄲ","ㄲ":"ㄱㅋ","ㄳ":"ㄱㄺㅅ","ㄺ":"ㄹㄱㄻ","ㄷ":"ㅅㅌㅈㄴㄹ","ㅅ":"ㄷㅆㅈㅊ","ㅆ":"ㅅ","ㅈ":"ㅊㅅㄷ","ㅊ":"ㅈㅅㄷ","ㅌ":"ㄷㅊㄹ","ㅎ":"ㅇㅊ",
+  "ㅂ":"ㅍㅁㅄㄼ","ㅍ":"ㅂ","ㅄ":"ㅂㅅ","ㄼ":"ㄹㅂ","ㄴ":"ㄵㄶㄷㄱ","ㄵ":"ㄴㅈ","ㄶ":"ㄴㅎ","ㄹ":"ㄺㄻㄼㄷㅋㄱㄴ","ㄻ":"ㄹㅁ","ㄾ":"ㄹㅌ","ㅀ":"ㄹㅎ","ㅁ":"ㅂㅇㄻㄷㄴ","ㅇ":"ㅁㅎ"}};
+function rivals(ch){var d=dcp(ch);if(!d)return [];var out=[];function push(x){if(x&&x!==ch&&out.indexOf(x)<0)out.push(x)}
+ (CONF.c[d.c]||"").split("").forEach(function(x){push(comp(x,d.v,d.f))});
+ (CONF.v[d.v]||"").split("").forEach(function(x){push(comp(d.c,x,d.f))});
+ if(d.f){(CONF.f[d.f]||"").split("").forEach(function(x){push(comp(d.c,d.v,x))});push(comp(d.c,d.v,null))}
+ return out}
+/* 받아쓰기 채점: ①절대 기준 통과 ②헷갈리는 철자 후보들보다 정답과 더 닮아야 통과.
+   틀렸을 때도 후보 중 아이 글씨와 딱 맞는 것이 있으면 "받침이 ㅅ처럼 보여요"처럼 무엇으로 보이는지 알려 준다 */
+function likeOf(ch,best,r0){var d0=dcp(ch),d1=dcp(best.ch),role=d0.c!==d1.c?"c":d0.v!==d1.v?"v":"f";
+ return {ok:false,parts:r0.parts,S:r0.S,like:best.ch,likeS:best.S,why:role+":like"}}
+function match(ch,kid,opt){opt=opt||{};var C=Object.assign({},CFG,opt.cfg||{});var r0=core(ch,kid,opt);
+ if(opt.noRivals||r0.why==="unknown"||r0.why==="empty")return r0;
+ var rv=rivals(ch),best=null;
+ for(var i=0;i<rv.length;i++){if(!charParts(rv[i]))continue;var r1=core(rv[i],kid,opt);if(!best||r1.S>best.S)best={ch:rv[i],S:r1.S,ok:r1.ok}}
+ if(!r0.ok){if(best&&best.ok&&best.S>r0.S)return likeOf(ch,best,r0);return r0}
+ if(best&&best.S>=r0.S-C.margin)return likeOf(ch,best,r0);
+ r0.rival=best;return r0}
+root.HSTK={JN:JN,STK:STK,jstk:jstk,dcp:dcp,comp:comp,charParts:charParts,charStrokes:charStrokes,match:match,core:core,rivals:rivals,CFG:CFG,
+ resample:resample,DBL:DBL,MIX:MIX,CHO:CHO,JUNG:JUNG,JONG:JONG};
+})(typeof window!=="undefined"?window:globalThis);
+
+/* ===== v30a: 낚시·두더지 분위기 업 — 잔잔한 배경 생물 + 연속 정답 무지개 ===== */
+(function(){
+var _fish0=PGM.fish;PGM.fish=function(){var M=_fish0(),_s=M.setup;
+ M.setup=function(){_s();var A=$("pgArea").querySelector(".pond3");if(!A)return;
+  A.insertAdjacentHTML("beforeend",'<i class="lily a"></i><i class="lily b"></i><span class="pbfly" aria-hidden="true">🦋</span><span class="jumpf" aria-hidden="true">🐟</span>')};
+ return M};
+var _mole0=PGM.mole;PGM.mole=function(){var M=_mole0(),_s=M.setup;
+ M.setup=function(){_s();var A=$("pgArea").querySelector(".meadow");if(!A)return;
+  A.insertAdjacentHTML("beforeend",'<span class="pbfly" aria-hidden="true">🦋</span><span class="lbug" aria-hidden="true">🐞</span><i class="seed s1"></i><i class="seed s2"></i><i class="seed s3"></i>')};
+ return M};
+/* 3연속 정답 배너가 뜰 때, 낚시·두더지 무대에는 무지개도 뜬다 */
+var _ban0=pgBanner;pgBanner=function(t,cls){_ban0(t,cls);
+ if(cls!=="combo"||!PGS)return;var A=$("pgArea");if(!A)return;var sc=A.querySelector(".pond3,.meadow");if(!sc)return;
+ var r=document.createElement("i");r.className="pgrbow";sc.appendChild(r);setTimeout(function(){try{r.remove()}catch(e){}},2300)};
+})();
+
+/* ===== v30b(v30.4): 따라 쓰기 — 획순을 가르치고, 모든 획을 다 써야 성공 =====
+   글자를 폰트 통짜가 아니라 획(stroke) 단위로 그린다. 획마다 번호가 붙고, 연필 시범이
+   순서를 보여 주며, 반짝이는 획부터 차례대로 덮어야 다음 획이 열린다. 받침 글자는
+   초성→중성→종성 순서로 자동 배치된다. 획 하나라도 빠지면 절대 성공하지 않는다. */
+(function(){
+/* 획 사전·글자 분해는 v30h(HSTK)와 같이 쓴다 (겹모음·겹받침까지) */
+var JN=HSTK.JN;
+function trSay(t){if(t.length===1&&JN[t])say(JN[t]);else say(t)}
+var jstk=HSTK.jstk,dcp=HSTK.dcp,charStrokes=HSTK.charStrokes;
 LADDER.trc1={n:"자음 쓰기",items:function(){return "ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ".split("").map(function(t){return {t:t}})}};
 LADDER.trc2={n:"모음 쓰기",items:function(){return "ㅏㅑㅓㅕㅗㅛㅜㅠㅡㅣ".split("").map(function(t){return {t:t}})}};
 LADDER.trc3={n:"배운 글자 쓰기",items:function(){return POOL.map(function(t){return {t:t}})}};
@@ -4909,7 +5078,7 @@ PGM.trace=function(){var A,row,fill,boxes=[],qual=[],color="#3949AB";
 /* ===== v30c: 오늘의 모험 × 한글 섬 — 모험 돌이 섬 위에 깔린다 ===== */
 (function(){
 /* 한 바퀴: 게임 10 + 이야기 + 낱말 = 12 */
-tdLap=function(){return ["fish","mole","course","pair","rain","battle","train","trace","opp","fill"]};
+tdLap=function(){return ["fish","course","asm","pair","trace","battle","train","dict","opp","fill"]};
 var STN=null;
 function occ(x,y){if(!ground(x,y))return 1;if(npcAt(x,y))return 1;if(chestAt(x,y)>=0)return 1;if(stationAt(x,y))return 1;
  if(typeof SPAWNS!=="undefined"&&SPAWNS.some(function(s){return s.x===x&&s.y===y}))return 1;
@@ -5303,6 +5472,336 @@ PGM.opp=function(){var A;
   say:function(){},
   hint:function(){var S=PGS;A.querySelectorAll(".opcard").forEach(function(b){b.classList.toggle("pghint",b.dataset.t===S.target.t)})}};
  return M};
+})();
+
+/* ===== v30f(v31): 🏭 글자 조립 공장 + 📝 받아쓰기 (토도한글식 '창제 원리' 조립 + 시중 앱에 없는 손글씨 받아쓰기) =====
+   공통: 낱말은 글자로 보여 주지 않는다 — 그림(과 녹음이 있으면 소리)만 보고 아이가 철자를 떠올린다.
+   🏭 조립 공장: 첫소리·모음·받침 조각을 골라 글자를 찍어 낸다. 1~2단계는 글자 모양 틀, 3단계부터는 '첫소리|모음|받침' 틀
+      + '받침 없음' 조각 (받침이 있는지까지 스스로 판단). 겹받침은 조각 두 개(ㄹ+ㄱ → ㄺ).
+   📝 받아쓰기: 그림자 없이 직접 쓴다. HSTK.match가 부분(첫소리·모음·받침)마다 획 방향까지 보고, 헷갈리는 철자
+      (꽃↔꽂·꼿, 곰↔공, 별↔벌…)보다 정답과 더 닮아야 통과. 두 번 틀린 칸은 흐린 그림자가 나와 따라 쓰며 배운다. */
+(function(){
+var DBLF={"ㄳ":"ㄱㅅ","ㄵ":"ㄴㅈ","ㄶ":"ㄴㅎ","ㄺ":"ㄹㄱ","ㄻ":"ㄹㅁ","ㄼ":"ㄹㅂ","ㄽ":"ㄹㅅ","ㄾ":"ㄹㅌ","ㄿ":"ㄹㅍ","ㅀ":"ㄹㅎ","ㅄ":"ㅂㅅ"};
+var HARDF="ㄲㅆㅊㅋㅌㅍㅎㅅㅈㄷ",CPXV="ㅐㅔㅒㅖㅘㅙㅚㅝㅞㅟㅢ";
+function dc(ch){return HSTK.dcp(ch)}
+function W(f){return WB.filter(f).map(function(w){return {t:w.t,p:w.p}})}
+function syls(t){return [].map.call(t,dc)}
+function hasHard(t){return syls(t).some(function(d){return d&&((d.f&&HARDF.indexOf(d.f)>=0)||CPXV.indexOf(d.v)>=0)})}
+function hasDblF(t){return syls(t).some(function(d){return d&&d.f&&DBLF[d.f]})}
+function hasLink(t){var s=syls(t);for(var i=0;i+1<s.length;i++)if(s[i]&&s[i].f&&s[i+1]&&s[i+1].c==="ㅇ")return true;return false}
+function rec(t){return typeof hasRec==="function"&&hasRec(t)}
+/* 녹음된 낱말은 두 번 넣어 더 자주 나오게 (소리로 듣고 쓰기) */
+function preferRec(a){var out=a.slice();a.forEach(function(x){if(rec(x.t))out.push(x)});return out}
+var EXTRA5=[{t:"닭",p:"🐔"},{t:"여덟",p:"8️⃣"}];
+function pool5(){var a=W(function(w){return w.lv===5&&w.t.length<=3}).concat(W(function(w){return w.t.length<=3&&hasDblF(w.t)}),W(function(w){return w.lv===4&&w.t.length<=3&&hasLink(w.t)}));
+ EXTRA5.forEach(function(e){if(!a.some(function(x){return x.t===e.t}))a.push(e)});
+ var seen={};return a.filter(function(x){if(seen[x.t])return false;seen[x.t]=1;return true})}
+/* ───────── 🏭 글자 조립 공장 ───────── */
+LADDER.am1={n:"받침 한 글자",items:function(){return preferRec(W(function(w){return w.lv===3&&w.t.length===1}))}};
+LADDER.am2={n:"받침 낱말 두 글자",items:function(){return preferRec(W(function(w){return w.lv===3&&w.t.length===2}))}};
+LADDER.am3={n:"헷갈리는 조각 · 받침 없음도",gen:1,items:function(){return W(function(w){return w.lv>=3&&w.lv<=4&&w.t.length>=2&&w.t.length<=3})}};
+LADDER.am4={n:"어려운 받침·모음",gen:1,items:function(){var a=W(function(w){return w.lv>=4&&w.t.length<=3&&hasHard(w.t)});return a.length>=8?a:W(function(w){return w.lv===4&&w.t.length<=3})}};
+LADDER.am5={n:"겹받침·소리가 바뀌는 낱말",gen:1,items:pool5};
+PGAMES.asm={ic:"🏭",n:{en:"Letter Factory",ko:"글자 조립 공장"},tag:{en:"Build the spelling",ko:"조각으로 철자 만들기"},
+ how:{en:"Look at the picture, then pick the pieces — first sound, vowel, bottom — to build the word!",
+  ko:"그림을 보고 첫소리, 모음, 받침 조각을 차례로 골라 낱말을 만들어요. 받침이 없으면 '받침 없음'!"},
+ lv:["am1","am2","am3","am4","am5"],goal:6};
+PGCOL.asm=["#FFCC80","#E65100"];
+/* 헷갈리는 이웃 조각 */
+var NEARJ={"ㄱ":"ㅋㄲㄴ","ㄴ":"ㄷㄹㄱ","ㄷ":"ㅌㄸㄴㅅ","ㄹ":"ㄷㄴㅌ","ㅁ":"ㅂㅇㅍ","ㅂ":"ㅍㅃㅁ","ㅅ":"ㅆㅈㄷ","ㅇ":"ㅎㅁ","ㅈ":"ㅊㅉㅅ","ㅊ":"ㅈㅅㅌ","ㅋ":"ㄱㄲ","ㅌ":"ㄷㅊ","ㅍ":"ㅂㅃ","ㅎ":"ㅇㅊ",
+ "ㄲ":"ㄱㅋ","ㄸ":"ㄷㅌ","ㅃ":"ㅂㅍ","ㅆ":"ㅅㅈ","ㅉ":"ㅈㅊ",
+ "ㅏ":"ㅓㅑㅐ","ㅑ":"ㅏㅕ","ㅓ":"ㅏㅕㅔ","ㅕ":"ㅓㅑ","ㅗ":"ㅜㅛ","ㅛ":"ㅗㅠ","ㅜ":"ㅗㅠ","ㅠ":"ㅜㅛ","ㅡ":"ㅜㅣ","ㅣ":"ㅏㅡ",
+ "ㅐ":"ㅔㅏ","ㅔ":"ㅐㅓ","ㅒ":"ㅐㅖ","ㅖ":"ㅔㅒ","ㅘ":"ㅝㅙ","ㅝ":"ㅘㅞ","ㅚ":"ㅟㅙ","ㅟ":"ㅚㅢ","ㅙ":"ㅞㅚ","ㅞ":"ㅙㅝ","ㅢ":"ㅟㅡ"};
+var JONLY="ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ",VONLY="ㅏㅓㅗㅜㅡㅣ";
+function nearOf(ch,n,ban){var s=(NEARJ[ch]||"").split(""),out=[];
+ s.forEach(function(x){if(out.length<n&&ban.indexOf(x)<0&&out.indexOf(x)<0)out.push(x)});
+ var pool=(HSTK.JUNG.indexOf(ch)>=0?VONLY:JONLY).split("");
+ for(var g=0;out.length<n&&g<60;g++){var c=pool[Math.floor(Math.random()*pool.length)];if(c!==ch&&ban.indexOf(c)<0&&out.indexOf(c)<0)out.push(c)}
+ return out}
+var LABEL={c:["first sound","첫소리"],v:["vowel","모음"],f:["bottom","받침"],f2:["2nd bottom","받침 둘째"]};
+PGM.asm=function(){var A,frame,belt,doneRow,win,word="",ss=[],si=0,slots=[],ni=0,gen=false;
+ function lvN(){return PGS?PGS.lv:1}
+ function needs(d){var L=[{k:"c",need:d.c},{k:"v",need:d.v}];
+  if(d.f&&DBLF[d.f])L.push({k:"f",need:DBLF[d.f][0]},{k:"f2",need:DBLF[d.f][1]});
+  else if(d.f||gen)L.push({k:"f",need:d.f||null});
+  return L}
+ function shapeBoxes(ch,d){/* 1~2단계: 진짜 글자 모양 틀 (HSTK 부분 상자) */
+  var ps=HSTK.charParts(ch)||[],B={};
+  ps.forEach(function(p){var r=p.role==="vh"||p.role==="vs"?"v":p.role,b=p.box;
+   if(B[r]){var o=B[r],x0=Math.min(o[0],b[0]),y0=Math.min(o[1],b[1]),x1=Math.max(o[0]+o[2],b[0]+b[2]),y1=Math.max(o[1]+o[3],b[1]+b[3]);B[r]=[x0,y0,x1-x0,y1-y0]}else B[r]=b.slice()});
+  if(B.f&&d.f&&DBLF[d.f]){var f=B.f;B.f=[f[0],f[1],f[2]/2-1,f[3]];B.f2=[f[0]+f[2]/2+1,f[1],f[2]/2-1,f[3]]}
+  return B}
+ function genBoxes(){/* 3단계~: 모양을 알려 주지 않는 틀 */
+  return {c:[4,8,28,84],v:[36,8,28,84],f:[68,8,28,84]}}
+ function hook(){if(A)A.__asm={need:slots[ni]?(slots[ni].need===null?"∅":slots[ni].need):null,si:si,ni:ni,k:slots[ni]&&slots[ni].k,gen:gen}}
+ function preview(){var d=ss[si],got=slots.filter(function(x){return x.ok}).map(function(x){return x.k}),ch="";
+  if(got.indexOf("v")>=0){var f=null;if(got.indexOf("f2")>=0)f=d.f;else if(got.indexOf("f")>=0&&slots[2]&&slots[2].need)f=slots[2].need;ch=HSTK.comp(d.c,d.v,f)||""}
+  else if(got.indexOf("c")>=0)ch=d.c;
+  win.textContent=ch;win.classList.toggle("on",!!ch)}
+ function buildSyl(){var d=ss[si],ch=word[si];slots=needs(d);ni=0;
+  var bx=gen?genBoxes():shapeBoxes(ch,d);
+  frame.className="asmframe"+(gen?" gen":"");
+  frame.innerHTML=slots.map(function(s,i){var b=bx[s.k]||(s.k==="f2"?[70,60,26,30]:[10,10,30,30]);
+    if(gen&&s.k==="f2")b=[68,52,28,40];
+    if(gen&&s.k==="f"&&slots.some(function(x){return x.k==="f2"}))b=[68,8,28,40];
+    return '<div class="asmslot" data-k="'+s.k+'" style="left:'+b[0]+'%;top:'+b[1]+'%;width:'+b[2]+'%;height:'+b[3]+'%">'
+     +(gen&&s.k!=="f2"?'<em>'+K(LABEL[s.k][0],LABEL[s.k][1])+'</em>':'')+'<i>'+(i+1)+'</i></div>'}).join("")
+   +'<b class="asmbig" hidden></b>';
+  var nd=[0,2,3,4,5,5][lvN()]||3,need=slots.map(function(s){return s.need}).filter(function(x){return x}),dist=[],j;
+  for(j=0;j<need.length&&dist.length<nd;j++)dist=dist.concat(nearOf(need[j],Math.max(1,Math.ceil(nd/need.length)),need.concat(dist)));
+  dist=dist.slice(0,nd);
+  var blocks=shuffle(need.concat(dist).map(function(x){return {ch:x}}));
+  if(gen)blocks.push({ch:"∅"});
+  belt.innerHTML=blocks.map(function(b){return '<button class="asmblk'+(b.ch==="∅"?" none":"")+'" data-ch="'+escH(b.ch)+'">'
+   +(b.ch==="∅"?'<b>✖</b><small>'+K("no bottom","받침 없음")+'</small>':'<b>'+escH(b.ch)+'</b>')+'</button>'}).join("");
+  belt.querySelectorAll(".asmblk").forEach(function(b){b.onclick=function(){pick(b)}});
+  frame.querySelectorAll(".asmslot").forEach(function(x,i){x.classList.toggle("cur",i===0)});
+  preview();hook()}
+ function pick(b){var S=PGS;if(!S||S.lock||b.classList.contains("used"))return;var s=slots[ni];if(!s)return;
+  var ch=b.dataset.ch,ok=(ch==="∅")?s.need===null:ch===s.need;
+  if(!ok){pgWrong(b);var lab=K(LABEL[s.k][0],LABEL[s.k][1]);
+   pgMsg(ch==="∅"?K("This letter has a bottom piece!","이 글자는 받침이 있어요!"):s.need===null?K("Does it need a bottom? Look again.","받침이 꼭 있을까? 다시 생각해 봐!"):K("Not that "+lab+". Look again!",lab+" 조각을 다시 골라 봐!"),1);return}
+  if(ch!=="∅")b.classList.add("used");else{b.classList.add("pop");setTimeout(function(){b.classList.remove("pop")},300)}
+  sfx("tap");s.ok=true;var el=frame.querySelectorAll(".asmslot")[ni];el.classList.add("full");el.classList.remove("cur");
+  el.innerHTML=(gen&&s.k!=="f2"?'<em>'+K(LABEL[s.k][0],LABEL[s.k][1])+'</em>':'')+'<b>'+(ch==="∅"?"✖":escH(ch))+'</b>';
+  ni++;preview();
+  if(s.k==="f"&&slots[ni]&&slots[ni].k==="f2")pgMsg(K("Two bottom pieces! Pick one more.","받침이 두 개예요! 하나 더 골라요"));
+  var nx=frame.querySelectorAll(".asmslot")[ni];if(nx)nx.classList.add("cur");
+  hook();if(ni>=slots.length)sylDone()}
+ function sylDone(){var S=PGS,t=word;frame.classList.add("merge");
+  setTimeout(function(){if(PGS!==S||S.dead)return;
+   var big=frame.querySelector(".asmbig");frame.querySelectorAll(".asmslot").forEach(function(x){x.hidden=true});
+   big.hidden=false;big.textContent=t[si];frame.classList.add("stamp");try{sfx2("pop")}catch(e){sfx("ok")}burstAt(frame);
+   if(t.length>1&&rec(t[si]))say(t[si]);
+   var chip=doneRow.querySelectorAll(".asmchip")[si];if(chip){chip.textContent=t[si];chip.classList.add("on")}
+   si++;
+   setTimeout(function(){if(PGS!==S||S.dead)return;
+    if(si<ss.length){frame.classList.remove("merge","stamp");buildSyl()}
+    else pgRight(frame,{say:t,wait:1050+hanN(t)*140})},t.length>1?760:600)},380)}
+ var M={
+  setup:function(){A=document.createElement("div");A.className="asm3";
+   A.innerHTML='<i class="gear g1"></i><i class="gear g2"></i><div class="asmdone"></div><div class="asmmid"><div class="asmframe"></div><div class="asmwin" aria-live="polite"></div></div><div class="asmbelt"><i class="rail"></i><div class="blks"></div></div>';
+   $("pgArea").appendChild(A);frame=A.querySelector(".asmframe");belt=A.querySelector(".asmbelt .blks");doneRow=A.querySelector(".asmdone");win=A.querySelector(".asmwin");
+   gen=!!(PGS&&PGS.lad&&PGS.lad.gen)},
+  target:function(it){word=it.t;ss=syls(word);si=0;
+   if(ss.some(function(d){return !d})){pgRight(frame,{say:word});return}
+   doneRow.innerHTML=ss.map(function(){return '<span class="asmchip">?</span>'}).join("");
+   frame.classList.remove("merge","stamp");buildSyl()},
+  prompt:function(it){var r=rec(it.t);
+   return '<span class="lab">'+K("Build this word!","이 낱말을 만들어요")+'</span>'+(it.p?'<span class="pic big2">'+it.p+'</span>':"")
+    +'<span class="nsyl">'+K(it.t.length+" letters",it.t.length+"글자")+'</span>'
+    +(r?'<button class="spk big" id="pgSpk" aria-label="'+K("Hear it","듣기")+'">🔊</button>':'')},
+  hint:function(){var s=slots[ni];if(!s)return;var want=s.need===null?"∅":s.need;
+   belt.querySelectorAll(".asmblk").forEach(function(b){b.classList.toggle("pghint",b.dataset.ch===want&&!b.classList.contains("used"))})},
+  say:function(){var S=PGS;if(S&&S.target&&rec(S.target.t))say(S.target.t)}};
+ return M};
+
+/* ───────── 📝 받아쓰기 ───────── */
+LADDER.dc1={n:"보고 기억해서 쓰기",show:1,items:function(){return preferRec(W(function(w){return w.lv===3&&w.t.length===1}))}};
+LADDER.dc2={n:"그림 보고 받침 글자",items:function(){return preferRec(W(function(w){return w.lv===3&&w.t.length===1}))}};
+LADDER.dc3={n:"받침 낱말 두 글자",items:function(){return preferRec(W(function(w){return w.lv===3&&w.t.length===2}))}};
+LADDER.dc4={n:"어려운 받침·모음",items:function(){var a=W(function(w){return w.lv>=4&&w.t.length<=2&&hasHard(w.t)});return a.length>=6?a:W(function(w){return w.lv===4&&w.t.length<=2})}};
+LADDER.dc5={n:"겹받침·소리가 바뀌는 낱말",items:function(){return pool5().filter(function(x){return x.t.length<=3})}};
+PGAMES.dict={ic:"📝",n:{en:"Dictation",ko:"받아쓰기"},tag:{en:"Write it yourself",ko:"그림자 없이 쓰기"},
+ how:{en:"Look at the picture (and listen if there is a sound), then write the word yourself and tap 'Done'!",
+  ko:"그림을 보고(소리가 나오면 잘 듣고) 낱말을 직접 써요. 다 쓰면 '다 썼어요'를 눌러요!"},
+ lv:["dc1","dc2","dc3","dc4","dc5"],goal:5};
+PGCOL.dict=["#A5D6A7","#1B5E20"];
+var PART={c:["first sound","첫소리"],v:["vowel","모음"],vh:["vowel","모음"],vs:["vowel","모음"],f:["bottom","받침"]};
+function partName(role){var p=PART[role]||PART.v;return K(p[0],p[1])}
+function josa(word,a,b){var c=word.charCodeAt(word.length-1)-0xAC00;return (c>=0&&c<=11171&&c%28)?a:b}
+PGM.dict=function(){var A,row,doneBtn,boxes=[],tries=0,qual=[],color="#3949AB",showTimer=0;
+ function mkBox(ch,sz,idx){var box=document.createElement("div");box.className="dcbox2";box.style.width=sz+"px";box.style.height=sz+"px";
+  var g=document.createElement("canvas"),gh=document.createElement("canvas"),ink=document.createElement("canvas");
+  g.className="dcgrid";gh.className="dcghost";ink.className="dcink";[g,gh,ink].forEach(function(c){c.width=c.height=sz;box.appendChild(c)});
+  var x=document.createElement("button");x.className="dcclr";x.type="button";x.textContent="✕";x.setAttribute("aria-label",K("Erase this letter","이 칸 지우기"));box.appendChild(x);
+  var gc=g.getContext("2d"),hc=gh.getContext("2d"),ic=ink.getContext("2d");ic.lineCap=ic.lineJoin="round";
+  gc.strokeStyle="#C9D8E8";gc.lineWidth=1.5;gc.setLineDash([6,6]);gc.beginPath();gc.moveTo(sz/2,4);gc.lineTo(sz/2,sz-4);gc.moveTo(4,sz/2);gc.lineTo(sz-4,sz/2);gc.stroke();
+  var b={el:box,ch:ch,idx:idx,done:false,fails:0,strokes:[],cur:null,ghost:0};
+  function ghost(alpha,col){hc.clearRect(0,0,sz,sz);if(!alpha)return;var st=HSTK.charStrokes(ch);if(!st)return;
+   hc.globalAlpha=alpha;hc.strokeStyle=col||"#7E97B4";hc.lineWidth=sz*.1;hc.lineCap=hc.lineJoin="round";
+   st.forEach(function(p){hc.beginPath();hc.moveTo(p[0][0]/100*sz,p[0][1]/100*sz);for(var i=1;i<p.length;i++)hc.lineTo(p[i][0]/100*sz,p[i][1]/100*sz);hc.stroke()});hc.globalAlpha=1}
+  function redraw(){ic.clearRect(0,0,sz,sz);ic.lineWidth=sz*.085;
+   b.strokes.concat(b.cur?[b.cur]:[]).forEach(function(p){ic.strokeStyle=p.c||color;ic.beginPath();ic.moveTo(p.pts[0][0],p.pts[0][1]);
+    if(p.pts.length===1)ic.lineTo(p.pts[0][0]+.1,p.pts[0][1]+.1);for(var i=1;i<p.pts.length;i++)ic.lineTo(p.pts[i][0],p.pts[i][1]);ic.stroke()})}
+  b.clear=function(){if(b.done)return;b.strokes=[];b.cur=null;redraw();box.classList.remove("bad");hook()};
+  b.ghost=function(a){b.ghostA=a;ghost(a)};
+  b.peek=function(){ghost(.45);setTimeout(function(){if(!b.done)ghost(b.ghostA||0)},1400)};
+  b.ok=function(){b.done=true;box.classList.remove("bad");box.classList.add("done");ghost(.9,"#43A047");hook()};
+  b.kid=function(){return b.strokes.map(function(p){return p.pts.map(function(q){return [q[0]/sz*100,q[1]/sz*100]})})};
+  function at(e){var r=ink.getBoundingClientRect();return [(e.clientX-r.left)*sz/r.width,(e.clientY-r.top)*sz/r.height]}
+  function pd(e){var S=PGS;if(!S||S.dead||S.lock||b.done)return;b.cur={pts:[at(e)],c:color};redraw();box.classList.remove("bad");
+   e.preventDefault&&e.preventDefault();try{ink.setPointerCapture&&e.pointerId!=null&&ink.setPointerCapture(e.pointerId)}catch(err){}}
+  function pm(e){if(!b.cur||b.done)return;var p=at(e),l=b.cur.pts[b.cur.pts.length-1];if(Math.hypot(p[0]-l[0],p[1]-l[1])<1.2)return;b.cur.pts.push(p);redraw()}
+  function pu(){if(!b.cur)return;b.strokes.push(b.cur);b.cur=null;redraw();hook();doneBtn&&doneBtn.classList.add("ready")}
+  ink.addEventListener("pointerdown",pd);ink.addEventListener("pointermove",pm);
+  ink.addEventListener("pointerup",pu);ink.addEventListener("pointercancel",pu);ink.addEventListener("pointerleave",pu);
+  x.onclick=function(){sfx("tap");b.clear()};
+  function hook(){box.__dc={ch:ch,done:b.done,fails:b.fails,n:b.strokes.length}}
+  hook();return b}
+ function check(){var S=PGS;if(!S||S.lock||S.dead)return;var left=boxes.filter(function(b){return !b.done});
+  if(left.some(function(b){return !b.strokes.length})){sfx("tap");pgMsg(K("Some boxes are still empty.","아직 안 쓴 칸이 있어요"),1);return}
+  var bad=[],why=null;
+  left.forEach(function(b){var r=HSTK.match(b.ch,b.kid());if(r.ok)b.ok();else{b.fails++;bad.push(b);if(!why)why={b:b,r:r}}});
+  if(!bad.length){var q=tries===0?1:tries===1?.75:.5;if(boxes.some(function(b){return b.ghostA}))q=Math.min(q,.5);qual.push(q);
+   pgRight(row,{say:S.target.t,wait:1150+hanN(S.target.t)*140});return}
+  tries++;S.first=false;S.streak=0;S.miss++;try{pgRec(S.target.t,false)}catch(e){}sfx("bad");
+  bad.forEach(function(b){b.el.classList.remove("bad");void b.el.offsetWidth;b.el.classList.add("bad");if(b.fails>=2&&!b.ghostA)b.ghost(.3)});
+  var w=why.r,role=(w.why||"").split(":")[0],kind=(w.why||"").split(":")[1],pn=partName(role),nth=boxes.length>1?K("Letter "+(why.b.idx+1)+": ",(why.b.idx+1)+"번째 글자 — "):"";
+  var msg;
+  if(kind==="like"&&w.like&&role==="f"&&DBLF[HSTK.dcp(why.b.ch).f||""]&&HSTK.dcp(w.like).f&&DBLF[HSTK.dcp(why.b.ch).f].indexOf(HSTK.dcp(w.like).f)>=0)
+   msg=nth+K("This letter has TWO bottom pieces!","받침이 두 개인 글자예요! 하나가 빠졌어요");
+  else if(kind==="like"&&w.like){var d0=HSTK.dcp(why.b.ch),d1=HSTK.dcp(w.like),jm=role==="c"?d1.c:role==="f"?(d1.f||""):d1.v;
+   msg=jm?nth+K("the "+PART[role==="f"?"f":role==="c"?"c":"v"][0]+" looks like "+jm+".",pn+josa(pn,"이 ","가 ")+jm+"처럼 보여요. 다시 볼까?"):nth+K("Is there a bottom piece?","받침이 빠진 것 같아요!")}
+  else if(kind==="missing")msg=nth+K("the "+(PART[role]?PART[role][0]:"part")+" is missing.",pn+josa(pn,"이 ","가 ")+"빠졌어요!");
+  else msg=nth+K("write the "+(PART[role]?PART[role][0]:"letter")+" again, a bit more clearly.",pn+josa(pn,"을 ","를 ")+"또박또박 다시 써 볼까?");
+  if(bad.some(function(b){return b.ghostA}))msg+=" "+K("Trace the light shadow!","흐린 그림자를 따라 써 봐요!");
+  pgMsg(msg,1);
+  if(S.miss>=2&&!S.hint&&rec(S.target.t))setTimeout(function(){if(PGS===S&&!S.lock)say(S.target.t)},900)}
+ var M={
+  setup:function(){A=document.createElement("div");A.className="dict3";
+   A.innerHTML='<div class="dcflash" hidden></div><div class="dcrow2"></div><div class="dctools"><button class="btn dcpeek" type="button">👀 '+K("Peek","살짝 보기")+'</button><span class="trpens">'+
+    ["#3949AB","#E53935","#2E7D32"].map(function(c,i){return '<button class="trpen'+(i?'':' on')+'" type="button" style="background:'+c+'" data-c="'+c+'" aria-label="'+K("Crayon","크레파스")+'"></button>'}).join("")+'</span>'
+    +'<button class="btn pri big dcdone" type="button">✅ '+K("Done","다 썼어요")+'</button></div>';
+   $("pgArea").appendChild(A);row=A.querySelector(".dcrow2");doneBtn=A.querySelector(".dcdone");
+   doneBtn.onclick=function(){check()};
+   A.querySelector(".dcpeek").onclick=function(){var S=PGS;if(!S||S.lock)return;sfx("tap");S.hint=true;S.first=false;boxes.forEach(function(b){if(!b.done)b.peek()})};
+   A.querySelectorAll(".trpen").forEach(function(p){p.onclick=function(){color=p.dataset.c;A.querySelectorAll(".trpen").forEach(function(x){x.classList.toggle("on",x===p)})}})},
+  target:function(it){row.innerHTML="";boxes=[];tries=0;doneBtn.classList.remove("ready");clearTimeout(showTimer);
+   var chs=it.t.split(""),rw=row.clientWidth||A.clientWidth||600,rh=row.clientHeight||260;
+   var sz=Math.floor(Math.min(rh*.96,(rw-16*chs.length)/chs.length,380));sz=Math.max(110,sz);
+   chs.forEach(function(ch,i){var b=mkBox(ch,sz,i);boxes.push(b);row.appendChild(b.el)});
+   var fl=A.querySelector(".dcflash");
+   if(PGS&&PGS.lad&&PGS.lad.show){fl.textContent=it.t;fl.hidden=false;fl.classList.remove("out");
+    showTimer=setTimeout(function(){fl.classList.add("out");setTimeout(function(){fl.hidden=true},450);pgMsg(K("Now write it from memory!","이제 기억해서 써 봐요!"))},2600)}
+   else fl.hidden=true},
+  prompt:function(it){var r=rec(it.t);
+   return '<span class="lab">'+K("Write this word","이 낱말을 써요")+'</span>'+(it.p?'<span class="pic big2">'+it.p+'</span>':"")
+    +'<span class="nsyl">'+K(it.t.length+" letters",it.t.length+"글자")+'</span>'
+    +(r?'<button class="spk big" id="pgSpk" aria-label="'+K("Hear it","듣기")+'">🔊</button>':'')},
+  hint:function(){boxes.forEach(function(b){if(!b.done)b.peek()})},
+  say:function(){var S=PGS;if(S&&S.target&&rec(S.target.t))say(S.target.t)},
+  stop:function(){clearTimeout(showTimer)},
+  acc:function(){if(!qual.length)return .8;var a=qual.reduce(function(x,y){return x+y},0)/qual.length;return Math.max(.4,Math.min(1,a))}};
+ return M};
+})();
+
+/* ===== v30g(v31): 너무 쉬운 게임·단계 정리 — 모든 게임이 '받침 낱말'부터 (보호자 결정 2026-11-02) =====
+   - 두더지 콩콩·글자 소나기 삭제 (글자 낚시와 같은 '듣고 고르기' 활동)
+   - 낱말 레벨 바닥 = 3(쉬운 받침 낱말). 복습·보기 낱말도 받침 낱말에서만
+   - 단계표: 낚시·짝꿍·기차·빈칸·따라 쓰기·반대말 모두 1단계 = 받침 낱말, 맨 위 = 어려운 받침·소리가 바뀌는 낱말·문장
+   - '소리만 듣고' 단계: 녹음된 낱말만 소리로 내고, 녹음이 없는 낱말은 그림을 보여 준다 (소리 없이 고르게 되는 문제 수정)
+   - 모험 코스·배틀·악당 대결: 받침 낱말만, 받침 글자 보기는 받침만 다른 글자(강·감·각…)로
+   - 예전 별은 같은 내용의 새 단계로 옮겨 준다 */
+(function(){
+var WL_MIN=3;
+function hasB(w){return [].some.call(w,function(c){var k=c.charCodeAt(0)-0xAC00;return k>=0&&k<=11171&&k%28>0})}
+function hasRec(t){try{return !!VAUD[vKey("learn",t)]}catch(e){return false}}
+window.hasRec=hasRec;
+/* 0) 게임 정리: 목록(놀이터·한 바퀴·별 합계·배지)에서는 사라지고, 한글 섬 이야기 3단계(소나기)처럼
+   pgPlay("rain")을 직접 부르는 곳은 그대로 돈다 — 열거되지 않는 속성으로 숨긴다 */
+["mole","rain"].forEach(function(g){var v=PGAMES[g];if(v)Object.defineProperty(PGAMES,g,{value:v,enumerable:false,configurable:true,writable:true})});
+/* 1) 낱말 레벨 바닥 */
+function wlFix(){if(!(G.wl>=WL_MIN)){G.wl=WL_MIN;try{save()}catch(e){}}}
+wlFix();
+var _wbR0=wbRound;
+wbRound=function(prev){wlFix();var L=G.wl,now=Date.now();
+ var score=function(w){var s=wbStat(w.t),due=!s.last||now-s.last>=WB_DUE[Math.min(5,s.box||0)];return (wbKnown(w.t)?0:2)+(s.w>s.r?1.5:0)+(due?1:0)+(s.last?0:.5)+Math.random()*1.6};
+ var top=function(a,n){return a.map(function(w){return [w,score(w)]}).sort(function(x,y){return y[1]-x[1]}).slice(0,n).map(function(x){return x[0]})};
+ var cur=WB.filter(function(w){return w.lv===L}),low=WB.filter(function(w){return w.lv<L&&w.lv>=WL_MIN}),nxt=WB.filter(function(w){return w.lv===L+1});
+ var nN=nxt.length?Math.round(16*prev):0,nR=low.length?4:0;
+ return shuffle(top(cur,16-nN-nR).concat(top(low,nR),top(nxt,nN)))};
+/* 어려운 받침·소리가 바뀌는 낱말 (레벨 4~5) */
+function wbHard(n){var now=Date.now(),pool=WB.filter(function(w){return w.lv>=4});
+ return shuffle(pool.map(function(w){var s=wbStat(w.t);return [w,(wbKnown(w.t)?0:2)+(s.w>s.r?1.5:0)+(!s.last||now-s.last>=WB_DUE[Math.min(5,s.box||0)]?1:0)+Math.random()*1.6]})
+  .sort(function(x,y){return y[1]-x[1]}).slice(0,n||16).map(function(x){return x[0]}))}
+LADDER.whard={n:"어려운 받침·소리가 바뀌는 낱말",word:1,near:1,items:function(){return wbHard(16)}};
+/* 2) 소리만 듣고: 녹음이 있는 낱말로. 모자라면 그림을 함께 보여 준다 */
+LADDER.wsound.items=function(){var r=wbRound(.2),rec=r.filter(function(x){return hasRec(x.t)});
+ if(rec.length>=6)return rec;
+ var all=WB.filter(function(w){return w.lv>=WL_MIN&&hasRec(w.t)});return all.length>=6?shuffle(all).slice(0,16):r};
+var _pgPr0=pgPrompt;pgPrompt=function(it){var S=PGS;
+ if(S&&S.lad&&S.lad.sound&&it&&!hasRec(it.t)){var L0=S.lad;S.lad=Object.assign({},L0,{sound:0});try{_pgPr0(it)}finally{S.lad=L0}}
+ else _pgPr0(it)};
+/* 3) 기차: 자모로 글자 만들기는 '글자' 단계일 때만 (단계 번호가 아니라 단계 종류로) */
+LADDER.syl1.syl=1;LADDER.syl2.syl=1;
+var SENT6=[[["아빠가","부엌에서","국을","끓여요"],"🍲"],[["비가","그치자","무지개가","떴어요"],"🌈"],[["친구와","놀이터에서","그네를","탔어요"],"🛝"],
+ [["강아지가","꼬리를","흔들며","달려와요"],"🐶"],[["할아버지께서","신문을","읽으세요"],"📰"],[["겨울에는","눈사람을","만들어요"],"⛄"],
+ [["나는","이를","깨끗이","닦아요"],"🪥"],[["엄마가","꽃밭에","물을","줘요"],"🌷"],[["밤하늘에","둥근","달이","떴어요"],"🌕"],
+ [["박물관에서","공룡","뼈를","봤어요"],"🦴"],[["동생이","크레파스로","그림을","그려요"],"🖍️"],[["닭이","꼬끼오","하고","울어요"],"🐓"],
+ [["옷을","입고","밖에","나가요"],"🧥"],[["숲속에서","새들이","노래해요"],"🌲"]].map(function(a){return {t:a[0].join(" "),p:a[1],parts:a[0]}});
+LADDER.sent2={n:"긴 문장 만들기",items:function(){return SENT6}};
+/* 4) 빈칸: 이어 주는 말 · 어제와 내일 */
+var FG=[{s:"☔ 비가 와요. ___ 우산을 써요.",a:"그래서",o:["그런데","그리고"]},{s:"🍚 배가 고파요. ___ 밥을 먹어요.",a:"그래서",o:["하지만","그리고"]},
+ {s:"📒 놀고 싶어요. ___ 숙제가 많아요.",a:"그런데",o:["그래서","그리고"]},{s:"🍎 사과를 먹었어요. ___ 바나나도 먹었어요.",a:"그리고",o:["그래서","하지만"]},
+ {s:"🏃 열심히 달렸어요. ___ 일등을 했어요.",a:"그래서",o:["하지만","그런데"]},{s:"💪 키는 작아요. ___ 힘은 세요.",a:"하지만",o:["그래서","그리고"]},
+ {s:"🧼 손을 씻었어요. ___ 간식을 먹었어요.",a:"그리고",o:["하지만","그래서"]},{s:"⛄ 눈이 많이 왔어요. ___ 눈사람을 만들었어요.",a:"그래서",o:["하지만","그런데"]},
+ {s:"🥶 날씨가 추워요. ___ 동생은 반팔을 입었어요.",a:"그런데",o:["그래서","그리고"]},{s:"📖 책을 읽었어요. ___ 그림도 그렸어요.",a:"그리고",o:["그래서","하지만"]},
+ {s:"🩹 넘어졌어요. ___ 울지 않았어요.",a:"하지만",o:["그래서","그리고"]},{s:"✅ 숙제를 다 했어요. ___ 놀이터에 갔어요.",a:"그래서",o:["하지만","그런데"]}];
+var FH=[{s:"🌳 어제 공원에 ___.",a:"갔어요",o:["갈 거예요","가요"]},{s:"👵 내일 할머니 댁에 ___.",a:"갈 거예요",o:["갔어요","가요"]},
+ {s:"🌧️ 어제 비가 많이 ___.",a:"왔어요",o:["올 거예요","와요"]},{s:"🍕 어제 맛있는 피자를 ___.",a:"먹었어요",o:["먹을 거예요","먹어요"]},
+ {s:"🧒 내일 친구를 ___.",a:"만날 거예요",o:["만났어요","만나요"]},{s:"😢 아까 동생이 ___.",a:"울었어요",o:["울 거예요","울어요"]},
+ {s:"🎂 다음 주에 생일 파티를 ___.",a:"할 거예요",o:["했어요","해요"]},{s:"🌙 지난밤에 무서운 꿈을 ___.",a:"꿨어요",o:["꿀 거예요","꿔요"]},
+ {s:"🖍️ 이따가 그림을 ___.",a:"그릴 거예요",o:["그렸어요","그려요"]},{s:"⛄ 어제 눈사람을 ___.",a:"만들었어요",o:["만들 거예요","만들어요"]},
+ {s:"⏰ 내일 아침에 일찍 ___.",a:"일어날 거예요",o:["일어났어요","일어나요"]},{s:"🚂 지난 주말에 기차를 ___.",a:"탔어요",o:["탈 거예요","타요"]}];
+FILL_LV.fg={n:"이어 주는 말",items:function(){return FG.map(fillIt)}};
+FILL_LV.fh={n:"어제와 내일",items:function(){return FH.map(fillIt)}};
+/* 5) 반대말: 문장 속 반대말 2 · 비교해서 고르기 */
+var OPS2=[["여름은 덥고, 겨울은 ___.","추워요",["더워요","밝아요"]],["거북이는 느리고, 토끼는 ___.","빨라요",["느려요","작아요"]],
+ ["기린은 목이 길고, 하마는 목이 ___.","짧아요",["길어요","높아요"]],["불을 켜면 밝고, 끄면 ___.","어두워요",["밝아요","뜨거워요"]],
+ ["가방은 무겁고, 깃털은 ___.","가벼워요",["무거워요","길어요"]],["형은 키가 크고, 나는 키가 ___.","작아요",["커요","많아요"]],
+ ["산 위는 높고, 바다 밑은 ___.","낮아요",["높아요","길어요"]],["얼음은 차갑고, 국은 ___.","뜨거워요",["차가워요","작아요"]],
+ ["도서관은 조용하고, 운동장은 ___.","시끄러워요",["조용해요","작아요"]],["새 신발은 깨끗하고, 헌 신발은 ___.","더러워요",["깨끗해요","무거워요"]],
+ ["창문을 열었다가 다시 ___.","닫았어요",["열었어요","입었어요"]],["장갑을 끼었다가 ___.","벗었어요",["꼈어요","먹었어요"]]];
+var OPS3=[["코끼리는 개미보다 ___.","커요",["작아요","느려요"]],["자전거는 비행기보다 ___.","느려요",["빨라요","높아요"]],
+ ["아기는 할아버지보다 나이가 ___.","적어요",["많아요","커요"]],["여름은 겨울보다 ___.","더워요",["추워요","짧아요"]],
+ ["깃털은 돌보다 ___.","가벼워요",["무거워요","단단해요"]],["바다는 연못보다 ___.","넓어요",["좁아요","작아요"]],
+ ["밤은 낮보다 ___.","어두워요",["밝아요","더워요"]],["치타는 거북이보다 ___.","빨라요",["느려요","작아요"]],
+ ["산은 언덕보다 ___.","높아요",["낮아요","짧아요"]],["고래는 고양이보다 ___.","무거워요",["가벼워요","빨라요"]],
+ ["사탕 열 개는 두 개보다 ___.","많아요",["적어요","작아요"]],["실은 밧줄보다 ___.","가늘어요",["굵어요","무거워요"]]];
+function opSent(rows,name){return {n:name,items:function(){return rows.map(function(r){return {t:r[1],q:{k:"sent",s:r[0],a:r[1],o:r[2]}}})}}}
+LADDER.op6=opSent(OPS2,"문장 속 반대말 2");LADDER.op7=opSent(OPS3,"비교해서 고르기");
+/* 6) 따라 쓰기: 받침 글자부터 */
+function wbList(f,n){return WB.filter(f).map(function(w){return {t:w.t,p:w.p}})}
+function vowelOf(ch){var d=HSTK.dcp(ch);return d?d.v:""}
+LADDER.trw={n:"받침 낱말 쓰기",items:function(){var a=wbList(function(w){return w.lv===3&&w.t.length===2});return a.length?a:LADDER.trc4.items()}};
+LADDER.trv={n:"어려운 모음 쓰기",items:function(){var a=wbList(function(w){return w.lv>=3&&w.t.length<=2&&[].some.call(w.t,function(c){return "ㅐㅔㅒㅖㅘㅙㅚㅝㅞㅟㅢ".indexOf(vowelOf(c))>=0})});
+ return a.length>=6?a:"왕관원권괜쉼웬됐횃갰넷쥐귀".split("").map(function(t){return {t:t}})}};
+LADDER.trh={n:"어려운 받침 쓰기",items:function(){return "꽃밖옷낮밭숲앞솥끝빛팥맛".split("").map(function(t){return {t:t}})}};
+LADDER.trd={n:"겹받침 쓰기",items:function(){return "닭흙값삶앉많읽넓짧밝맑덟".split("").map(function(t){return {t:t}})}};
+/* 7) 새 단계표 */
+PGAMES.fish.lv=["wpic","wnear","wsound","wmix","whard"];
+PGAMES.pair.lv=["wpic","wpic","wmix","wmix","whard"];PGAMES.pair.pairs=[4,5,5,6,6];
+PGAMES.train.lv=["wpic","wnear","whard","sent","sent2"];
+PGAMES.fill.lv=["fc","fd","fe","fg","fh"];
+PGAMES.trace.lv=["trc4","trw","trv","trh","trd"];
+PGAMES.opp.lv=["op3","op4","op5","op6","op7"];
+PGAMES.trace.how={en:"Watch the pencil, then trace each numbered stroke in order.",ko:"연필 시범을 보고, 번호 순서대로 획을 하나씩 따라 써요. 받침까지 전부 써야 성공!"};
+/* 8) 예전 별 → 같은 내용의 새 단계로 (한 번만) */
+var MIG={fish:{1:3,2:4,3:5},pair:{1:2,2:3,3:4,4:5},train:{1:3,2:4,4:5},fill:{1:3,2:4,3:5},trace:{1:4},opp:{1:3,2:4,3:5}};
+if(G.pgMig!==31){try{Object.keys(MIG).forEach(function(g){var gp=G.pg&&G.pg[g];if(!gp||!gp.s)return;var old=gp.s,ns={};
+  Object.keys(MIG[g]).forEach(function(n){var o=old[MIG[g][n]];if(o)ns[n]=o});gp.s=ns})}catch(e){}G.pgMig=31;try{save()}catch(e){}}
+/* 9) 놀이 시작마다: 낱말 레벨 바닥 + 보기 낱말도 받침 낱말에서 */
+var _pgPlay9=pgPlay;pgPlay=function(g,lv,o){wlFix();var r=_pgPlay9.apply(this,arguments);
+ try{if(PGS&&PGS.dpool){var dp=PGS.dpool.filter(function(w){return w.lv>=WL_MIN});if(dp.length>=8)PGS.dpool=dp}}catch(e){}return r};
+/* 10) 모험 코스·배틀·악당 대결: 받침 낱말(모두 녹음 있음) */
+for(var i=WORDS2.length-1;i>=0;i--)if(!hasB(WORDS2[i].w))WORDS2.splice(i,1);
+G.rl=2;
+var _sr0=startRun;startRun=function(word){if(!word){var pool=WORDS2.filter(function(x){return x.w.length>=2&&x.w.length<=3});
+  if(pool.length)word=pool[Math.floor(Math.random()*pool.length)]}return _sr0.call(this,word)};
+/* 받침 글자의 보기: 받침만(또는 모음·첫소리만) 다른 글자 — 받침 없는 보기 사이에서 하나만 받침이 있는 쉬운 문제를 없앤다 */
+var _dis0=distract;
+distract=function(s,n){var d=HSTK.dcp(s);if(!d||!d.f)return _dis0(s,n);
+ var out=[],F="ㄱㄴㄹㅁㅂㅇㅅ".split(""),V="ㅏㅓㅗㅜㅡㅣ".split(""),C="ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅎ".split("");
+ function add(x){if(x&&x!==s&&out.indexOf(x)<0)out.push(x)}
+ shuffle(F.filter(function(f){return f!==d.f})).slice(0,3).forEach(function(f){add(HSTK.comp(d.c,d.v,f))});
+ shuffle(V.filter(function(v){return v!==d.v})).slice(0,2).forEach(function(v){add(HSTK.comp(d.c,v,d.f))});
+ shuffle(C.filter(function(c){return c!==d.c})).slice(0,2).forEach(function(c){add(HSTK.comp(c,d.v,d.f))});
+ return shuffle(out).slice(0,n)};
+/* 11) 설정: 낱말 레벨은 3~5만, 배틀 '글자' 문제 줄은 없앤다 */
+var _set31=showSettings;showSettings=function(){_set31.apply(this,arguments);
+ try{var c=$("setCard");[1,2].forEach(function(v){var b=c.querySelector('[data-wl="'+v+'"]');if(b)b.remove()});
+  var rb=c.querySelector("[data-rl]");if(rb){var row=rb.closest(".setrow");if(row)row.remove()}}catch(e){}};
 })();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

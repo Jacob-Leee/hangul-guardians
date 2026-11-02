@@ -2269,3 +2269,69 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .lnfull.go .lntt{animation:lnTT 2s ease forwards .22s}
 @keyframes lnTT{0%{opacity:0;transform:translateX(-50%) scale(.7)}20%{opacity:1;transform:translateX(-50%) scale(1.1)}30%{transform:translateX(-50%) scale(1)}82%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) scale(1)}}
 @media (prefers-reduced-motion:reduce){.lnshot,.lnfull.go .lnshot.lnbig,.lnfull.go .lnln,.lnfull.go .lnfl,.lnfull.go .lntt{animation:none}.lnfull.go .lnshot.lnbig{transform:none;opacity:1}.lnfull.go .lntt{transform:translateX(-50%);opacity:1}}
+/* ── v31 🏭 글자 조립 공장 ── */
+.asm3{position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:6px;padding:6px 4px 10px;
+ background:linear-gradient(180deg,#FFF3E0 0%,#FFE0B2 68%,#FFCC80 100%);border-radius:14px;overflow:hidden}
+.asm3 .gear{position:absolute;width:44px;height:44px;border-radius:50%;opacity:.35;pointer-events:none;
+ background:radial-gradient(circle,#FFF3E0 26%,transparent 27%),repeating-conic-gradient(#8D6E63 0 15deg,transparent 15deg 30deg);animation:asmSpin 7s linear infinite}
+.asm3 .g1{left:3%;top:5%}.asm3 .g2{right:4%;top:9%;width:32px;height:32px;animation-duration:5s;animation-direction:reverse}
+@keyframes asmSpin{to{transform:rotate(360deg)}}
+.asmdone{display:flex;gap:6px;min-height:36px;align-items:center}
+.asmchip{min-width:40px;text-align:center;background:#fff;border:2px dashed #FFB74D;border-radius:10px;padding:2px 10px;font-size:22px;font-weight:800;color:#C9A27A}
+.asmchip.on{border-style:solid;color:#3E2723;animation:hqPop .3s ease}
+.asmmid{display:flex;align-items:center;gap:clamp(8px,3vmin,22px)}
+.asmframe{position:relative;width:min(44vmin,240px);aspect-ratio:1;background:#FFFDF7;border:4px dashed #FFB74D;border-radius:18px;flex:none;
+ box-shadow:inset 0 0 0 6px rgba(255,183,77,.12),0 8px 18px rgba(120,60,0,.15)}
+.asmframe.gen{width:min(60vmin,330px);aspect-ratio:2.2}
+.asmframe.merge{border-style:solid;border-color:#FB8C00}
+.asmslot{position:absolute;border:3px dashed #B8C6D8;border-radius:12px;background:rgba(236,243,250,.65);display:flex;align-items:center;justify-content:center}
+.asmslot.cur{border-color:#FB8C00;background:rgba(255,224,178,.55);animation:asmPing 1.4s ease-in-out infinite}
+.asmslot em{position:absolute;left:0;right:0;top:3px;text-align:center;font-style:normal;font-size:clamp(10px,2.6vmin,13px);font-weight:800;color:#8D6E63}
+.asmslot i{position:absolute;left:-7px;top:-9px;width:22px;height:22px;border-radius:50%;background:#FB8C00;color:#fff;font-size:13px;font-weight:800;font-style:normal;
+ display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.asmslot.full{border-style:solid;border-color:#66BB6A;background:#E8F5E9;animation:none}
+.asmslot.full i{display:none}
+.asmslot.full b{font-size:clamp(24px,8vmin,52px);animation:hqPop .25s ease}
+@keyframes asmPing{0%,100%{box-shadow:0 0 0 0 rgba(251,140,0,.0)}50%{box-shadow:0 0 0 6px rgba(251,140,0,.25)}}
+.asmbig{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(80px,30vmin,170px);font-weight:800;color:#3E2723}
+.asmframe.gen .asmbig{font-size:clamp(70px,22vmin,140px)}
+.asmframe.stamp .asmbig{animation:asmStamp .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes asmStamp{0%{transform:scale(2.1) rotate(-7deg);opacity:0}60%{transform:scale(.94) rotate(1deg);opacity:1}100%{transform:scale(1)}}
+.asmwin{min-width:clamp(64px,16vmin,110px);height:clamp(64px,16vmin,110px);border-radius:16px;border:4px solid #8D6E63;background:#3E2723;color:#FFE082;
+ display:flex;align-items:center;justify-content:center;font-size:clamp(40px,11vmin,74px);font-weight:800;box-shadow:inset 0 0 18px rgba(0,0,0,.6);opacity:.55}
+.asmwin.on{opacity:1;text-shadow:0 0 14px rgba(255,224,130,.8)}
+.asmbelt{position:relative;width:100%;max-width:660px;padding:12px 8px 14px;border-radius:14px;background:#8D6E63;
+ box-shadow:inset 0 4px 0 rgba(255,255,255,.18),inset 0 -5px 0 rgba(0,0,0,.22)}
+.asmbelt .rail{position:absolute;inset:4px 0 auto;height:6px;background:repeating-linear-gradient(90deg,#5D4037 0 22px,#795548 22px 44px);
+ animation:asmRail 1.4s linear infinite;border-radius:3px}
+@keyframes asmRail{to{background-position:44px 0}}
+.asmbelt .blks{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.asmblk{min-width:clamp(54px,11vmin,78px);height:clamp(54px,11vmin,78px);border-radius:14px;border:3px solid #4E342E;background:linear-gradient(180deg,#FFF8E1,#FFE082);
+ font-size:clamp(26px,6.5vmin,42px);font-weight:800;color:#3E2723;box-shadow:0 5px 0 #4E342E;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 6px}
+.asmblk.none{background:linear-gradient(180deg,#ECEFF1,#CFD8DC);min-width:clamp(70px,14vmin,96px)}
+.asmblk.none b{font-size:clamp(18px,4.5vmin,26px);color:#78909C}.asmblk.none small{font-size:clamp(11px,2.6vmin,13px);font-weight:800}
+.asmblk:active{transform:translateY(3px);box-shadow:0 2px 0 #4E342E}
+.asmblk.used{opacity:.25;pointer-events:none;transform:scale(.85)}
+.asmblk.pop{animation:hqPop .3s ease}
+.asmblk.pghint{animation:pghint 1s ease-in-out infinite}
+.pgprompt .pic.big2{font-size:clamp(46px,11vmin,72px);line-height:1}
+.pgprompt .nsyl{background:#fff;border:2px solid currentColor;border-radius:999px;padding:1px 10px;font-weight:800;font-size:14px;opacity:.75}
+/* ── v31 📝 받아쓰기 ── */
+.dict3{position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:6px 4px 10px}
+.dcrow2{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;gap:16px}
+.dcbox2{position:relative;flex:none;border:4px solid #A5D6A7;border-radius:18px;background:#FBFDFF;box-shadow:0 6px 0 rgba(27,94,32,.12);touch-action:none}
+.dcbox2 canvas{position:absolute;inset:0;width:100%;height:100%}
+.dcbox2 .dcink{touch-action:none;cursor:crosshair}
+.dcbox2.done{border-color:#2E7D32;background:#F1F8E9}
+.dcbox2.bad{border-color:#E53935;animation:dcShake .4s}
+@keyframes dcShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.dcclr{position:absolute;right:-10px;top:-10px;width:32px;height:32px;border-radius:50%;border:2px solid #90A4AE;background:#fff;color:#546E7A;font-weight:800;z-index:2;cursor:pointer}
+.dcbox2.done .dcclr{display:none}
+.dctools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center}
+.dctools .dcdone{font-size:clamp(18px,4.2vmin,24px)}
+.dctools .dcdone.ready{animation:pghint 1.3s ease-in-out infinite}
+.dcflash{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);z-index:3;background:#fff;border:4px solid #66BB6A;border-radius:20px;padding:10px 26px;
+ font-size:clamp(56px,16vmin,110px);font-weight:800;color:#1B5E20;box-shadow:0 12px 30px rgba(0,0,0,.2);animation:hqPop .35s ease;transition:opacity .4s,transform .4s}
+.dcflash.out{opacity:0;transform:translate(-50%,-60%) scale(.8)}
+@media (max-height:520px){.asmframe{width:min(36vmin,170px)}.asmframe.gen{width:min(52vmin,260px)}.asm3 .gear{display:none}.asmdone{min-height:24px}.asmwin{height:56px;min-width:56px;font-size:34px}}
+@media (prefers-reduced-motion:reduce){.asm3 .gear,.asmbelt .rail,.asmslot.cur{animation:none}}

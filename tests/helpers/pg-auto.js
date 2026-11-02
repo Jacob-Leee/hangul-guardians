@@ -7,7 +7,7 @@ window.PGAUTO=function(wrong){const S=PGS;if(document.querySelector('.pgres'))re
  if(S.g==='mole'){const ms=[...document.querySelectorAll('.mole3.up')];const m=ms.find(e=>wrong?e.querySelector('.sign').textContent!==T:e.querySelector('.sign').textContent===T);return m?clk(m):'none'}
  if(S.g==='rain'){const ds=[...document.querySelectorAll('.rdrop2:not(.fade):not(.pop)')];const d=ds.find(e=>wrong?e.textContent!==T:e.textContent===T);return d?clk(d):'none'}
  if(S.g==='fill'){const o=[...document.querySelectorAll('.fopt:not(:disabled)')].find(e=>wrong?e.dataset.o!==T:e.dataset.o===T);return o?clk(o):'none'}
- if(S.g==='train'){let parts;if(S.lv<=2){const j=jamoOf(T);parts=[j.c,j.v]}else if(S.target.parts)parts=S.target.parts;else parts=[...T];
+ if(S.g==='train'){let parts;if(S.lad&&S.lad.syl){const j=jamoOf(T);parts=[j.c,j.v]}else if(S.target.parts)parts=S.target.parts;else parts=[...T];
   const filled=document.querySelectorAll('#pgTrain .car.full').length+document.querySelectorAll('.dfly').length;const used=document.querySelectorAll('.blk.used').length;const next=parts[used];
   const b=[...document.querySelectorAll('.blk:not(.used)')].find(e=>wrong?e.textContent!==next:e.textContent===next);return b?clk(b):'none'}
  if(S.g==='trace'){const bx=document.querySelector('.trbox:not(.done)');if(!bx)return 'wait';
@@ -35,3 +35,29 @@ window.PGAUTO=function(wrong){const S=PGS;if(document.querySelector('.pgres'))re
   if(open.length===1){const o=open[0],k=o.querySelector('.cw')?o.querySelector('.cw').textContent:pic2t[TX(o.querySelector('.cpic'))];const m=cards.find(c=>c!==o&&(c.querySelector('.cw')?c.querySelector('.cw').textContent===k&&!o.querySelector('.cw'):pic2t[TX(c.querySelector('.cpic'))]===k&&!!o.querySelector('.cw')));return m?clk(m):'none'}
   const pc=cards.find(c=>c.querySelector('.cpic')&&!c.classList.contains('up'));return pc?clk(pc):'none:'+cards.length+':'+open.length}
  return '?'};
+/* v30.8: 글자 공장 + 받아쓰기 드라이버 */
+window.PGAUTO_EXT=1;
+(function(){var base=window.PGAUTO;
+/* v31 drivers: 🏭 조립 공장(맞는 조각 / wrong이면 틀린 조각) · 📝 받아쓰기(정답 획을 손글씨처럼 그려서 '다 썼어요') */
+function drawStrokes(ink,strokes){const r=ink.getBoundingClientRect(),sx=r.width/100,sy=r.height/100;
+ const ev=(t,p)=>ink.dispatchEvent(new PointerEvent(t,{bubbles:true,clientX:r.left+p[0]*sx,clientY:r.top+p[1]*sy,pointerId:7,pointerType:'touch',isPrimary:true}));
+ strokes.forEach(st=>{const pts=[];for(let i=0;i<st.length-1;i++){const a=st[i],b=st[i+1],n=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/1.5));for(let k=0;k<n;k++)pts.push([a[0]+(b[0]-a[0])*k/n+(Math.random()-.5)*.8,a[1]+(b[1]-a[1])*k/n+(Math.random()-.5)*.8])}
+  pts.push(st[st.length-1]);ev('pointerdown',pts[0]);pts.slice(1).forEach(p=>ev('pointermove',p));ev('pointerup',pts[pts.length-1])})}
+window.PGDRAW=drawStrokes;
+window.PGAUTO=function(wrong){const S=PGS;
+ if(S&&!document.querySelector('.pgres')&&!document.querySelector('.pgintro')&&!S.lock){
+  if(S.g==='asm'){const st=document.querySelector('.asm3');const H=st&&st.__asm;if(!H||!H.need)return 'wait';
+   const b=[...document.querySelectorAll('.asmblk:not(.used)')].find(e=>wrong?e.dataset.ch!==H.need:e.dataset.ch===H.need);
+   return b?(b.click(),'click'):'wait'}
+  if(S.g==='dict'){const fl=document.querySelector('.dcflash');if(fl&&!fl.hidden&&!fl.classList.contains('out'))return 'wait';
+   const bx=[...document.querySelectorAll('.dcbox2')].find(b=>b.__dc&&!b.__dc.done&&!b.__dc.n);
+   if(bx){const ch=bx.__dc.ch;let tgt=ch;
+    if(wrong){const rv=HSTK.rivals(ch).filter(x=>HSTK.charParts(x));tgt=rv.length?rv[0]:ch}
+    drawStrokes(bx.querySelector('canvas.dcink'),HSTK.charStrokes(tgt));return 'draw'}
+   const d=document.querySelector('.dcdone');if(d){const before=[...document.querySelectorAll('.dcbox2.bad')].length;d.click();
+    /* 틀린 칸은 지우고 다시 (다음 호출에서 정답으로) */
+    [...document.querySelectorAll('.dcbox2')].forEach(b=>{if(b.__dc&&!b.__dc.done&&b.__dc.n){const x=b.querySelector('.dcclr');x&&x.click()}});
+    return 'click'}
+   return 'wait'}}
+ return base(wrong)};
+})();

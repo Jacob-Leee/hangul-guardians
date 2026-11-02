@@ -17,7 +17,7 @@ const out=[];let bad=0;const ok=(n,c,x)=>{if(!c)bad++;out.push((c?'PASS ':'FAIL 
  await p.evaluate(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await p.waitForTimeout(600);
  await p.addScriptTag({content:HELP('pg-auto.js')});await p.addScriptTag({content:HELP('kz-auto.js')});
  const W=ms=>p.waitForTimeout(ms);const closeLv=()=>p.evaluate(()=>{const c=document.getElementById('lvOk');if(c&&!document.getElementById('lvOv').hidden)c.click()});
- const ACTS=['fish','mole','course','pair','rain','battle','train','trace','opp','fill','story','words'];
+ const ACTS=['fish','course','asm','pair','trace','battle','train','dict','opp','fill','story','words'];
  let st=await p.evaluate(()=>({hud:!!$("tdHud"),banner:!!document.querySelector('#extras [data-x="today"]'),lap:tdLap().length,tot:tdTotal()}));
  ok('sun chip + Today banner removed; one lap: 10 games, total 12',st.hud===false&&st.banner===false&&st.lap===10&&st.tot===12,st);
  st=await p.evaluate(()=>({n:document.querySelectorAll('.tdstone').length,done:document.querySelectorAll('.tdstone.done').length,nx:emjText(document.querySelector('.tdstone.nx .stn')),tag:!!document.querySelector('.tdstone .tag')}));

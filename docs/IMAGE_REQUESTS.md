@@ -137,7 +137,7 @@ Canvas 1024x1024.
 
 ## 6. 아직 정하지 않은 것
 
-- 한글 놀이터 게임(글자 낚시, 두더지 등)의 무대를 사건 배경처럼 그림으로 바꿀지: 보호자가 정하면 목록과 프롬프트를 여기에 적습니다.
+- 한글 놀이터 게임(글자 낚시, 조립 공장 등)의 무대를 사건 배경처럼 그림으로 바꿀지: 보호자가 정하면 목록과 프롬프트를 여기에 적습니다.
 
 ## 6. 동화책 3~12권 그림 (v30 — 지금은 임시 그림으로 플레이 중)
 
@@ -281,8 +281,8 @@ pieces placed on top stand out. Completely empty stage — no characters, no tex
 | 파일 | [장면] |
 |---|---|
 | pg_fish_bg.png | a calm blue pond seen from the shore: a small wooden dock on the left, reeds and lily pads at the edges, gentle ripples, underwater weeds faintly visible, a sandy bottom strip at the lower edge |
-| pg_mole_bg.png | a sunny green meadow with a low wooden fence at the back, six soft dirt mounds with round holes arranged in two rows, little flowers and grass tufts |
-| pg_rain_bg.png | a soft sky scene for a word-rain game: fluffy clouds along the top, a gentle hill with grass at the bottom, a faint rainbow far away |
+| pg_asm_bg.png | a cheerful toy factory for a letter-building game: warm wooden workbench at the bottom, cogs and pipes on a soft orange wall, a small conveyor belt along the front edge, empty middle area for the game, no text |
+| pg_dict_bg.png | a child's writing desk seen from above for a dictation game: a big open notebook with faint square grid pages filling the middle, a pencil cup and crayons at the edges, warm morning light, no letters or text |
 | pg_pair_bg.png | a warm wooden table seen from above, slightly textured, with soft vignette edges — a cozy card-game table |
 | pg_train_bg.png | rolling green hills with a winding empty railway track along the lower third, a tunnel on the left, fluffy clouds |
 | pg_fill_bg.png | a cozy classroom wall with a large empty green chalkboard in the middle, wooden frame, a shelf with plants and books at the sides |
@@ -297,9 +297,6 @@ style. [대상]. Transparent background, no floor shadow outside the object, no 
 ```
 | 파일 | [대상] |
 |---|---|
-| pg_mole_up.png | a cute brown mole popping up happily from a hole, paws up, big friendly eyes, whole upper body |
-| pg_mole_bonk.png | the same mole dizzy after a gentle bonk, stars-in-eyes expression, squashed slightly |
-| pg_mole_laugh.png | the same mole giggling with tongue out (playful tease) |
 | pg_fish_1.png | a plump friendly orange fish facing left, mouth slightly open, big round eye |
 | pg_fish_2.png | the same style fish in teal-green | 
 | pg_fish_3.png | the same style fish in pink-purple |
@@ -308,5 +305,5 @@ style. [대상]. Transparent background, no floor shadow outside the object, no 
 | pg_pair_back.png | a square card-back design: soft navy with tiny stars and a paw-print in the middle (1024x1024 square) |
 | pg_trace_pencil.png | a small cute crayon-pencil at a 45-degree angle, red with a gold band |
 
-- 효과가 큰 것부터: 배경 8장 → 두더지 3포즈 → 물고기 3색 → 기차 2장 → 카드 뒷면 → 연필.
+- 효과가 큰 것부터: 배경 8장 → 물고기 3색 → 기차 2장 → 카드 뒷면 → 연필. (v31: 두더지·소나기 게임이 빠져 그 그림은 필요 없음, 대신 조립 공장·받아쓰기 배경)
 - 다 만들 필요 없어요. **오는 것만 그때그때** 코드에 연결해 드립니다(파일명만 지켜 주세요).
