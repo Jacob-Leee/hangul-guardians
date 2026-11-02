@@ -11,17 +11,22 @@ window.PGAUTO=function(wrong){const S=PGS;if(document.querySelector('.pgres'))re
   const filled=document.querySelectorAll('#pgTrain .car.full').length+document.querySelectorAll('.dfly').length;const used=document.querySelectorAll('.blk.used').length;const next=parts[used];
   const b=[...document.querySelectorAll('.blk:not(.used)')].find(e=>wrong?e.textContent!==next:e.textContent===next);return b?clk(b):'none'}
  if(S.g==='trace'){const bx=document.querySelector('.trbox:not(.done)');if(!bx)return 'wait';
-  const gd=bx.querySelector('canvas.trguide'),ink=bx.querySelector('canvas.trink');if(!gd||!ink)return 'wait';
-  const w=gd.width,h=gd.height,d=gd.getContext('2d').getImageData(0,0,w,h).data;
-  const r=ink.getBoundingClientRect(),sx=r.width/w,sy=r.height/h;
+  const T2=bx.__trs,ink=bx.querySelector('canvas.trink');if(!T2||!ink)return 'wait';
+  const r=ink.getBoundingClientRect(),sz=ink.width,sx=r.width/sz,sy=r.height/sz;
   const ev=(t,x,y)=>ink.dispatchEvent(new PointerEvent(t,{bubbles:true,clientX:r.left+x*sx,clientY:r.top+y*sy,pointerId:7,pointerType:'touch',isPrimary:true}));
-  const step=Math.max(4,Math.round(h*.05));
-  for(let y=Math.round(step/2);y<h;y+=step){let run=false;
-   for(let x=0;x<w;x+=3){const a=d[(y*w+x)*4+3]>60;
-    if(a&&!run){run=true;ev('pointerdown',x,y)}
-    else if(a&&run)ev('pointermove',x,y);
-    else if(!a&&run){ev('pointerup',x-3,y);run=false}}
-   if(run)ev('pointerup',w-2,y)}
+  if(T2.font){const gd=bx.querySelector('canvas.trguide');const w=gd.width,h=gd.height,d=gd.getContext('2d').getImageData(0,0,w,h).data;
+   const step=Math.max(4,Math.round(h*.05));
+   for(let y=Math.round(step/2);y<h;y+=step){let run=false;
+    for(let x=0;x<w;x+=3){const a=d[(y*w+x)*4+3]>60;
+     if(a&&!run){run=true;ev('pointerdown',x,y)}else if(a&&run)ev('pointermove',x,y);
+     else if(!a&&run){ev('pointerup',x-3,y);run=false}}if(run)ev('pointerup',w-2,y)}
+   return 'click'}
+  const p2=T2.strokes[T2.active];if(!p2)return 'wait';
+  const trace=(pts,off)=>{ev('pointerdown',pts[0][0]+off,pts[0][1]);
+   for(let s2=0;s2<pts.length-1;s2++){const a=pts[s2],b2=pts[s2+1],n=Math.max(2,Math.ceil(Math.hypot(b2[0]-a[0],b2[1]-a[1])/4));
+    for(let i=1;i<=n;i++)ev('pointermove',a[0]+(b2[0]-a[0])*i/n+off,a[1]+(b2[1]-a[1])*i/n)}
+   ev('pointerup',pts[pts.length-1][0]+off,pts[pts.length-1][1])};
+  trace(p2,0);trace(p2,2.5);trace(p2,-2.5);
   return 'click'}
  if(S.g==='opp'){const o=[...document.querySelectorAll('.opcard')].find(e=>wrong?e.dataset.t!==T:e.dataset.t===T);return o?clk(o):'none'}
  if(S.g==='pair'){if(!S.started)return 'wait';const open=[...document.querySelectorAll('.pcard.up:not(.done)')];if(open.length>=2)return 'wait';

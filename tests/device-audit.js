@@ -26,11 +26,12 @@ const FILTER=new RegExp(process.argv[4]||'.');
 function screens(info){const S=[
  ['home','renderAll()',700,'body'],
  ['hq_base','["rmOv","setOv","tdOv","pgOv","caseOv","bookOv","duelOv","runOv"].forEach(x=>{const e=$(x);if(e)e.hidden=true});hush();hqOpen()',900,'#hqOv'],
+ ['home2','$("hqOv").hidden=true;renderAll()',500,'body'],
  ['settings','$("hqOv").hidden=true;$("tdOv").hidden=true;showSettings()',700,'#setOv'],
  ['pghub','["setOv","tdOv","hqOv"].forEach(x=>{const e=$(x);if(e)e.hidden=true});pgHub()',700,'#pgOv']];
  info.pg.forEach(g=>S.push(['pg_'+g,`["tdOv","hqOv"].forEach(x=>{const e=$(x);if(e)e.hidden=true});pgPlay(${JSON.stringify(g)},3);setTimeout(()=>{const b=document.querySelector('#pgGo');b&&b.click()},300)`,1900,'#pgOv']));
  S.push(['wordbook','pgStop();wbBook()',700,'#pgOv']);
- S.push(['course','pgStop();$("pgOv").hidden=true;startRun()',1600,'#runOv']);
+ S.push(['course','pgStop();["pgOv","hqOv"].forEach(x=>{const e=$(x);if(e)e.hidden=true});startRun()',1600,'#runOv']);
  S.push(['duel','try{cancelAnimationFrame(RUN.raf)}catch(e){};$("runOv").hidden=true;duel({lv:1,practice:true})',1800,'#duelOv']);
  // v29.5 new battle question types (tier 3, forced type)
  S.push(['duel_oxq','["setOv","tdOv","hqOv","hqGiftOv"].forEach(x=>{const e=$(x);if(e)e.hidden=true});duClose();duel({lv:3,practice:true,vil:"fat"});setTimeout(()=>{const go=$("dGo");go&&go.click();DU.busy=false;const o=duType;duType=()=>"oxq";duNext();duType=o},500)',2400,'#duelOv']);

@@ -166,7 +166,14 @@ No text, letters, numbers, logos or watermark. Friendly for a 5-year-old. Canvas
 | b11 개와 그림자 | 왼쪽 산책길 + 가운데 개울·외나무다리 + 오른쪽 집 마당 | 뼈다귀 물고 다리 오르는 콩이 / 물속 그림자를 보는 콩이 / 뼈다귀 물고 집에서 행복한 콩이 | pup_stand·pup_look·pup_happy(강아지) |
 | b12 아기 돼지 삼 형제 | 왼쪽 지푸라기 집 + 가운데 나무 집 + 오른쪽 벽돌집 | 집 짓는 삼 형제 / 후후 부는 늑대와 날아가는 집 / 벽돌집에 모인 삼 형제 | p1_stand·p2_stand·p3_stand·pig_scared(돼지들), wolf_stand·wolf_blow(늑대) |
 
-표지(cover)는 page1을 그대로 씁니다(따로 만들지 않아도 됩니다).
+표지(cover)는 지금 page1을 임시로 쓰지만, **진짜 표지를 만들면 훨씬 좋아요** — 도서관 책장과 '책 속으로 뛰어들기' 3D 입장(토끼와 거북이처럼)에 쓰입니다. `incoming/bN_cover.png`:
+
+```
+A storybook COVER illustration for a cute 3D animated children's game, matching the attached
+reference art style. The main characters of the story in one charming scene, framed like a
+picture-book front cover with a soft decorative border. NO title, NO text, NO letters
+(the game draws the title). Portrait canvas 1024x1536. Friendly for a 5-year-old.
+```
 
 ## 7. 본부 원형 기지 그림 (v30.3 — 지금은 코드 장식, 그림이 오면 자동 교체)
 
@@ -188,31 +195,118 @@ no animals (the game places them on top). Low-contrast floor so characters stand
 No text, letters, numbers, logos or watermark. Friendly for a 5-year-old. Canvas 1536x1024.
 ```
 
-### ⑦-2 영웅 '일하는 포즈' 12장 — `work_<id>.png` (1024×1024, 투명 배경, 선택)
+### ⑦-1c ★ 살아 움직이는 비행선 조종실 (보호자 확정 콘셉트) — 2겹 배경
 
-공통 틀 (각 영웅의 기존 그림을 참고로 첨부하고 [일] 부분만 바꾸기):
+보호자가 고른 참고 그림(구름 위 조종실, 콘솔, 큰 창)처럼. **배경은 2겹**으로 만들어야 창밖 구름이 흐르고 영웅이 움직입니다. 참고 그림을 함께 첨부하세요.
+
+**① `hq_sky.png` — 창밖 하늘 (2048×1024)**
+```
+A wide panoramic sky high above a sea of fluffy white clouds, bright daytime, soft blue gradient,
+a few distant cloud towers, gentle sunlight, matching the attached reference art style (soft
+painterly 3D). The image must tile SEAMLESSLY left-to-right (the left edge continues the right
+edge). No aircraft, no characters, no text. Canvas 2048x1024.
+```
+
+**② `hq_cabin.png` — 조종실 안 (1536×1024, 창유리 투명)**
+```
+The SAME airship cockpit interior as the attached reference image (curved glass dome, metal ribs,
+glowing consoles with screens, cables, cosy seats), cute 3D animated children's game style, seen
+from the same angle. IMPORTANT: remove ALL characters — every seat and console is EMPTY.
+The window glass areas must be fully TRANSPARENT (real PNG alpha channel, not a checkerboard) so a
+moving sky can be shown behind them. Keep screens glowing with simple shapes only — absolutely
+NO text, letters or numbers on screens or signs. Canvas 1536x1024.
+```
+- 조종실이 오면 제가 의자마다 좌표를 맞춰 영웅(⑦-2 그림)을 앉힙니다.
+
+### ⑦-1b 비행선 객실 배경 (새 콘셉트, 선택) — `room_base.png` 교체용
+
+보호자 콘셉트: **하늘을 나는 아주 큰 비행선 안**. 둥근 객실 가장자리에 창이 빙 둘러 있고, 영웅들은 바깥 창 쪽 자리에서 일한다. (배경엔 의자·사람을 그리지 않음 — 의자와 물건은 ⑦-2 영웅 그림에 함께 들어감)
 
 ```
-The SAME character as the attached reference image (same outfit, same colors, same face),
-in a new pose: [일]. Whole body visible, facing slightly left, cheerful.
-Single character only, transparent background PNG, no floor, no shadow outside the character,
-no text or watermark. Matching the reference 3D style exactly. Canvas 1024x1024.
+Interior of a huge friendly airship flying high in the sky, for a cute 3D animated children's game,
+matching the attached reference art style (soft, warm, painterly 3D — cozy, NOT mecha, NOT realistic).
+A round cabin seen from a slightly high angle (about 35 degrees), perfectly centered. Large round
+porthole windows all around the curved outer wall, showing bright daytime sky with fluffy clouds
+rushing past and a little sun. Warm wooden floor with a soft circular rug pattern in the middle,
+brass trims and rivets on the walls, a few hanging lanterns, colourful bunting. At the exact centre a
+small round golden pedestal (empty). IMPORTANT: the floor is completely EMPTY — no chairs, no desks,
+no characters (the game places twelve animal heroes with their own seats on top).
+Absolutely NO text, letters, numbers or signs. Friendly for a 5-year-old. Canvas 1024x1024.
 ```
 
-| 파일 이름 | 영웅 | [일] 에 넣을 내용 |
+### ⑦-2 영웅 '일하는 자리' 12장 — `work_<id>.png` (1024×1024, **진짜 투명 PNG**, 의자·물건 포함)
+
+각 영웅이 **자기 자리(의자/작업대)와 물건을 함께** 가진 한 장. 비행선 창가에서 일하는 느낌으로, 얼굴은 보이게 살짝 옆을 향함. 기존 영웅 그림을 꼭 첨부.
+
+```
+The SAME character as the attached reference image (same outfit, same colours, same face),
+[자리와 일]. Three-quarter view turned slightly to the side so the face is clearly visible,
+cheerful and focused. The seat/workstation and the item are part of the picture and fit the
+character's size. Single character with its own seat and props only — no room, no floor, no wall.
+REAL transparent PNG background with alpha channel (NOT a checkerboard pattern), no shadow
+outside the props, no text or watermark. Matching the reference 3D style exactly. Canvas 1024x1024.
+```
+
+| 파일 이름 | 영웅 | [자리와 일] 에 넣을 내용 |
 |---|---|---|
-| work_rat.png | 번개 쥐 | looking through a big magnifying glass at a small clue card |
-| work_ox.png | 강철 소 | proudly lifting a small dumbbell with one arm |
-| work_tiger.png | 대장 호랑이 | pointing at a small mission map board held in the other hand |
-| work_rabbit.png | 달빛 토끼 | holding a watering can and a fresh carrot |
-| work_dragon.png | 하늘 용 | looking through a brass telescope pointed at the sky |
-| work_snake.png | 바람 뱀 | neatly holding two letter envelopes |
-| work_horse.png | 질주 말 | carrying a small parcel box |
-| work_sheep.png | 구름 양 | knitting with yarn and two needles |
-| work_monkey.png | 재주 원숭이 | holding a small stack of picture books |
-| work_rooster.png | 새벽 닭 | polishing a small shiny brass horn with a cloth |
-| work_dog.png | 용감한 개 | standing guard holding a small round shield |
-| work_pig.png | 든든 돼지 | holding a tray of freshly baked cookies |
+| work_rat.png | 번개 쥐 | sitting on a small swivel stool at a clue desk, holding a big magnifying glass over a clue card (☑ 서 있는 버전 이미 사용 중 — 앉은 버전으로 다시 만들면 교체) |
+| work_ox.png | 강철 소 | sitting on a sturdy workout bench lifting a small dumbbell, a water bottle beside |
+| work_tiger.png | 대장 호랑이 | sitting in a captain's chair at a small table, pointing at a mission map spread on it |
+| work_rabbit.png | 달빛 토끼 | kneeling at a little window-box garden, watering carrots with a small watering can |
+| work_dragon.png | 하늘 용 | sitting on a stool looking through a brass telescope on a tripod |
+| work_snake.png | 바람 뱀 | coiled at a small mail-sorting counter with pigeonhole shelves, holding two envelopes |
+| work_horse.png | 질주 말 | standing beside a neat stack of parcel boxes, carrying one parcel, ready to deliver |
+| work_sheep.png | 구름 양 | sitting in a cosy armchair knitting cloud-white yarn, a yarn basket at her feet |
+| work_monkey.png | 재주 원숭이 | sitting on a library step-ladder by a small bookshelf, holding a stack of picture books |
+| work_rooster.png | 새벽 닭 | sitting on a tall stool polishing a shiny brass horn on a little stand |
+| work_dog.png | 용감한 개 | standing guard beside a small watch-post with a lantern, holding a round shield |
+| work_pig.png | 든든 돼지 | standing at a small cosy oven in an apron, holding a tray of fresh cookies |
 
-- 스승님은 기존 그림(mentor)을 그대로 쓰므로 안 만들어도 됩니다.
-- 올리는 곳: 깃허브 `incoming/` 폴더 (지금까지와 동일). 제가 webp로 바꿔 끼웁니다.
+- 스승님은 기존 그림을 그대로 쓰므로 안 만들어도 됩니다.
+- 그림이 들어오면 게임이 그려 둔 임시 책상·의자는 그 영웅에서 자동으로 빠집니다.
+- 올리는 곳: 깃허브 `incoming/` 폴더. JPG로 와도 처리하지만 **PNG가 훨씬 깨끗**합니다.
+
+## 8. 놀이터 고퀄 그림 (v30.4 요청 — 전부 선택, 오는 대로 교체)
+
+공통 규칙: 기존 참고 그림 첨부, **빈 무대**(캐릭터·글자 없음), 글자/로고/워터마크 금지, 5살 친화. 배경은 1536×1024, 스프라이트는 1024×1024 투명 PNG. 업로드는 `incoming/<파일명>.png`.
+
+### ⑧-1 배경 8장 (`pg_<게임>_bg.png`)
+
+공통 틀:
+```
+A wide background for a cute 3D animated children's game, matching the attached reference art
+style (soft, warm, slightly painterly 3D). Scene: [장면]. Low-contrast, soft lighting so game
+pieces placed on top stand out. Completely empty stage — no characters, no text. Canvas 1536x1024.
+```
+| 파일 | [장면] |
+|---|---|
+| pg_fish_bg.png | a calm blue pond seen from the shore: a small wooden dock on the left, reeds and lily pads at the edges, gentle ripples, underwater weeds faintly visible, a sandy bottom strip at the lower edge |
+| pg_mole_bg.png | a sunny green meadow with a low wooden fence at the back, six soft dirt mounds with round holes arranged in two rows, little flowers and grass tufts |
+| pg_rain_bg.png | a soft sky scene for a word-rain game: fluffy clouds along the top, a gentle hill with grass at the bottom, a faint rainbow far away |
+| pg_pair_bg.png | a warm wooden table seen from above, slightly textured, with soft vignette edges — a cozy card-game table |
+| pg_train_bg.png | rolling green hills with a winding empty railway track along the lower third, a tunnel on the left, fluffy clouds |
+| pg_fill_bg.png | a cozy classroom wall with a large empty green chalkboard in the middle, wooden frame, a shelf with plants and books at the sides |
+| pg_trace_bg.png | a child's wooden desk seen from above with a large blank writing notebook page in the middle (empty grid paper), crayons at the edge |
+| pg_opp_bg.png | a playful mirror hall: a large ornate oval mirror on the right wall, soft pastel wallpaper, light sparkles in the air |
+
+### ⑧-2 스프라이트 (투명 PNG)
+
+```
+A single game sprite for a cute 3D animated children's game, matching the attached reference art
+style. [대상]. Transparent background, no floor shadow outside the object, no text. Canvas 1024x1024.
+```
+| 파일 | [대상] |
+|---|---|
+| pg_mole_up.png | a cute brown mole popping up happily from a hole, paws up, big friendly eyes, whole upper body |
+| pg_mole_bonk.png | the same mole dizzy after a gentle bonk, stars-in-eyes expression, squashed slightly |
+| pg_mole_laugh.png | the same mole giggling with tongue out (playful tease) |
+| pg_fish_1.png | a plump friendly orange fish facing left, mouth slightly open, big round eye |
+| pg_fish_2.png | the same style fish in teal-green | 
+| pg_fish_3.png | the same style fish in pink-purple |
+| pg_train_engine.png | a cheerful toy steam engine facing left, round boiler, big friendly headlight face plate (no face), pastel red |
+| pg_train_car.png | a simple matching toy train car with an empty flat top where a letter block can sit, pastel blue |
+| pg_pair_back.png | a square card-back design: soft navy with tiny stars and a paw-print in the middle (1024x1024 square) |
+| pg_trace_pencil.png | a small cute crayon-pencil at a 45-degree angle, red with a gold band |
+
+- 효과가 큰 것부터: 배경 8장 → 두더지 3포즈 → 물고기 3색 → 기차 2장 → 카드 뒷면 → 연필.
+- 다 만들 필요 없어요. **오는 것만 그때그때** 코드에 연결해 드립니다(파일명만 지켜 주세요).
