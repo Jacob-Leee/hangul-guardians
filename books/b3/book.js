@@ -1,12 +1,12 @@
 /* 〈소가 된 게으름뱅이〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b3) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b3={dir:"books/b3/",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b3={dir:"books/b3/",cover:"cover.webp",bg:"spread.webp",
  actors:{
-  boy:{n:"게으른 소년 돌이",voice:"sb_boy",h:30,poses:{stand:["boy_stand.webp",1],walk:["boy_stand.webp",1],sleep:["boy_sleep.webp",.96],happy:["boy_happy.webp",1],ox:["oxboy_stand.webp",1.18],oxwalk:["oxboy_walk.webp",1.18]}},
+  boy:{n:"게으른 소년 돌이",voice:"sb_boy",h:30,poses:{stand:["boy_stand.webp",1],walk:["boy_stand.webp",1],sleep:["boy_sleep.webp",.96],happy:["boy_happy.webp",1],ox:["oxboy_stand.webp",1.18],oxwalk:["oxboy_stand.webp",1.18]}},
   old:{n:"탈 할아버지",voice:"sb_old",h:32,poses:{stand:["old_stand.webp",1],walk:["old_stand.webp",1]}},
-  cow:{n:"얼룩소",voice:"narrator",h:34,poses:{stand:["oxboy_walk.webp",1],walk:["oxboy_walk.webp",1]}}},
- at:{home:[10,86],bench:[22,84],yard:[30,88],gate:[40,90],field:[52,88],field2:[63,86],hill:[71,86],meal:[84,84],barn:[93,82]},
+  cow:{n:"얼룩소",voice:"narrator",h:34,poses:{stand:["oxboy_stand.webp",1],walk:["oxboy_stand.webp",1]}}},
+ at:{home:[10,86],bench:[21,76],yard:[30,88],gate:[40,90],field:[52,88],field2:[63,86],hill:[71,86],meal:[84,84],barn:[93,82]},
  broken:{boy:["bench","sleep"],old:["field","stand"],cow:["barn","stand"]},
  endState:{boy:["field","happy"],old:["meal","stand"],cow:["field2","stand"]},
  claim:{who:"boy",t:"모자를 써도 아무 일도 없었어! 일은 안 해도 돼!"},
