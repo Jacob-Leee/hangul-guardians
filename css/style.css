@@ -2181,8 +2181,9 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .hqcbm img{width:clamp(56px,12vmin,110px);filter:drop-shadow(0 8px 8px rgba(0,0,0,.4));animation:hq3bob 3.6s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.hqcab .hqsky,.hqcab .hqsky2,.hqcb img,.hqcbm img{animation:none}}
 /* 살아있는 조종실 그림 모드 */
-.hqpic{position:relative;overflow:hidden;border-radius:14px;width:100%;aspect-ratio:1408/745;max-height:58vh;margin:0 auto;background:#9CC8E8}
-.hqpic .pbg{position:absolute;inset:-1.5%;width:103%;height:103%;object-fit:cover;animation:hqFlyBob 7s ease-in-out infinite,hqFlyZoom 16s ease-in-out infinite alternate}
+.hqpic{position:relative;overflow:hidden;border-radius:14px;width:min(100%,calc(58vh*1920/1072));aspect-ratio:1920/1072;margin:0 auto;background:#9CC8E8}
+.hqpic .stg{position:absolute;inset:-1.5%;animation:hqFlyBob 7s ease-in-out infinite,hqFlyZoom 16s ease-in-out infinite alternate}
+.hqpic .pbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 @keyframes hqFlyBob{0%,100%{translate:0 0}50%{translate:0 -0.8%}}
 @keyframes hqFlyZoom{from{scale:1}to{scale:1.025}}
 .hqpic .mist{position:absolute;top:6%;width:42%;height:30%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.5),transparent 70%);filter:blur(10px);mix-blend-mode:screen;animation:hqMist 17s linear infinite;pointer-events:none}
@@ -2192,7 +2193,7 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .hqpic .sweep{position:absolute;top:-20%;bottom:30%;width:18%;left:-30%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent);rotate:8deg;animation:hqSweep 9s ease-in-out infinite;pointer-events:none}
 @keyframes hqSweep{0%,55%{left:-30%}95%,100%{left:120%}}
 .hqpic .glow{position:absolute;width:7%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(120,255,220,.55),transparent 70%);mix-blend-mode:screen;animation:hqGlow 2.8s ease-in-out infinite;pointer-events:none}
-.hqpic .g1{left:11%;top:76%}.hqpic .g2{left:31%;top:54%;animation-delay:.9s}.hqpic .g3{left:69%;top:54%;animation-delay:1.5s}.hqpic .g4{left:87%;top:20%;animation-delay:.4s;background:radial-gradient(circle,rgba(130,200,255,.55),transparent 70%)}
+.hqpic .g1{left:7.5%;top:69.7%}.hqpic .g2{left:25.5%;top:37.7%;animation-delay:.9s}.hqpic .g3{left:59.5%;top:35.7%;animation-delay:1.5s}.hqpic .g4{left:83.5%;top:11.7%;animation-delay:.4s;background:radial-gradient(circle,rgba(130,200,255,.55),transparent 70%)}
 @keyframes hqGlow{0%,100%{opacity:.25;scale:1}50%{opacity:.9;scale:1.15}}
 .hqpic .spk{position:absolute;width:9px;height:9px;mix-blend-mode:screen;border-radius:50%;background:radial-gradient(circle,#FFF8CE 30%,rgba(255,230,140,.0) 70%);box-shadow:0 0 8px 3px rgba(255,235,150,.75);animation:v30tw 3.1s ease-in-out infinite;pointer-events:none}
 .hqpic .s1{left:6%;top:76%}.hqpic .s2{left:93%;top:34%;animation-delay:1.1s}.hqpic .s3{left:55%;top:94%;animation-delay:2s}
@@ -2201,6 +2202,9 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .hqhot.hi i{opacity:1;animation:hqPing .7s ease-out}
 @keyframes hqPing{0%{box-shadow:0 0 0 0 rgba(255,214,90,.9);opacity:1}100%{box-shadow:0 0 0 26px rgba(255,214,90,0);opacity:0}}
 .hqpm{position:absolute;left:9%;top:99%;translate:-50% -100%;z-index:8;border:0;background:none;padding:0;cursor:pointer}
+.hqpm.in{translate:-50% -50%;border-radius:50%;z-index:3}
+.hqpm.in i{position:absolute;inset:18% 8%;border-radius:50%;opacity:0}
+.hqpm.in.hi i{opacity:1;animation:hqPing .7s ease-out}
 .hqpm img{width:clamp(36px,8vmin,78px);filter:drop-shadow(0 6px 6px rgba(0,0,0,.4));animation:hq3bob 3.6s ease-in-out infinite;transform-origin:50% 100%}
 /* 영웅 선택(출동) */
 .hppick{text-align:center;margin:8px 0 0;font-weight:700}
@@ -2213,7 +2217,7 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .hpcard .btns{display:flex;gap:8px;flex-wrap:wrap}
 .hplaunch{position:fixed;left:50%;bottom:-60px;z-index:999;font-size:54px;animation:hqLaunch 1.1s ease-in forwards;pointer-events:none}
 @keyframes hqLaunch{0%{transform:translate(-50%,0) rotate(-8deg)}100%{transform:translate(-50%,-120vh) rotate(10deg)}}
-@media (prefers-reduced-motion:reduce){.hqpic .pbg,.hqpic .mist,.hqpic .sweep,.hqpic .glow,.hqpm img,.hpcard .pose{animation:none}}
+@media (prefers-reduced-motion:reduce){.hqpic .stg,.hqpic .pbg,.hqpic .mist,.hqpic .sweep,.hqpic .glow,.hqpm img,.hpcard .pose{animation:none}}
 /* 모든 게 살아있게: 난기류·구름·새·레이더·화면·홀로그램 */
 .hqpic{animation:hqTurb 18s ease-in-out infinite}
 @keyframes hqTurb{0%,100%{rotate:0deg;translate:0 0}22%{rotate:.25deg;translate:0 1px}48%{rotate:-.2deg;translate:0 -1px}74%{rotate:.15deg;translate:1px 0}}
@@ -2230,7 +2234,7 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 @keyframes hqWing{from{rotate:-34deg}to{rotate:10deg}}
 .hqpic .b2{top:26%;animation-delay:7.5s;scale:.7}
 @keyframes hqBird{0%,55%{opacity:0;transform:translateX(0) translateY(0)}60%{opacity:.85}78%{opacity:.85;transform:translateX(56vw) translateY(-2vh)}88%,100%{opacity:0;transform:translateX(70vw) translateY(-2.5vh)}}
-.hqpic .scr{position:absolute;translate:-50% -50%;width:var(--w);aspect-ratio:1.3;pointer-events:none;mix-blend-mode:screen;border-radius:8%}
+.hqpic .scr{position:absolute;translate:-50% -50%;width:var(--w);aspect-ratio:var(--ar,1.3);pointer-events:none;mix-blend-mode:screen;border-radius:8%}
 .hqpic .scr.flick{background:repeating-linear-gradient(0deg,rgba(130,255,220,.0) 0 2px,rgba(130,255,220,.35) 2px 3px);animation:hqFlick 2.1s steps(2) infinite}
 @keyframes hqFlick{0%,100%{opacity:.25}50%{opacity:.8}}
 .hqpic .scr.roll{overflow:hidden;background:linear-gradient(rgba(140,220,255,0) 30%,rgba(140,220,255,.55) 50%,rgba(140,220,255,0) 70%);background-size:100% 220%;animation:hqRoll 2.6s linear infinite}
@@ -2335,3 +2339,7 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .dcflash.out{opacity:0;transform:translate(-50%,-60%) scale(.8)}
 @media (max-height:520px){.asmframe{width:min(36vmin,170px)}.asmframe.gen{width:min(52vmin,260px)}.asm3 .gear{display:none}.asmdone{min-height:24px}.asmwin{height:56px;min-width:56px;font-size:34px}}
 @media (prefers-reduced-motion:reduce){.asm3 .gear,.asmbelt .rail,.asmslot.cur{animation:none}}
+
+/* v31.1: 그림으로 된 본부 방은 그림 비율 그대로 (슬롯 좌표 = 그림 좌표) */
+.hqroom.art{aspect-ratio:1920/1072}
+@media (orientation:landscape){.hqroom.art{width:min(100%,calc((100vh - 120px)*1.791))}}

@@ -4258,7 +4258,7 @@ var _showSettings1=showSettings;showSettings=function(){_showSettings1();const c
   const ref=c.querySelector(".credit");if(ref)ref.after(p);else c.appendChild(p)}};
 
 
-window.HQART={"room":{"base":"assets/img/hq/room_base.webp","pic":"assets/img/hq/room_pic.webp"},"item":{},"launch":{"grid":"assets/img/hq/launch_grid.webp"},"work":{"rat":"assets/img/hq/work_rat.webp"}};
+window.HQART={"room":{"base":"assets/img/hq/room_base.webp","case":"assets/img/hq/room_case.webp","deck":"assets/img/hq/room_deck.webp","living":"assets/img/hq/room_living.webp","pic":"assets/img/hq/room_pic.webp","study":"assets/img/hq/room_study.webp"},"item":{},"launch":{"grid":"assets/img/hq/launch_grid.webp"},"work":{"rat":"assets/img/hq/work_rat.webp"}};
 /* ===== v29.5 우리 본부 (HQ): the shop is gone; reading achievements give treasures to decorate the HQ in the library tree.
    Treasures come when something is achieved (a case solved, a book won back, a playground level, a battle tier, course runs,
    one lap of today's adventure), not for every game. Rooms open with the hero level (3, 6, 9).
@@ -4277,9 +4277,9 @@ var HQ_ITEMS=[
  {id:"finish",e:"🏁",n:["Finish flag","결승 깃발"],src:"book_b1"},{id:"meal",e:"🍲",n:["Country supper","시골 밥상"],src:"book_b2"},
  /* playground: level 3 and level 5 of each game */
  {id:"rod",e:"🎣",n:["Fishing rod","낚싯대"],src:"pg_fish_3"},{id:"tank",e:"🐠",n:["Fish tank","어항"],src:"pg_fish_5"},
- {id:"hammer",e:"🔨",n:["Toy hammer","뿅망치"],src:"pg_mole_3"},{id:"teddy",e:"🧸",n:["Mole teddy","두더지 인형"],src:"pg_mole_5"},
+ {id:"hammer",e:"🔨",n:["Toy hammer","장난감 망치"],src:"pg_asm_3"},{id:"teddy",e:"🧸",n:["Cuddly teddy","포근 인형"],src:"pg_asm_5"},
  {id:"cardbox",e:"🃏",n:["Card box","카드 상자"],src:"pg_pair_3"},{id:"frame",e:"🖼️",n:["Picture frame","짝꿍 액자"],src:"pg_pair_5"},
- {id:"umbrella",e:"☂️",n:["Umbrella","우산"],src:"pg_rain_3"},{id:"rainbow",e:"🌈",n:["Rainbow mobile","무지개 모빌"],src:"pg_rain_5"},
+ {id:"umbrella",e:"☂️",n:["Umbrella","우산"],src:"pg_dict_3"},{id:"rainbow",e:"🌈",n:["Rainbow mobile","무지개 모빌"],src:"pg_dict_5"},
  {id:"train",e:"🚂",n:["Model train","기차 모형"],src:"pg_train_3"},{id:"station",e:"🚉",n:["Station sign","기차역 표지판"],src:"pg_train_5"},
  {id:"puzzle",e:"🧩",n:["Puzzle frame","퍼즐 액자"],src:"pg_fill_3"},{id:"books",e:"📚",n:["Book tower","책 탑"],src:"pg_fill_5"},
  /* practice battle tiers */
@@ -4297,11 +4297,12 @@ var HQ_ITEMS=[
  {id:"basket",e:"🧺",n:["Picnic basket","소풍 바구니"],src:"lap_11"},{id:"candle",e:"🕯️",n:["Candle","양초"],src:"lap_12"},
  {id:"paints",e:"🎨",n:["Paint set","그림 도구"],src:"lap_13"},{id:"piano",e:"🎹",n:["Little piano","작은 피아노"],src:"lap_14"},
  {id:"scope",e:"🔭",n:["Telescope","망원경"],src:"lap_15"}];
+/* v31.1: 보호자 방 그림(11/3)의 반짝이 자리(링)에 슬롯을 맞춤 — 영웅(34%/56%)과 안 겹치게 */
 var HQ_ROOMS=[
- {id:"living",lv:1,n:["Living room","거실"],slots:[[16,30,12],[84,30,12],[50,9,10],[28,58,11],[72,58,11],[16,82,17],[50,85,19],[84,82,17]]},
- {id:"case",lv:3,n:["Case room","수사실"],slots:[[50,30,22],[15,26,11],[85,26,11],[24,56,10],[76,56,10],[20,84,16],[50,84,18],[80,84,16]]},
- {id:"deck",lv:6,n:["Lookout","옥상 관측대"],slots:[[20,24,12],[80,20,12],[50,15,12],[12,62,12],[88,62,12],[28,84,17],[50,86,17],[72,84,17]]},
- {id:"study",lv:9,n:["Study","서재"],slots:[[50,22,14],[14,36,10],[14,60,10],[86,36,10],[86,60,10],[34,84,16],[50,62,12],[66,84,16]]}];
+ {id:"living",lv:1,n:["Living room","거실"],slots:[[4.5,38,9],[20.5,53,8],[60,31,8],[79,32,8],[92,29,8],[93,49,8],[88,63,10],[24,82,13]]},
+ {id:"case",lv:3,n:["Case room","수사실"],slots:[[51,23,8],[21.5,51,8],[14,59,10],[63,50,8],[84,59,8],[13,78,10],[31,88,11],[89,80,12]]},
+ {id:"deck",lv:6,n:["Lookout","옥상 관측대"],slots:[[18,10,6.5],[24.5,10,6.5],[30.5,41.5,8],[15.5,59,8],[6,62,8],[34,72,10],[61,56.5,9],[82.5,64.5,10]]},
+ {id:"study",lv:9,n:["Study","서재"],slots:[[8,38,8],[40,48,7],[57,62,8],[93,45,8],[13,90,12],[27,87,12],[76,86,12],[88,74,11]]}];
 var HQS={room:"living",slot:null,item:null},HQQ=[],HQGIFT=false;
 function hqG(){if(!isObj(G.hq))G.hq={};const h=G.hq;["got","place","seen"].forEach(k=>{if(!isObj(h[k]))h[k]={}});h.runs=+h.runs||0;return h}
 const hqN=x=>Array.isArray(x)?(G.lang==="ko"?x[1]:x[0]):L(x);
@@ -5320,27 +5321,33 @@ window.hqCabin=function(){var A=window.HQART&&HQART.room||{};if(!A.cabin||!A.sky
  return true};
 /* ── 살아있는 조종실 그림 모드: room_pic.webp 한 장으로 — 그림이 숨쉬고, 창에 구름빛이 흐르고,
    콘솔이 깜빡이고, 영웅을 누르면 핑+말풍선. 영웅 선택 화면도 이 그림을 쓴다. ── */
-var HQPIC_SPOTS={rat:[11,40],dog:[18,64],pig:[36,30],rabbit:[33,64],dragon:[51,56],snake:[45,86],
- sheep:[80,62],tiger:[63,42],horse:[73,38],ox:[66,74],rooster:[87,72],monkey:[59,16]};
+/* v31.1: 보호자 원본 그림(2576×1438 → 1920×1072). 좌표는 그림 기준 [가로%, 세로%, 너비%, 높이%] — 몸통 중심, 서로 안 겹치게 잼.
+   그림·효과·단추를 한 무대(.stg)에 넣어 그림이 흔들려도 같이 움직인다(좌표 = 그림 좌표). */
+var HQPIC_SPOTS={rat:[12,38,10,26],dog:[20,68,16,40],pig:[40.5,34,11,26],rabbit:[40,72,12,40],dragon:[55,60,13,30],snake:[50,84,9,20],
+ sheep:[82,66,9,24],tiger:[66.5,45,10,24],horse:[79,42,10,22],ox:[71,73,17,36],rooster:[92,73,12,34],monkey:[62,18,12,24]};
+var HQPIC_MENTOR=[54,35.5,10,15]; /* 새 그림에는 스승님이 가운데(삿갓)에 있음 → 따로 얹지 않고 그림 위 투명 단추 */
 function hqPicStage(pic,forPick){var hots=CHARS.map(function(c,i){var p=HQPIC_SPOTS[c.id]||[10+i*7,60];
-  return '<button class="hqhot" data-h="'+c.id+'" aria-label="'+escH(L(c.n))+'" style="left:'+p[0]+'%;top:'+p[1]+'%"><i></i></button>'}).join("");
- return '<div class="hqpic'+(forPick?' pick':'')+'"><img class="pbg" src="'+pic+'" alt="">'
+  return '<button class="hqhot" data-h="'+c.id+'" aria-label="'+escH(L(c.n))+'" style="left:'+p[0]+'%;top:'+p[1]+'%'+(p[2]?';width:'+p[2]+'%;height:'+p[3]+'%':'')+'"><i></i></button>'}).join("");
+ var M=HQPIC_MENTOR,ml=K("Master Turtle","거북이 스승님");
+ return '<div class="hqpic'+(forPick?' pick':'')+'"><div class="stg"><img class="pbg" src="'+pic+'" alt="">'
   +'<i class="cl2 c1"></i><i class="cl2 c2"></i><i class="cl2 c3"></i><i class="mist m1"></i><i class="mist m2"></i>'
   +'<i class="bird b1"></i><i class="bird b2"></i><i class="sweep"></i>'
-  +'<i class="scr radar" style="left:9.5%;top:67%;--w:9.5%"></i>'
-  +'<i class="scr flick" style="left:27.5%;top:52%;--w:5%"></i>'
-  +'<i class="scr flick" style="left:56%;top:37%;--w:4.2%;animation-delay:.7s"></i>'
-  +'<i class="scr roll" style="left:69%;top:33%;--w:4.2%"></i>'
-  +'<i class="scr flick" style="left:93%;top:29%;--w:5%;animation-delay:1.3s"></i>'
-  +'<i class="scr roll" style="left:94%;top:46%;--w:4.5%;animation-delay:.9s"></i>'
-  +'<i class="holo" style="left:34%;top:70%;--w:15%;--h:24%"></i>'
-  +'<i class="holo" style="left:50%;top:64%;--w:9%;--h:13%;animation-delay:.8s"></i>'
-  +'<i class="holo" style="left:79%;top:64%;--w:8%;--h:11%;animation-delay:1.5s"></i>'
+  +'<i class="scr radar" style="left:7.3%;top:63.5%;--w:6.6%"></i>'
+  +'<i class="scr roll" style="left:23.3%;top:36.5%;--w:2.4%;--ar:.62"></i>'
+  +'<i class="scr flick" style="left:25.7%;top:45.8%;--w:2.9%;--ar:1.8"></i>'
+  +'<i class="scr flick" style="left:32.5%;top:43%;--w:3.6%;--ar:2.3;animation-delay:.7s"></i>'
+  +'<i class="scr flick" style="left:64.4%;top:41.5%;--w:2.4%;--ar:1.8;animation-delay:1.3s"></i>'
+  +'<i class="scr roll" style="left:86.7%;top:18.4%;--w:4.4%;--ar:1.05"></i>'
+  +'<i class="scr roll" style="left:95%;top:42.8%;--w:4%;--ar:.8;animation-delay:.9s"></i>'
+  +'<i class="holo" style="left:34.4%;top:75.4%;--w:7.4%;--h:12.5%"></i>'
+  +'<i class="holo" style="left:44.8%;top:75.5%;--w:5.6%;--h:11.5%;animation-delay:.5s"></i>'
+  +'<i class="holo" style="left:50%;top:60.8%;--w:8%;--h:13%;animation-delay:.8s"></i>'
   +'<i class="glow g1"></i><i class="glow g2"></i><i class="glow g3"></i><i class="glow g4"></i>'
   +'<i class="spk s1"></i><i class="spk s2"></i><i class="spk s3"></i>'
   +hots
-  +(forPick?'':'<button class="hqpm" id="hqMentor" aria-label="'+K("Master Turtle","거북이 스승님")+'"><img src="'+(DA.mentor||PORT.mentor)+'" alt=""></button>')
-  +'</div>'}
+  +(forPick?'':M?'<button class="hqpm in" id="hqMentor" aria-label="'+ml+'" style="left:'+M[0]+'%;top:'+M[1]+'%;width:'+M[2]+'%;height:'+M[3]+'%"><i></i></button>'
+   :'<button class="hqpm" id="hqMentor" aria-label="'+ml+'"><img src="'+(DA.mentor||PORT.mentor)+'" alt=""></button>')
+  +'</div></div>'}
 function heroLine(id){var best=null;try{(window.VOICEFILES||[]).forEach(function(e){
   if(e[0]!==id)return;var t=e[1];if(/가자|출동|맡겨|좋아|함께/.test(t)&&(!best||t.length<best.length))best=t;
   if(!best&&t.length<=14)best=t});}catch(e){}return best}
@@ -5361,7 +5368,7 @@ window.hqPic=function(){var A=window.HQART&&HQART.room||{};if(!A.pic)return fals
   b.classList.remove("hi");void b.offsetWidth;b.classList.add("hi");
   var ln=heroLine(id);if(ln)try{narrate([ln],null,"ko",{voice:id})}catch(e){}
   hqTip("💬 "+L(c.n)+" — "+K(J[1][0],J[1][1]))}});
- var m=$("hqMentor");if(m)m.onclick=function(){sfx("tap");hqTip(K("Welcome aboard! Solve cases and read books to earn treasures.","우리 비행선 본부에 온 걸 환영해! 사건을 풀고 책을 읽으면 보물을 받아."),true)};
+ var m=$("hqMentor");if(m)m.onclick=function(){sfx("tap");m.classList.remove("hi");void m.offsetWidth;m.classList.add("hi");hqTip(K("Welcome aboard! Solve cases and read books to earn treasures.","우리 비행선 본부에 온 걸 환영해! 사건을 풀고 책을 읽으면 보물을 받아."),true)};
  $("hqCard").querySelectorAll(".hq3rooms [data-r]").forEach(function(b){b.onclick=function(){sfx("tap");var x=HQ_ROOMS.find(function(q){return q.id===b.dataset.r});
   if(!hqRoomOpen(x)){hqTip(K("This room opens when your hero reaches level "+x.lv+".","영웅 레벨 "+x.lv+"이 되면 열려요."),true);return}_hqOpen0(x.id)}});
  var h=hqG();if(!h.picIntro){h.picIntro=1;save();setTimeout(function(){if(!$("hqOv").hidden)hqTip(K("Everyone is busy on the bridge! Tap a friend to say hello.","모두 조종실에서 일하는 중! 친구를 누르면 인사해 줘."))},500)}
@@ -5778,6 +5785,9 @@ PGAMES.trace.lv=["trc4","trw","trv","trh","trd"];
 PGAMES.opp.lv=["op3","op4","op5","op6","op7"];
 PGAMES.trace.how={en:"Watch the pencil, then trace each numbered stroke in order.",ko:"연필 시범을 보고, 번호 순서대로 획을 하나씩 따라 써요. 받침까지 전부 써야 성공!"};
 /* 8) 예전 별 → 같은 내용의 새 단계로 (한 번만) */
+/* v31.1: 빠진 게임(두더지·소나기)의 보물 기록을 조립 공장·받아쓰기로 이전 */
+try{var _hg=G&&G.hq&&G.hq.got;if(_hg){[["pg_mole_3","pg_asm_3"],["pg_mole_5","pg_asm_5"],["pg_rain_3","pg_dict_3"],["pg_rain_5","pg_dict_5"]].forEach(function(m){
+ if(_hg[m[0]]&&!_hg[m[1]]){_hg[m[1]]=_hg[m[0]]}if(_hg[m[0]])delete _hg[m[0]]});}}catch(e){}
 var MIG={fish:{1:3,2:4,3:5},pair:{1:2,2:3,3:4,4:5},train:{1:3,2:4,4:5},fill:{1:3,2:4,3:5},trace:{1:4},opp:{1:3,2:4,3:5}};
 if(G.pgMig!==31){try{Object.keys(MIG).forEach(function(g){var gp=G.pg&&G.pg[g];if(!gp||!gp.s)return;var old=gp.s,ns={};
   Object.keys(MIG[g]).forEach(function(n){var o=old[MIG[g][n]];if(o)ns[n]=o});gp.s=ns})}catch(e){}G.pgMig=31;try{save()}catch(e){}}

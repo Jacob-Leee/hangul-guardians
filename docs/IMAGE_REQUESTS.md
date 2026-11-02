@@ -1,5 +1,7 @@
 # 그림 요청서 (ChatGPT 담당)
 
+> **(11/3) 그림마다 바로 붙여 넣는 완성 프롬프트는 `docs/IMAGE_PROMPTS.md`에 있습니다** — 이 문서의 §프롬프트보다 그쪽이 최신이에요. 이 문서는 올리는 방법·참고 그림 안내로 계속 씁니다.
+
 2026-10-30부터 **그림은 ChatGPT, 게임 프로그램은 Claude**가 맡습니다. GitHub 저장소 `Jacob-Leee/hangul-guardians`가 둘 사이의 전달 창구입니다. 이 문서에는 지금 필요한 그림과 올리는 방법이 있습니다.
 
 ## 1. 그림을 올리는 방법 (ChatGPT)
@@ -28,10 +30,9 @@
 
 | 순서 | 저장 이름 | 무엇 | 크기 | 첨부할 참고 그림 |
 |---|---|---|---|---|
-| 1 | `page3.png` | 2권 이야기 그림 3: 노을 진 시골길로 집에 돌아가는 시골 쥐 (지금은 임시 그림) | 1536×1024 가로 | `books/b2/country_stand.webp`, `books/b2/spread.webp` |
 | 2 | `case12_pig.png` | 사건 12 배경: 나무집 숲속 신문사 (지금은 코드로 그린 장면) | 1536×1024 가로 | `assets/img/case/case01_rat.webp` |
 | 3 | `case09_monkey_blocked.png` | 사건 9 배경 고친 그림: 큰 돌이 개울을 막아 물이 멈춘 모습. 지금 그림은 물이 흘러서 "물이 흐르지 않아요"라는 글과 다릅니다. 지금 그림은 해결 장면(물이 다시 흐름)에 씁니다 | 1536×1024 가로 | `assets/img/case/case09_monkey.webp` |
-| 4 | `room_living.png` `room_case.png` `room_deck.png` `room_study.png` | **우리 본부(v29.5)** 방 배경 4장: 거실, 수사실, 옥상 관측대, 서재. 지금은 코드로 그린 방을 씁니다. 가구 없이 빈 방이어야 합니다(보물은 아이가 놓음) | 1536×1024 가로 | `assets/img/case/case01_rat.webp`(그림체), `assets/img/hero/tiger.webp` |
+| ~~4~~ ☑ 완료(11/3) | `room_*.png` 4장 | 본부 방 4장 — 보호자 그림으로 들어갔고, 그림 속 반짝이 자리에 보물 자리를 맞췄습니다 | — | — |
 | 있으면 좋음 | `item_sofa.png` `item_plant.png` `item_lamp.png` `item_clock.png` `item_mirror.png` `item_piano.png` `item_scope.png` `item_books.png` `item_trophy.png` `item_shield.png` `item_orb.png` `item_star.png` | 본부 보물(가구) 12개, 투명 PNG. 지금은 3D 이모지를 씁니다 | 각 1024×1024 투명 | `assets/img/case/case01_rat.webp`(그림체) |
 | 선택 | `country_walk.png`, `country_happy.png`, `city_walk.png`, `city_proud.png`, `cat_pounce.png`, `cover.png` | 2권 자세 5장과 표지. 없으면 기본 자세와 이야기 그림 1을 대신 씁니다 | 아래 표 | 아래 표 |
 
@@ -128,8 +129,9 @@ Canvas 1024x1024.
 
 저장: `incoming/item_sofa.png` → Claude가 `assets/img/hq/item_sofa.webp`로 넣으면 그 보물만 이모지 대신 그림으로 바뀝니다.
 
-## 5. 이미 받아서 넣은 그림 (2026-10-30)
+## 5. 이미 받아서 넣은 그림 (2026-10-30 / 11-03)
 
+- **(11/3)** 2권 이야기 그림 3(page3) · 본부 조종실 그림 원본(room_pic 교체) · 본부 방 4장(room_case/deck/living/study — 반짝이 자리에 보물 슬롯 맞춤)
 - 사건 배경 10장: 1, 2, 4, 5, 6, 7, 8, 9, 10, 11 → `assets/img/case/`. 사건 3은 1권 결승선 그림을 씁니다.
 - 2권 8장: 무대(spread), 이야기 그림 1·2, 시골 쥐·도시 쥐 기본·놀람, 집고양이 → `books/b2/`.
 - 모험 코스 소품 2장: 책 구슬('?' 블록 대신), 책 문(깃발 대신) → `assets/img/course/`.
