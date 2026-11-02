@@ -5159,7 +5159,7 @@ function hqPicStage(pic,forPick){var hots=CHARS.map(function(c,i){var p=HQPIC_SP
   +'<i class="cl2 c1"></i><i class="cl2 c2"></i><i class="cl2 c3"></i><i class="mist m1"></i><i class="mist m2"></i>'
   +'<i class="bird b1"></i><i class="bird b2"></i><i class="sweep"></i>'
   +'<i class="scr radar" style="left:9.5%;top:67%;--w:9.5%"></i>'
-  +'<i class="scr flick" style="left:31%;top:39%;--w:5%"></i>'
+  +'<i class="scr flick" style="left:27.5%;top:52%;--w:5%"></i>'
   +'<i class="scr flick" style="left:56%;top:37%;--w:4.2%;animation-delay:.7s"></i>'
   +'<i class="scr roll" style="left:69%;top:33%;--w:4.2%"></i>'
   +'<i class="scr flick" style="left:93%;top:29%;--w:5%;animation-delay:1.3s"></i>'
