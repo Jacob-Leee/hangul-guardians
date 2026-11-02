@@ -5949,5 +5949,167 @@ var _closeRun32=closeRun;
 closeRun=function(){var wasCrs=!!(RUN&&RUN.crs&&!STAGE);_closeRun32.apply(this,arguments);
  if(wasCrs&&window.courseMap)setTimeout(function(){if(!document.querySelector("#runOv:not([hidden])"))courseMap()},150)};
 })();
+
+/* ===== v32-2: 배틀 — 주사위 산수 + 악당 반격·방어 턴 + 악당별 기믹 + 무기 마스터 ===== */
+(function(){
+var N2W=["영","하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉","열","열하나","열둘"];
+function dieHTML(v,myst){
+ var ON={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]}[v]||[];
+ return '<span class="die'+(myst?' myst':'')+'">'+(myst?'<b>?</b>':Array.from({length:9},function(_,i){return '<i class="'+(ON.indexOf(i)>=0?'on':'')+'"></i>'}).join(''))+'</span>';
+}
+function numOpts(ans,lo,hi,n){var out=[ans];while(out.length<n){var x=lo+Math.floor(Math.random()*(hi-lo+1));if(out.indexOf(x)<0)out.push(x)}return shuffle(out)}
+/* 문제 순서: 1~3단계는 세 문제마다 주사위, 보스는 8문제 순환에 주사위 2번 */
+duType=function(){var T=DU.tier,i=DU.qi;
+ if(T<4&&i%3===2)return "dice";
+ if(T===1)return "jamo";if(T===2)return i%2?"word":"combo";if(T===3)return i%2?"sent":"word";
+ return ["combo","word","dice","sent","word","dice","word","sent"][i%8]};
+var _gen32=duGen;
+duGen=function(type){
+ if(type==="dice"){var T=DU.tier,a,b,s;
+  if(T===1){a=1+Math.floor(Math.random()*6);return {type:"dice",d:[a],ans:String(a),opts:numOpts(a,1,6,3).map(String)}}
+  a=1+Math.floor(Math.random()*6);b=1+Math.floor(Math.random()*6);s=a+b;
+  if(T>=3&&Math.random()<.5){ /* 빠진 수: a + ? = s */
+   return {type:"dice",d:[a],miss:{s:s},ans:String(b),opts:numOpts(b,1,6,3).map(String)}}
+  return {type:"dice",d:[a,b],ans:String(s),opts:numOpts(s,2,12,3).map(String)}}
+ var Q=_gen32.call(this,type);
+ /* 보라냥: 문장 문제 → '바뀐 낱말 찾기' */
+ if(Q.type==="sent"&&DU.vil==="purple"&&DU.tier>=2){
+  try{
+   var wrong=Q.opts.filter(function(o){return o!==Q.ans})[0];
+   if(wrong){var sw=Q.s.replace("___",wrong);
+    var chunks=sw.split(/\s+/).map(function(c){return c.replace(/[.!?,]+$/,"")}).filter(Boolean);
+    var bad=chunks.find(function(c){return c.indexOf(wrong)>=0})||wrong;
+    var others=shuffle(chunks.filter(function(c){return c!==bad})).slice(0,2);
+    if(others.length===2)return {type:"swap",ans:bad,s:sw,full:Q.full,good:Q.ans,opts:shuffle([bad].concat(others))}}
+  }catch(e){}
+ }
+ return Q;
+};
+var _dat32=duAnswerText;
+duAnswerText=function(Q){if(Q.type==="dice")return (N2W[+Q.ans]||Q.ans)+" ("+Q.ans+")";if(Q.type==="swap")return Q.full||Q.ans;return _dat32.call(this,Q)};
+var _hint32=duHint;
+duHint=function(Q){
+ if(Q.type==="dice"){var x=K("Count the dots one by one: one, two, three…","주사위 점을 하나씩 세어 보렴. 하나, 둘, 셋…");return {t:x,v:x}}
+ if(Q.type==="swap"){var y=K("Read the sentence from the start. One word sounds strange!","문장을 처음부터 읽어 보렴. 뜻이 이상한 낱말이 딱 하나 있단다.");return {t:y,v:y}}
+ return _hint32.call(this,Q)};
+var _spk32=duSpeak;
+duSpeak=function(){var Q=DU&&DU.q;if(!Q)return;
+ if(Q.type==="dice")return narrate([Q.miss?K("What number is missing?","빠진 수는 몇일까?"):K("How many in all?","모두 몇인지 세어 봐!")],null,null);
+ if(Q.type==="swap")return narrate([K("Find the word that doesn't fit!","문장에서 어색한 낱말을 찾아봐!")],null,null);
+ return _spk32.apply(this,arguments)};
+/* 문제 그리기(원본 복사 + 주사위·바뀐 낱말 + 악당 기믹) */
+duNext=function(){
+ if(!DU||DU.done)return;DU.busy=false;DU.qw=0;const Q=DU.q=duGen(duType());DU.qi++;duHUD();
+ let p="";
+ if(Q.type==="jamo")p=`<div class="dqp"><button class="spk" id="dSay" aria-label="Hear it">🔊</button><span class="big">${Q.name}</span><span>${K("— find this letter!",(batchim(Q.name)?"을":"를")+" 찾아!")}</span></div>`;
+ else if(Q.type==="combo")p=`<div class="deq"><span class="jt c">${Q.c}</span>+<span class="jt v">${Q.v}</span>=<span class="jt q">?</span><button class="spk" id="dSay" aria-label="Hear it">🔊</button></div>`;
+ else if(Q.type==="word")p=`<div class="dword"><span class="pic">${Q.pic}</span>${[...Q.w].map((x,i)=>`<span class="sl${i===Q.idx?" q":""}">${i===Q.idx?"?":x}</span>`).join("")}</div>`;
+ else if(Q.type==="dice")p=`<div class="ddice roll">🎲 ${Q.d.map(v=>dieHTML(v)).join("")}${Q.miss?`<span class="dplus">+</span>${dieHTML(0,1)}<span class="dplus">=</span><span class="dsum">${Q.miss.s}</span>`:(Q.d.length>1?"":"")}</div>`;
+ else if(Q.type==="swap")p=`<div class="fsent swapq">${escH(Q.s)}</div>`;
+ else p=`<div class="fsent">${Q.s.replace("___",'<span class="blank">?</span>')}</div>`;
+ const optHTML=Q.type==="dice"
+  ?Q.opts.map(o=>`<button class="dop num" data-o="${o}"><b>${N2W[+o]||o}</b><small>${o}</small></button>`).join("")
+  :Q.opts.map(o=>`<button class="dop" data-o="${o}">${o}</button>`).join("");
+ $("dQ").innerHTML=p+`<div class="dopts">${optHTML}</div>`;
+ document.querySelectorAll(".dop").forEach(b=>b.onclick=()=>duAnswer(b));
+ const sp=duSpeak;if($("dSay"))$("dSay").onclick=sp;
+ $("dMsg").textContent=Q.type==="jamo"?K("Which letter is it?","어떤 글자일까?"):Q.type==="combo"?K("Put the two sounds together!","두 소리를 합치면?"):Q.type==="word"?K("Finish the word for the picture!","그림에 맞게 낱말을 완성해!"):Q.type==="dice"?(Q.miss?K("Which die is missing?","빠진 주사위 수는 몇일까?"):K("Count the dots!","점을 모두 세어 봐!")):Q.type==="swap"?K("Find the word that doesn't fit!","어색한 낱말을 찾아봐!"):K("Pick the word that fits!","빈칸에 맞는 말을 골라!");
+ if(Q.type==="dice")setTimeout(()=>{const d=$("dQ").querySelector(".ddice");if(d)d.classList.remove("roll")},750);
+ /* 악당 기믹 (2단계부터, 한 문제 걸러) */
+ try{
+  if(DU.tier>=2&&DU.qi>=2&&DU.qi%2===0&&!DU.done){
+   const box=$("dQ").querySelector(".dopts"),v=DU.vil;
+   if(v==="black"&&box){if(!DU.gmSaid){DU.gmSaid=1;dBan("🌑 "+L(VSK.black.def)+"!")}
+    box.classList.add("gm-shadow");setTimeout(()=>{if(DU&&DU.q===Q)box.classList.remove("gm-shadow")},1700)}
+   else if(v==="white"&&box){if(!DU.gmSaid){DU.gmSaid=1;dBan("❄️ "+L(VSK.white.atk)+"!")}
+    const bs=[...box.querySelectorAll(".dop")],t=bs[Math.floor(Math.random()*bs.length)];
+    t.classList.add("gm-ice");const orig=t.onclick;
+    t.onclick=()=>{if(t.classList.contains("gm-ice")){sfx("hit");t.classList.add("gm-crack");setTimeout(()=>{t.classList.remove("gm-ice","gm-crack");t.onclick=orig},260)}else orig()}}
+   else if(v==="gray"&&box){if(!DU.gmSaid){DU.gmSaid=1;dBan("💨 "+L(VSK.gray.def)+"!")}
+    box.classList.add("gm-wait");setTimeout(()=>{if(!DU||DU.q!==Q)return;box.classList.add("gm-mix");
+     [...box.children].sort(()=>Math.random()-.5).forEach(c=>box.appendChild(c));
+     setTimeout(()=>{if(DU&&DU.q===Q)box.classList.remove("gm-mix","gm-wait")},650)},900)}
+   else if(v==="fat"){if(!DU.gmSaid){DU.gmSaid=1;dBan("🪨 "+L(VSK.fat.atk)+"!")}
+    const st=$("dStage");st.classList.remove("gm-quake");void st.offsetWidth;st.classList.add("gm-quake");setTimeout(()=>st.classList.remove("gm-quake"),900)}
+   else if(v==="tiger"){if(!DU.gmSaid){DU.gmSaid=1;dBan("🔥 "+K("Roar!","어흥!"));DU.vsSure=1;
+    const st=$("dStage");st.classList.add("gm-quake");setTimeout(()=>st.classList.remove("gm-quake"),900)}}
+  }
+ }catch(e){}
+ setTimeout(()=>{if(DU&&DU.q===Q)sp()},900);
+};
+/* 틀리면: 악당이 진짜 공격 모션 → 같은 문제를 다시 맞히면 방어 카드로 막고 반격 */
+duFoeAttack=function(){
+ if(!DU||DU.done)return;const D0=DU;
+ if(DU.threatEl){try{DU.threatEl.remove()}catch(e){}DU.threatEl=null}
+ const F=$("dFoe");if(F){F.classList.remove("foeatk");void F.offsetWidth;F.classList.add("foeatk")}
+ dCut("foe","v_"+DU.vil+"_atk",L(VSK[DU.vil].atk)+"!");sfx("hit");
+ setTimeout(()=>{if(DU!==D0||DU.done)return;
+  const z=stageRect($("dFoe")),h=stageRect($("dHero"));
+  const p=dAdd("dproj foe");p.textContent="💢";p.style.left=z.x+"px";p.style.top=z.y+"px";
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{p.style.left=(h.x+(z.x-h.x)*.34)+"px";p.style.top=(h.y+(z.y-h.y)*.34-14)+"px"}));
+  DU.threat=1;DU.threatEl=p;
+  dBan("🛡️ "+K("Block it!","막아라!"));
+  $("dMsg").textContent=K(`Answer right to block with ${L(WEAP[DU.id].def)}!`,`정답을 고르면 ${L(WEAP[DU.id].def)}(으)로 막아 내고 반격해!`);
+ },620);
+ setTimeout(()=>{if(!DU||DU.done||DU!==D0)return;DU.busy=false;duMentor(true)},1300);
+};
+/* 정답 처리(원본 복사 + 방어 막기 연출 + 주사위) */
+duAnswer=function(b){
+ if(!DU||DU.busy||DU.done||b.disabled)return;const Q=DU.q,o=b.dataset.o;
+ if(o===Q.ans){
+  DU.busy=true;b.classList.add("right");sfx("ok");recT(Q.type==="dice"?"수세기":Q.ans,true);duMentor(false);
+  const before=wLv(DU.id);G.wx[DU.id]=wXP(DU.id)+(DU.qw?1:2);DU.gain+=(DU.qw?1:2);save();const after=wLv(DU.id);
+  DU.combo++;if(Q.type!=="dice"&&Q.type!=="swap")say(duAnswerText(Q));
+  const blocked=DU.threat;
+  if(DU.threat){DU.threat=0;const tp=DU.threatEl;DU.threatEl=null;const W=WEAP[DU.id];
+   dCut("me",DU.id+"_def",L(W.def)+"!");
+   const hr=stageRect($("dHero")),sh=dAdd("dshield");sh.style.left=hr.x+"px";sh.style.top=hr.y+"px";
+   if(tp){tp.classList.add("fizz");setTimeout(()=>{try{tp.remove()}catch(e){}},420)}
+   setTimeout(()=>{try{sh.remove()}catch(e){}},950);
+   $("dMsg").textContent=K("Blocked! Now strike back!","막았다! 이제 반격!");
+  }
+  const r=b.getBoundingClientRect(),w=$("dWpn").querySelector(".ic").getBoundingClientRect();
+  const f=document.createElement("div");f.className="dfly";f.textContent=Q.type==="dice"?Q.ans:Q.ans;f.style.left=r.left+r.width/2+"px";f.style.top=r.top+r.height/2+"px";document.body.appendChild(f);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.left=w.left+w.width/2+"px";f.style.top=w.top+w.height/2+"px";f.style.transform="translate(-50%,-50%) scale(.4)"}));
+  setTimeout(()=>{f.remove();if(!DU||DU.done)return;const ic=$("dWpn").querySelector(".ic");ic.classList.remove("charge");void ic.offsetWidth;ic.classList.add("charge");duHUD();
+   if(after>before){dBan(K(`Weapon up! Lv ${after}`,`무기 강화! Lv ${after}`));sfx("evo");toast(after===2?K("Special move charges faster!","필살기가 더 빨리 모여요!"):after===3?K("Attack power up!","공격력이 강해졌어요!"):K("Hangul energy is full!","한글 에너지가 가득!"))}
+   setTimeout(duAttack,(after>before?700:150)+(blocked?500:0))},470);
+ }else{
+  b.classList.add("wrong");b.disabled=true;sfx("bad");recT(Q.type==="dice"?"수세기":Q.ans,false);DU.wrongs++;DU.qw++;DU.combo=0;duHUD();
+  if(Q.type==="dice")$("dMsg").textContent=K("Count again, one by one!","다시 하나씩 세어 봐!");
+  else if(Q.type==="swap")$("dMsg").textContent=K("Read the sentence once more!","문장을 한 번 더 읽어 봐!");
+  else say(Q.type==="jamo"?((JC.concat(JV).find(x=>x[0]===o)||[0,o])[1]):o);
+  DU.busy=true;setTimeout(duFoeAttack,500);
+ }
+};
+/* 공격(원본 복사 + 악당 50% 방어 카드 + Lv4 필살기 연출) */
+duAttack=function(){
+ if(!DU||DU.done)return;const D0=DU;const W=WEAP[DU.id],sup=DU.combo>=duThr();let dmg=Math.ceil(100/DU.need)*(wLv(DU.id)>=3?1.5:1);if(sup){dmg*=2;DU.combo=0}
+ const H=$("dHero");H.classList.remove("lunge");void H.offsetWidth;H.classList.add("lunge");sfx("hit");
+ const max4=sup&&wLv(DU.id)>=4;
+ dCut("me",DU.id+"_atk",sup?K("Special! ","필살기! ")+L(W.atk)+"!":L(W.atk)+"!",sup?"sup":"");
+ if(max4){const fl=dAdd("dflash");setTimeout(()=>{try{fl.remove()}catch(e){}},620)}
+ setTimeout(()=>{if(DU!==D0)return;const a=stageRect($("dWpn").querySelector(".ic")),z=stageRect($("dFoe"));const p=dAdd("dproj"+(sup?" big":"")+(max4?" max":""));p.textContent=DU.q?DU.q.ans:"";p.style.setProperty("--wc",HERO[DU.id].s);p.style.left=a.x+"px";p.style.top=a.y+"px";
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{p.style.left=z.x+"px";p.style.top=z.y+"px"}));
+  setTimeout(()=>{p.remove();if(DU!==D0)return;
+   let blocked=false;
+   if(!DU.vdef&&DU.hp>52&&(DU.hp-dmg<=52||DU.vsSure)){DU.vdef=1;blocked=true;dmg=Math.ceil(dmg/2);
+    dCut("foe","v_"+DU.vil+"_def",L(VSK[DU.vil].def)+"!");dBan("🛡️ "+K("The villain blocked half!","악당이 반을 막았다!"))}
+   const F=$("dFoe");F.classList.remove("hit");void F.offsetWidth;F.classList.add("hit");sfx("hit");
+   DU.hp=Math.max(0,DU.hp-dmg);const d=dAdd("ddmg");d.textContent="-"+Math.round(dmg);d.style.left=z.x+"px";d.style.top=(z.y-60)+"px";setTimeout(()=>d.remove(),900);duHUD();
+   if(DU.hp<=0)setTimeout(duWin,500);else setTimeout(duNext,blocked?1100:700)},400)},650);
+};
+/* 무기 마스터: 12영웅 전부 Lv4 */
+var _dw32=duWin;
+duWin=function(){var had=!!G.wxMaster;_dw32.apply(this,arguments);
+ try{var all=CHARS.every(function(c){return wLv(c.id)>=4});
+  if(all&&!had&&!G.wxMaster){G.wxMaster=1;save();dBan("🎖️ "+K("Weapon Master!","무기 마스터!"));
+   toast(K("All 12 heroes at weapon Lv 4! Amazing!","12영웅 무기가 모두 Lv4! 무기 마스터 달성!"))}}catch(e){}};
+var _di32=duIntro;
+duIntro=function(){_di32.apply(this,arguments);
+ try{var n=CHARS.filter(function(c){return wLv(c.id)>=4}).length;
+  if(n>0){var el=document.querySelector("#dQ .dintro .wcard p");
+   if(el)el.insertAdjacentHTML("beforeend","<br>🎖️ "+K("Weapon Master: "+n+" / 12 heroes at Lv4","무기 마스터 도전: Lv4 영웅 "+n+" / 12")+(G.wxMaster?" ✅":""))}}catch(e){}};
+})();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

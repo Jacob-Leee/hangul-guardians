@@ -2361,3 +2361,37 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .crsnode.lock{opacity:.55;background:#F0ECE2}
 .crsnode:active{transform:scale(.97)}
 @media (prefers-color-scheme:dark){.crscard{background:#241E12;color:#F0E8D8}.crsnode{background:#2E2718;border-color:#4A3F28}.crsnode.done{background:#3A3014}.crspk{background:#352C19}.crshead .crsn{background:#4A3B16}}
+
+/* ===== v32-2: 배틀 — 주사위·방어·기믹 ===== */
+.ddice{display:flex;align-items:center;justify-content:center;gap:10px;font-size:26px;margin:4px 0}
+.ddice .die{width:58px;height:58px;background:#FFFDF4;border:3px solid #2B2416;border-radius:12px;display:grid;grid-template-columns:repeat(3,1fr);padding:6px;gap:2px;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+.ddice .die i{border-radius:50%}
+.ddice .die i.on{background:#E2504C}
+.ddice .die.myst{display:flex;align-items:center;justify-content:center;background:#EFE6D2}
+.ddice .die.myst b{font-size:30px;color:#8A7A5C}
+.ddice .dplus,.ddice .dsum{font-weight:900;font-size:30px}
+.ddice.roll .die{animation:dceRoll .7s ease}
+@keyframes dceRoll{0%{transform:rotate(-14deg) translateY(-10px)}40%{transform:rotate(10deg)}70%{transform:rotate(-6deg)}100%{transform:none}}
+.dop.num{display:inline-flex;flex-direction:column;align-items:center;line-height:1.1;gap:1px}
+.dop.num small{font-size:.72em;opacity:.75}
+.dproj.foe{background:radial-gradient(circle,#3A2B4E 30%,rgba(58,43,78,.1) 70%);color:#FFB4A6;box-shadow:0 0 14px 5px rgba(90,50,120,.5);animation:dthrob .7s ease-in-out infinite}
+@keyframes dthrob{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.18)}}
+.dfoe.foeatk{animation:dfoeatk .55s ease}
+@keyframes dfoeatk{0%{transform:none}40%{transform:translateX(-46px) scale(1.06)}100%{transform:none}}
+.dshield{position:absolute;width:120px;height:120px;translate:-50% -50%;border-radius:50%;pointer-events:none;z-index:6;background:radial-gradient(circle,rgba(130,200,255,.14) 55%,rgba(130,200,255,.55) 72%,transparent 78%);border:3px solid rgba(160,220,255,.9);animation:dshld .9s ease}
+@keyframes dshld{0%{transform:scale(.3);opacity:0}30%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:0}}
+.dopts.gm-shadow{pointer-events:none}
+.dopts.gm-shadow .dop{color:transparent;text-shadow:none;background:#2E2A3C;border-color:#1E1B2A;filter:grayscale(1);transition:none}
+.dop.gm-ice{position:relative;color:rgba(40,60,90,.25);background:linear-gradient(160deg,#EAF6FF,#BFE3F8);border-color:#7FB8DC;overflow:hidden}
+.dop.gm-ice::after{content:"❄️";position:absolute;inset:0;display:grid;place-items:center;font-size:1.2em;background:linear-gradient(160deg,rgba(234,246,255,.85),rgba(170,220,250,.7))}
+.dop.gm-crack::after{content:"💥"}
+.dopts.gm-wait{pointer-events:none}
+.dopts.gm-mix .dop{animation:dgmix .6s ease}
+@keyframes dgmix{0%{transform:translateY(-16px);opacity:.3}100%{transform:none;opacity:1}}
+#dStage.gm-quake{animation:dquake .8s ease}
+@keyframes dquake{0%,100%{transform:none}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(4px,-2px)}}
+.dproj.max{box-shadow:0 0 26px 12px rgba(255,220,110,.85);font-size:1.4em}
+.dflash{position:absolute;inset:0;pointer-events:none;z-index:7;background:radial-gradient(circle,rgba(255,240,180,.55),transparent 70%);animation:dflsh .6s ease}
+@keyframes dflsh{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
+.fsent.swapq{background:#FFF4D8;border-radius:12px;padding:10px 12px}
+@media (prefers-reduced-motion:reduce){.ddice.roll .die,.dproj.foe,.dfoe.foeatk,#dStage.gm-quake,.dopts.gm-mix .dop{animation:none}}
