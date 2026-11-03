@@ -6477,7 +6477,7 @@ window.cardArena=function(){
  var vi=vils[Math.floor(Math.random()*vils.length)];
  ov.innerHTML='<div class="crscard cardcard arena" style="--bgi:url('+((window.DARENA&&DARENA[vi])||"")+')">'
   +'<div class="crshead"><h2>🎴 '+K("Card Battle","카드 배틀")+'</h2><span class="crsn">🃏 '+own+' / '+CARDS.length+'</span><button class="btn" id="caX">'+K("Close","닫기")+'</button></div>'
-  +'<div class="caduel"><img class="cahero" src="'+tcgSrc(cardPick())+'" alt=""><span class="cavs">VS</span><img class="cavil" src="'+tcgSrc("v_"+vi)+'" alt=""></div>'
+  +'<div class="caduel"><span class="cac"><img class="cahero" src="'+tcgSrc(cardPick())+'" alt=""><b class="can">'+escH(((window.CARDS&&CARDS.find(function(c){return c.id===cardPick()}))||{nm:""}).nm)+'</b></span><span class="cavs">VS</span><span class="cac"><img class="cavil" src="'+tcgSrc("v_"+vi)+'" alt=""><b class="can">'+escH(((window.CARDS&&CARDS.find(function(c){return c.id==="v_"+vi}))||{nm:""}).nm)+'</b></span></div>'
   +'<p class="carule">'+K("Beat the cat with NUMBER cards — read a word for a critical hit!","숫자 카드로 고양이 악당을 이기자! 낱말을 읽으면 크리티컬 공격!")+'</p>'
   +'<div class="calvs">'+[1,2,3,4,5].map(function(l){var nm=LADDER["nc"+l].n;
     return l>open?'<button class="calv lock" disabled>🔒<small>'+nm+'</small></button>'

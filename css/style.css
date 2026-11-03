@@ -2557,3 +2557,12 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .wkpop.out{opacity:0;transition:opacity .4s}
 @keyframes wkpopin{from{transform:scale(.6)}to{transform:scale(1)}}
 @keyframes wkin{from{opacity:0}to{opacity:1}}
+/* v41c: 어두운 화면(다크 모드)에서도 글씨 보이게 + 대결 카드 이름판 */
+.crscard .btn{color:var(--ink,#2B2416)}
+.crscard .btn.pri{color:#3A2C10}
+.calv{color:#4A3B23}
+.calv b,.calv small{color:inherit}
+.caduel .cac{position:relative;display:block;width:118px;aspect-ratio:63/88}
+.caduel .cac img{width:100%;height:100%}
+.caduel .can{position:absolute;left:12%;right:12%;bottom:10.5%;text-align:center;font-weight:900;font-size:13px;line-height:1.1;color:#5A3A0E;pointer-events:none;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+@media (max-width:480px){.caduel .cac{width:92px}.caduel .can{font-size:11px}}

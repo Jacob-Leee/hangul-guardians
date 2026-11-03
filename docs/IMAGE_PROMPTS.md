@@ -2477,9 +2477,9 @@ NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
 Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
 ```
 
-## 4순위 · 놀이터 배경 8장 (선택) (8장)
+## ☑ 완료 · 놀이터 배경 8장 (8장)
 
-지금도 코드로 그린 배경으로 잘 돌아가요. 오는 것부터 바로 바꿔 끼웁니다.
+☑ 11/3 — 연못·철길·나무 탁자·칠판 교실·종이 책상·공책·장난감 공장·거울 복도 전부 연결. 아래 프롬프트는 보관용.
 
 ### 1. `pg_fish_bg.png` — 놀이터 배경 — 글자 낚시
 
@@ -2585,9 +2585,9 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1536x1024 (landscape).
 ```
 
-## 4순위 · 놀이터 조각 7장 (선택) (7장)
+## ☑ 완료 · 놀이터 조각 7장 (7장)
 
-게임 속 움직이는 조각. 물고기 2·3과 기차 칸은 먼저 만든 그림을 첨부해 같은 세트로.
+☑ 11/3 — 물고기 3색·기관차·기차 칸·카드 뒷면·시범 연필 전부 연결. 아래 프롬프트는 보관용.
 
 ### 1. `pg_fish_1.png` — 놀이터 조각 — 글자 낚시 물고기 1
 
@@ -2748,7 +2748,7 @@ No text, letters, numbers, title, logos or watermark.
 Canvas 1024x1536 (portrait).
 ```
 
-## 6순위 · 본부 조종실 2겹 + 앉은 포즈 12장 (선택 — 함께 와야 보여요) (14장)
+## 6순위 · 본부 조종실 2겹 + 앉은 포즈 12장 (선택 — 함께 와야 보여요) ※ 일하는 포즈 12장은 ☑ 완료(11/3) — 조종실에서 영웅을 누르면 나와요 (14장)
 
 지금 본부는 보호자 조종실 그림(11/3 원본, 교체 완료)으로 돌아가요. 이 14장은 '창밖 구름이 흐르고 영웅이 하나씩 따로 움직이는' 버전을 원할 때만. 앉은 포즈는 hq_cabin이 있어야 화면에 나와요.
 
