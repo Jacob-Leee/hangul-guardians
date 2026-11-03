@@ -1714,12 +1714,12 @@ Canvas 1536x1024 (landscape). The game may trim about 8% at the top and the bott
 ### 9. `b8_page3.png` — 이야기 그림 3
 
 - 쓰임새: 양치기 소년: 순서 맞추기 카드 + 이야기 장면
-- 첨부: b8_shep_stand.png · b8_lamb_stand.png · b8_wolf_stand.png · b8_spread.png (무대)
+- 첨부: b8_shep_stand.png · b8_lamb_stand.png · b8_spread.png (무대)
 
 ```
 A full storybook illustration that fills the whole picture, for a cute 3D animated children's game.
-Scene: At the promise rock, Mee holds his hand on his heart and makes an honest promise, with Mungge safe in his arms; the friends walk back smiling and the wolf runs away over the hill.
-Attached images, in this order: 1) Mee, the shepherd boy; 2) Mungge, the baby lamb; 3) the wolf; 4) the stage. Keep every character EXACTLY the same as in its image (face, colours, clothes, proportions). The stage image is the story world — keep its places and its art style.
+Scene: At the promise rock at sunset, Mee wipes his tears and makes an honest vow with his hand on his heart, little Mungge nuzzling his side; no villagers around — just the boy, his promise, and the quiet meadow.
+Attached images, in this order: 1) Mee, the shepherd boy; 2) Mungge, the baby lamb; 3) the stage. Keep every character EXACTLY the same as in its image (face, colours, clothes, proportions). The stage image is the story world — keep its places and its art style.
 Camera: at a small child's eye level, slightly wide; the main characters in the middle of the height.
 Light: warm hopeful sunset.
 Art style: the same cute, high-quality 3D animated storybook look as the attached images.
@@ -2133,10 +2133,10 @@ Canvas 1536x1024 (landscape). The game may trim about 8% at the top and the bott
 
 ```
 A full storybook illustration that fills the whole picture, for a cute 3D animated children's game.
-Scene: Sunset in the home yard: Kongi happily chews his bone in front of his little red dog house.
+Scene: On the log bridge, Kongi's mouth is empty and his ears droop as he watches his bone sink with a splash, the reflection breaking apart in the ripples below; he looks sorry and sad.
 Attached images, in this order: 1) Kongi, the puppy; 2) the stage. Keep every character EXACTLY the same as in its image (face, colours, clothes, proportions). The stage image is the story world — keep its places and its art style.
 Camera: at a small child's eye level, slightly wide; the main characters in the middle of the height.
-Light: warm orange sunset.
+Light: dusky evening light.
 Art style: the same cute, high-quality 3D animated storybook look as the attached images.
 No text, letters, numbers, logos or watermark anywhere (no writing on signs, books, labels or screens). Friendly for a 5-year-old — nothing scary or violent.
 Canvas 1536x1024 (landscape). The game may trim about 8% at the top and the bottom.
