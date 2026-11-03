@@ -2647,8 +2647,8 @@ function splitSegs(text){const out=[];String(text).split(/(["“][^"”]*["”])
 async function readSegs(segs,who){const b=BK,tok=b.rt=(b.rt||0)+1;
  const hl=k=>document.querySelectorAll("#sbText .sg").forEach(e=>e.classList.toggle("on",+e.dataset.k===k));
  const A=who&&b.D.actors[who];
- for(let k=0;k<segs.length;k++){if(!bAlive(b)||b.rt!==tok)return;hl(k);const bub=A&&segs[k].q&&$("bPov").hidden;if(bub)actBub(who,segs[k].t.replace(/^["“]|["”]$/g,""));
-  await bSpeak(segs[k].t,segs[k].q?(who||"narrator"):"narrator",!!segs[k].q);if(bub&&BK===b){const c=b.D.claim;if(c&&c.who===who&&b.claimOn)claimShow(b.claimOn);else actBub(who,null)}if(!bAlive(b)||b.rt!==tok)return;if(k<segs.length-1)await wait(Math.round(vGap()*.55))}
+ for(let k=0;k<segs.length;k++){if(!bAlive(b)||b.rt!==tok)return;hl(k);const _kc=window.kwGo?kwGo(k,segs[k].t):null;const bub=A&&segs[k].q&&$("bPov").hidden;if(bub)actBub(who,segs[k].t.replace(/^["“]|["”]$/g,""));
+  await bSpeak(segs[k].t,segs[k].q?(who||"narrator"):"narrator",!!segs[k].q);if(_kc)_kc();if(bub&&BK===b){const c=b.D.claim;if(c&&c.who===who&&b.claimOn)claimShow(b.claimOn);else actBub(who,null)}if(!bAlive(b)||b.rt!==tok)return;if(k<segs.length-1)await wait(Math.round(vGap()*.55))}
  if(b.rt===tok)hl(-1)}
 async function readBook(pages,o){const b=BK;o=o||{};let i=o.start||0;
  while(bAlive(b)&&i<pages.length){const r=await readPage(pages,i,o);if(!bAlive(b))return false;i=r==="prev"?Math.max(0,i-1):i+1}
@@ -2656,7 +2656,7 @@ async function readBook(pages,o){const b=BK;o=o||{};let i=o.start||0;
 function readPage(pages,i,o){const b=BK,p=pages[i],segs=splitSegs(p.text);b.vt=(b.vt||0)+1;
  return new Promise(res=>{
   const auto=G.autoRead!==false;
-  $("bQ").innerHTML=`<div class="sbook"><div class="sbtext" id="sbText">${segs.map((s,k)=>`<span class="sg${s.q?" q":""}" data-k="${k}">${escH(s.t)}</span>`).join(" ")}</div>
+  $("bQ").innerHTML=`<div class="sbook"><div class="sbtext" id="sbText">${segs.map((s,k)=>`<span class="sg${s.q?" q":""}" data-k="${k}">${window.kwSpan?kwSpan(s.t):escH(s.t)}</span>`).join(" ")}</div>
    <div class="sbnav"><span class="pn">📖 ${i+1} / ${pages.length}</span><button class="btn" id="sbAuto" aria-pressed="${auto}">${auto?"🔈 "+K("Auto read on","자동 읽기 켜짐"):"🔇 "+K("Auto read off","자동 읽기 꺼짐")}</button><button class="btn" id="sbPrev" ${i?"":"disabled"}>◀</button><button class="btn" id="sbSay">🔊 ${K("Read to me","읽어 주기")}</button><button class="btn pri" id="sbNext">${i===pages.length-1?(o.last||K("Done ✓","다 읽었어요 ✓")):K("Next ▶","다음 ▶")}</button></div></div>`;
   $("bkMsg").textContent="";
   const go=r=>{b.rt=(b.rt||0)+1;hush();res(r)};
@@ -6490,6 +6490,107 @@ window.cardArena=function(){
  document.getElementById("caGo").onclick=function(){sfx("tap");ov.hidden=true;pgPlay("ncard",cur)};
  ov.querySelectorAll(".calv[data-l]").forEach(function(b){b.onclick=function(){sfx("tap");ov.hidden=true;pgPlay("ncard",+b.dataset.l)}});
 };
+})();
+
+/* ===== v40: 따라 읽기 가라오케 + 복습 보물상자 가시화 + 부모 주간 리포트 + 내 목소리 ===== */
+(function(){
+"use strict";
+/* --- 가라오케: 본문 낱말 스팬 + 재생 진행 하이라이트 --- */
+window.kwSpan=function(t){return String(t).split(/\s+/).map(function(w){return '<i class="kw">'+escH(w)+'</i>'}).join(" ")};
+window.kwGo=function(k,text){
+ var el=document.querySelector('#sbText .sg[data-k="'+k+'"]');if(!el)return null;
+ var ws=[].slice.call(el.querySelectorAll('.kw'));if(ws.length<1)return null;
+ var lens=ws.map(function(w){var t=w.textContent;return Math.max(1,(t.match(/[가-힣]/g)||[]).length+t.replace(/[가-힣\s]/g,'').length*.4)});
+ var tot=lens.reduce(function(a,b){return a+b},0)||1;
+ var done=false,t0=Date.now(),dur=null;
+ var iv=setInterval(function(){
+  if(done)return;
+  if(dur==null){var a=window.VA;
+   if(a&&isFinite(a.duration)&&a.duration>0)dur=a.duration*1000/(a.playbackRate||1);
+   else if(Date.now()-t0>800)dur=400+((String(text).match(/[가-힣]/g)||[]).length)*430/(G.vrate||1);
+   else return}
+  var p=(Date.now()-t0)/Math.max(700,dur),acc=0,idx=ws.length-1;
+  for(var i=0;i<ws.length;i++){acc+=lens[i]/tot;if(p<=acc){idx=i;break}}
+  ws.forEach(function(w,i){w.classList.toggle('kon',i<=idx)});
+  if(p>=1.08){done=true;clearInterval(iv)}
+ },90);
+ return function(){done=true;clearInterval(iv);ws.forEach(function(w){w.classList.remove('kon')})};
+};
+/* --- 복습 보물상자: 틀렸던 낱말 목록 + 졸업 연출 (출제 가중은 pgPick이 이미 수행) --- */
+function boxWords(){var M=G.pgm||{};return Object.keys(M).map(function(t){return {t:t,r:M[t]||{}}})
+ .filter(function(x){return (x.r.w||0)>=2&&(x.r.box||0)<4&&x.t.length<=4})
+ .sort(function(a,b){return (b.r.w||0)-(a.r.w||0)||(a.r.box||0)-(b.r.box||0)}).slice(0,12)}
+window.boxWords=boxWords;
+window.reviewBox=function(){var ws=boxWords(),ov=cardOv();
+ ov.innerHTML='<div class="crscard cardcard"><div class="crshead"><h2>🧰 '+K("Review box","복습 보물상자")+'</h2><span class="crsn">'+ws.length+'</span><button class="btn" id="rvX">'+K("Close","닫기")+'</button></div>'
+ +'<p class="cdtip">'+K("Words we missed before. They pop up in games more often — answer right and they graduate!","전에 틀렸던 낱말들이에요. 게임에 자주 나오고, 계속 맞히면 상자를 졸업해요! ● 세 개가 되면 졸업이 코앞!")+'</p>'
+ +(ws.length?'<div class="rvgrid">'+ws.map(function(x){var bx=Math.min(3,x.r.box||0);
+    return '<button class="rvw" data-t="'+escH(x.t)+'"><b>'+escH(x.t)+'</b><small>'+'●'.repeat(bx)+'○'.repeat(3-bx)+'</small></button>'}).join('')+'</div>'
+  :'<p class="rvempty">'+K("The box is empty — amazing!","상자가 비었어요 — 대단한걸!")+' 🎉</p>')
+ +'</div>';
+ ov.hidden=false;
+ document.getElementById("rvX").onclick=function(){sfx("tap");ov.hidden=true};
+ ov.querySelectorAll(".rvw").forEach(function(b){b.onclick=function(){sfx("tap");try{hush()}catch(e){}narrate([b.dataset.t],null,"ko")}});
+};
+/* 놀이터 허브에 상자 단추 */
+var _hub40=pgHub;window.pgHub=function(){_hub40.apply(this,arguments);
+ try{var wb=document.getElementById("cdBookB")||document.getElementById("wlBook");
+  if(wb&&!document.getElementById("rvBoxB")){var n=boxWords().length;
+   var b=document.createElement("button");b.className="btn";b.id="rvBoxB";b.textContent="🧰 "+K("Review box","복습 상자")+(n?" "+n:"");
+   if(!n)b.classList.add("dim");
+   b.onclick=function(){sfx("tap");reviewBox()};wb.parentNode.insertBefore(b,wb.nextSibling)}}catch(e){}};
+/* 졸업 연출 */
+var _pgRec40=pgRec;window.pgRec=function(t,ok){
+ var M=G.pgm||{},e0=M[t],prev=e0?(e0.box||0):0,hadW=e0?(e0.w||0):0;
+ _pgRec40.apply(this,arguments);
+ try{if(ok&&hadW>=2&&prev<4&&G.pgm[t]&&(G.pgm[t].box||0)>=4){sfx("star");toast("🧰 ‘"+t+"’ "+K("graduated the review box! ✨","복습 상자 졸업! 참 잘했어요 ✨"))}}catch(e){}};
+/* --- 부모 리포트: 주간 요약 + 자주 틀린 낱말 TOP5 --- */
+var _sp40=showPartner;window.showPartner=function(){_sp40.apply(this,arguments);
+ try{var st=document.getElementById("pStats");if(!st)return;
+  var old=document.getElementById("pWeek");if(old)old.remove();
+  var days=G.days||{},d=new Date(),i,g=0,w=0,qn=0,qok=0;
+  for(i=0;i<7;i++){var D=days[dkey(d)];if(D){g+=D.games||0;w+=D.words||0;qn+=D.qn||0;qok+=D.qok||0}d.setDate(d.getDate()-1)}
+  var agg={};d=new Date();
+  for(i=0;i<14;i++){var E=days[dkey(d)];if(E&&E.wrong)Object.keys(E.wrong).forEach(function(t){agg[t]=(agg[t]||0)+E.wrong[t]});d.setDate(d.getDate()-1)}
+  var top=Object.keys(agg).sort(function(a,b){return agg[b]-agg[a]}).slice(0,5);
+  var bw=boxWords();
+  var html='<div id="pWeek" class="pweek"><div><b>📅 '+K("This week","이번 주")+'</b> '+K("games ","게임 ")+g+K(" · word reviews ","판 · 낱말 복습 ")+w+(qn?K(" · reading quiz ","개 · 읽기 질문 ")+qok+"/"+qn:K("","개"))+'</div>'
+   +(top.length?'<div><b>⚠️ '+K("Tricky words (2 weeks)","자주 틀린 낱말 (2주)")+'</b> '+top.map(function(t){return '<span class="pchip">'+escH(t)+' ×'+agg[t]+'</span>'}).join('')+'</div>':'')
+   +'<div><b>🧰 '+K("Review box","복습 상자")+'</b> '+bw.length+K(" words","개")+(bw.length?' — '+bw.slice(0,5).map(function(x){return escH(x.t)}).join(", "):'')+'</div></div>';
+  st.insertAdjacentHTML("afterend",html);
+ }catch(e){}};
+/* --- 내 목소리: 책 페이지 녹음→재생 (지원 기기에서만) --- */
+var KREC={url:null};
+function micSup(){try{return !!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder)}catch(e){return false}}
+function wireRec(){
+ if(!micSup())return;
+ var nav=document.querySelector("#bQ .sbnav");if(!nav||document.getElementById("sbRec"))return;
+ var nxt=nav.querySelector("#sbNext");if(!nxt)return;
+ var b=document.createElement("button");b.className="btn";b.id="sbRec";b.title=K("Record my reading","내가 읽은 걸 녹음해요");b.textContent="🎤";
+ var p=document.createElement("button");p.className="btn";p.id="sbRecP";p.title=K("Play my voice","내 목소리 듣기");p.textContent="▶🎤";p.hidden=!KREC.url;
+ nav.insertBefore(b,nxt);nav.insertBefore(p,nxt);
+ var mr=null,tmo=null,chunks=[];
+ function stopRec(){try{if(mr&&mr.state!=="inactive")mr.stop()}catch(e){}}
+ p.onclick=function(){if(!KREC.url)return;sfx("tap");try{hush()}catch(e){}try{new Audio(KREC.url).play()}catch(e){}};
+ b.onclick=function(){
+  if(mr&&mr.state==="recording"){stopRec();return}
+  sfx("tap");try{hush()}catch(e){}
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(st){
+   chunks=[];
+   try{mr=new MediaRecorder(st)}catch(e){st.getTracks().forEach(function(t){t.stop()});b.hidden=true;return}
+   mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
+   mr.onstop=function(){st.getTracks().forEach(function(t){t.stop()});clearTimeout(tmo);
+    b.classList.remove("recing");b.textContent="🎤";
+    if(!chunks.length)return;
+    try{if(KREC.url)URL.revokeObjectURL(KREC.url)}catch(e){}
+    KREC.url=URL.createObjectURL(new Blob(chunks,{type:(mr.mimeType||"audio/webm")}));
+    var pp=document.getElementById("sbRecP");if(pp){pp.hidden=false;pp.onclick()}};
+   mr.start();b.classList.add("recing");b.textContent="⏹";
+   tmo=setTimeout(stopRec,20000);
+  }).catch(function(){b.hidden=true;try{toast(K("Microphone is not available.","마이크를 쓸 수 없어요."))}catch(e){}});
+ };
+}
+var _rp40=readPage;window.readPage=function(){var r=_rp40.apply(this,arguments);try{setTimeout(wireRec,40)}catch(e){}return r};
 })();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
