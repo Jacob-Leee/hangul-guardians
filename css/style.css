@@ -2566,3 +2566,11 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .caduel .cac img{width:100%;height:100%}
 .caduel .can{position:absolute;left:12%;right:12%;bottom:10.5%;text-align:center;font-weight:900;font-size:13px;line-height:1.1;color:#5A3A0E;pointer-events:none;text-shadow:0 1px 0 rgba(255,255,255,.4)}
 @media (max-width:480px){.caduel .cac{width:92px}.caduel .can{font-size:11px}}
+/* v41d: 다크 모드 가독성 전수 보강 */
+.pgbanner{text-shadow:0 3px 12px rgba(0,0,0,.65)}
+.calv.lock{background:rgba(255,255,255,.22);color:#F3EADA}
+.rvw{color:#4A3B23}
+.rvw small{color:#B8860B}
+#pGrid td{color:var(--ink,#22304A)}
+.pweek{color:#2B2416;background:rgba(255,253,244,.85)}
+.wkpop .wkin{color:#2B2416}
