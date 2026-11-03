@@ -6215,7 +6215,7 @@ window.cardOpenNext=function(){
  ov.innerHTML='<div class="crscard cardcard"><div class="crshead"><h2>🎴 '+K("Card riddle","카드 수수께끼")+'</h2><span class="crsn">'+K("Left: ","남은 카드 ")+cd.q.length+'</span><button class="btn" id="cdX">'+K("Later","나중에")+'</button></div>'
   +'<p class="cdrid">📖 '+escH(c.rid)+'</p>'
   +'<p class="cdtip">'+K("Read the riddle out loud, then tap the right friend!","수수께끼를 소리 내어 읽고, 맞는 친구를 골라 봐!")+'</p>'
-  +'<div class="cdopts">'+opts.map(function(o){return '<button class="cdface" data-id="'+o.id+'"><img src="'+o.img+'" alt=""></button>'}).join('')+'</div>'
+  +'<div class="cdopts">'+opts.map(function(o){return '<button class="cdface tcgf" data-id="'+o.id+'"><img src="'+tcgSrc(o.id)+'" alt=""></button>'}).join('')+'</div>'
   +'<div class="cdstage" hidden></div></div>';
  ov.hidden=false;
  document.getElementById("cdX").onclick=function(){sfx("tap");ov.hidden=true};
@@ -6249,8 +6249,8 @@ window.cardBook=function(){
   +grps.map(function(g){var list=CARDS.filter(function(c){return c.grp===g});
     return '<h3 class="cbh" style="color:'+CG[g][1]+'">'+CG[g][0]+' <small>'+list.filter(function(c){return own[c.id]!=null}).length+'/'+list.length+'</small></h3>'
      +'<div class="cbgrid">'+list.map(function(c){var r=own[c.id];
-       return r!=null?'<button class="cbslot has" data-id="'+c.id+'">'+cardHTML(c.id,r,"mini")+'</button>'
-        :'<div class="cbslot lock"><div class="ccard mini dark"><div class="cart"><img src="'+c.img+'" alt=""></div><span class="q">?</span></div></div>'}).join('')+'</div>'}).join('')
+       return r!=null?'<button class="cbslot has'+(c.id===cardPick()?' pickd':'')+'" data-id="'+c.id+'">'+cardHTML(c.id,r,"mini")+(c.id===cardPick()?'<span class="pkb">⚔️ '+K("My card","대표")+'</span>':'')+'</button>'
+        :'<div class="cbslot lock"><div class="ccard mini dark tcglk"><div class="cart"><img src="'+tcgSrc(c.id)+'" alt=""></div><span class="q">?</span></div></div>'}).join('')+'</div>'}).join('')
   +'</div>';
  ov.hidden=false;
  document.getElementById("cbX").onclick=function(){sfx("tap");ov.hidden=true};
@@ -6258,8 +6258,14 @@ window.cardBook=function(){
  ov.querySelectorAll(".cbslot.has").forEach(function(b){b.onclick=function(){sfx("tap");
   var id=b.dataset.id,c=CARD_BY[id];
   var big=document.createElement("div");big.className="cbbig";
-  big.innerHTML='<div class="cbbin">'+cardHTML(id,own[id],"big")+'<p class="cdrid">📖 '+escH(c.rid)+'</p><button class="btn pri">'+K("OK","좋아!")+'</button></div>';
-  big.onclick=function(e){if(e.target===big||e.target.tagName==="BUTTON")big.remove()};
+  var isPk=id===cardPick();
+  big.innerHTML='<div class="cbbin">'+cardHTML(id,own[id],"big")+'<p class="cdrid">📖 '+escH(c.rid)+'</p>'
+   +'<div class="cbbtns">'+(isPk?'<span class="pknow">⚔️ '+K("My battle card!","지금 내 대표 카드!")+'</span>'
+     :'<button class="btn pri" id="cbPick">⚔️ '+K("Battle with this card!","이 카드로 대결하기!")+'</button>')
+   +'<button class="btn" id="cbOk">'+K("OK","좋아!")+'</button></div></div>';
+  big.onclick=function(e){if(e.target===big||e.target.id==="cbOk")big.remove()};
+  var pkb=big.querySelector("#cbPick");
+  if(pkb)pkb.onclick=function(){sfx("star");cardsG().pick=id;save();big.remove();cardBook()};
   ov.appendChild(big)}});
 };
 /* 놀이터 허브에 카드 도감 단추 */
@@ -6310,9 +6316,11 @@ LADDER.nc4={n:"같은 수로 막기",math:"same",items:LADDER.nc1.items};
 LADDER.nc5={n:"섞어서",math:"mix",items:LADDER.nc1.items};
 var NC_W=["영","하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉","열","열하나","열둘"];
 function ncPips(v){var out='<span class="ncpips">';for(var i=0;i<v;i++)out+='<i></i>';return out+'</span>'}
+window.cardPick=function(){var cd=cardsG();return (cd.pick&&cd.own[cd.pick]!=null)?cd.pick:G.char}
 function ncArtPool(){var own=Object.keys(cardsG().own);
- if(own.length>=4)return shuffle(own.slice());
- return shuffle(["rat","tiger","rabbit","dog","dragon","sheep","monkey","pig"])}
+ var pool=own.length>=4?shuffle(own.slice()):shuffle(["rat","tiger","rabbit","dog","dragon","sheep","monkey","pig"]);
+ var pk=cardPick(),i=pool.indexOf(pk);if(i>0){pool.splice(i,1);pool.unshift(pk)}
+ return pool}
 function ncMode(S,i){var m=S.lad.math;if(m==="same")return i%2?"same":"cmp";
  if(m==="mix")return ["cmp","sum","ten","same","sum"][i%5];return m}
 window.ncVFor=function ncVFor(hand,mode){ /* 지금 손패로 풀 수 있는 악당 수 */
@@ -6469,7 +6477,7 @@ window.cardArena=function(){
  var vi=vils[Math.floor(Math.random()*vils.length)];
  ov.innerHTML='<div class="crscard cardcard arena" style="--bgi:url('+((window.DARENA&&DARENA[vi])||"")+')">'
   +'<div class="crshead"><h2>🎴 '+K("Card Battle","카드 배틀")+'</h2><span class="crsn">🃏 '+own+' / '+CARDS.length+'</span><button class="btn" id="caX">'+K("Close","닫기")+'</button></div>'
-  +'<div class="caduel"><img class="cahero" src="'+tcgSrc(G.char)+'" alt=""><span class="cavs">VS</span><img class="cavil" src="'+tcgSrc("v_"+vi)+'" alt=""></div>'
+  +'<div class="caduel"><img class="cahero" src="'+tcgSrc(cardPick())+'" alt=""><span class="cavs">VS</span><img class="cavil" src="'+tcgSrc("v_"+vi)+'" alt=""></div>'
   +'<p class="carule">'+K("Beat the cat with NUMBER cards — read a word for a critical hit!","숫자 카드로 고양이 악당을 이기자! 낱말을 읽으면 크리티컬 공격!")+'</p>'
   +'<div class="calvs">'+[1,2,3,4,5].map(function(l){var nm=LADDER["nc"+l].n;
     return l>open?'<button class="calv lock" disabled>🔒<small>'+nm+'</small></button>'
