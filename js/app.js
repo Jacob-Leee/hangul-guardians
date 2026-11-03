@@ -6430,5 +6430,21 @@ PGM.ncard=function(){
  };
 };
 })();
+
+/* ===== v33: 책 들어가기 전 '원래 이야기 미리보기' (순서 쪽그림 3장 재사용) ===== */
+(function(){
+"use strict";
+window.bookPrologue=async function(){
+ var b=BK;if(!b)return;
+ var pages=b.D.prologue.filter(function(pg){return !pg.onlyFor||pg.onlyFor.includes(G.char)});
+ var ord=(b.D.steps||[]).find(function(s){return s.type==="order"&&s.pages&&s.pages.length});
+ if(ord&&!bookDone(b.B.id)){
+  var pre=[{pov:{bg:"@lib",mentor:true,deco:["📖","✨"]},text:K("Before we jump in, let's peek at the original story first.","책 속에 들어가기 전에, 원래 이야기를 먼저 살짝 볼까요?")}]
+   .concat(ord.pages.map(function(p,i){return {pov:{img:p.img,kb:i%2?"pan":"in"},text:p.t}}));
+  pages=[pages[0]].concat(pre,pages.slice(1));
+ }
+ var ok=await readBook(pages,{last:"✨ "+K("Jump into the book!","책 속으로 들어가기!")});
+ if(ok)bookEnter()};
+})();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
