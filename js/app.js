@@ -6173,17 +6173,16 @@ window.CARDS=[
  C("bk_p2","둘째 뚝딱이",B+"b12/p2_stand.webp","book","나무 망치로 뚝딱뚝딱 나무 집을 지은 둘째 돼지는 누구일까요?"),
  C("bk_p3","셋째 차근이",B+"b12/p3_stand.webp","book","벽돌을 차근차근 쌓아 튼튼한 집을 지은 똑똑한 셋째 돼지는 누구일까요?"),
  C("bk_wolf","입김 센 늑대",B+"b12/wolf_stand.webp","book","볼을 크게 부풀려 후후 불어 지푸라기 집을 날려 버린 동물은 누구일까요?")];
-var CARD_BY={};CARDS.forEach(function(c){CARD_BY[c.id]=c});
+var CARD_BY={};window.TCGC={};CARDS.forEach(function(c){CARD_BY[c.id]=c;TCGC[c.id]=1});
 var RANKN=[["Normal","노멀"],["Silver","실버"],["Gold","골드"]];
 function cardsG(){G.cards=G.cards||{};G.cards.own=G.cards.own||{};G.cards.q=G.cards.q||[];return G.cards}
 function cardOwnedN(){return Object.keys(cardsG().own).length}
 /* ---------- 카드 HTML (포켓몬식 프레임, 전부 코드) ---------- */
-window.TCGC={rat:1,ox:1,tiger:1,rabbit:1,dragon:1,snake:1,horse:1,sheep:1,monkey:1,rooster:1,dog:1,pig:1};
 window.cardHTML=function(id,rank,cls){var c=CARD_BY[id];if(!c)return "";
  var gc=CG[c.grp];
  if(TCGC[c.id])return '<div class="ccard tcg r'+(rank||0)+' '+(cls||'')+'" style="--gc:'+gc[1]+'" data-cid="'+id+'">'
   +'<img class="tcgi" src="assets/img/card/tcg_'+c.id+'.webp" alt="" loading="lazy">'
-  +'<b class="tcgn">'+escH(c.nm)+'</b><i class="cfoil"></i></div>';
+  +'<b class="tcgn" style="font-size:min(8.6cqw,'+(60/Math.max(4,c.nm.length)).toFixed(1)+'cqw)">'+escH(c.nm)+'</b><i class="cfoil"></i></div>';
  return '<div class="ccard r'+(rank||0)+' '+(cls||'')+'" style="--gc:'+gc[1]+'" data-cid="'+id+'">'
   +'<div class="chead"><b>'+escH(c.nm)+'</b><span class="cgrp">'+gc[0]+'</span></div>'
   +'<div class="cart"><img src="'+c.img+'" alt="" loading="lazy"></div>'

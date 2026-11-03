@@ -2493,7 +2493,7 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .ccard.tcg{background:none;border:7px solid transparent;box-shadow:none;container-type:inline-size}
 .ccard.tcg::before{display:none}
 .ccard.tcg .tcgi{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 5px 10px rgba(0,0,0,.35))}
-.ccard.tcg .tcgn{position:absolute;left:50%;bottom:26.2%;transform:translate(-50%,50%);width:58%;text-align:center;
+.ccard.tcg .tcgn{position:absolute;left:50%;bottom:27.05%;transform:translate(-50%,50%);width:58%;text-align:center;
  font-weight:900;color:#6B4512;font-size:15px;font-size:9cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 .ccard.tcg.r1 .tcgi{filter:drop-shadow(0 0 7px rgba(205,218,255,.95)) drop-shadow(0 5px 10px rgba(0,0,0,.3))}
 .ccard.tcg.r2 .tcgi{filter:drop-shadow(0 0 8px rgba(255,210,80,.95)) drop-shadow(0 5px 10px rgba(0,0,0,.3))}
