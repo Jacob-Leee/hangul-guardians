@@ -45,7 +45,7 @@ BOOKDATA.b4={dir:"books/b4/",cover:"cover.webp",bg:"spread.webp",enterArt:"scene
    pages:[{img:"page1.webp",t:"문밖에서 호랑이가 엄마 흉내를 냈어요.",cl:["엄마 흉내를"]},{img:"page2.webp",t:"오누이는 큰 나무 위로 올라가 하늘에 빌었어요.",cl:["하늘에 빌었어요"]},{img:"page3.webp",t:"오누이는 동아줄을 타고 올라가 해와 달이 되었어요.",cl:["해와 달이"]}]},
   {type:"story",name:"완성",pages:"restored"}],
  restored:[
-  {pov:{img:"page1.webp",kb:"pan"},who:"tig",text:"떡 장수 엄마가 떡 광주리를 이고 고개를 넘는데, 호랑이가 자꾸 나타나 말했어요. \"떡 하나 주면 안 따라가지!\""},
+  {scene:[{gloom:false},{state:{sis:["door","stand"],bro:["house","stand"],tig:["far","prowl"]}},{cam:[75,80,1.15],cms:0},{move:"tig",to:"hill",pose:"prowl",ms:2200}],who:"tig",text:"떡 장수 엄마가 떡 광주리를 이고 고개를 넘는데, 호랑이가 자꾸 나타나 말했어요. \"떡 하나 주면 안 따라가지!\""},
   {pov:{img:"page1.webp",kb:"in"},text:"떡이 다 떨어지도록 엄마는 늦었고, 오누이는 둘이서 집을 지키고 있었어요. 그때 문밖에서 굵은 목소리가 들렸어요."},
   {scene:[{gloom:false},{state:{sis:["door","scared"],bro:["house","scared"],tig:["yard","prowl"]}},{cam:["tig",1.4],cms:0}],who:"tig",text:"\"엄마란다, 문 열어라.\" 하지만 문틈으로 털북숭이 꼬리가 보였어요. 호랑이였어요!"},
   {pov:{img:"page2.webp",kb:"pan"},text:"오누이는 살금살금 뒷마당으로 나가 큰 나무 위로 올라갔어요. 그리고 하늘에 빌었어요. \"저희를 도와주세요!\""},

@@ -1,7 +1,7 @@
 /* 〈비를 잃어버린 꼬마 용〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b5) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b5={dir:"books/b5/",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b5={dir:"books/b5/",cover:"cover.webp",bg:"spread.webp",enterArt:"scene_enter.webp",
  actors:{
   yong:{n:"꼬마 용 이슬이",voice:"sb_yong",h:32,poses:{stand:["yong_stand.webp",1],walk:["yong_fly.webp",1],sad:["yong_sad.webp",.96],fly:["yong_fly.webp",1],happy:["yong_stand.webp",1]}},
   cloud:{n:"구름 할머니",voice:"sb_cloud",h:30,poses:{stand:["cloud_stand.webp",1],walk:["cloud_stand.webp",1]}}},

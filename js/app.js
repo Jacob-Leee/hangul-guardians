@@ -2942,7 +2942,7 @@ function stageFail(i){
 function practiceBattle(){duel({practice:true,tier:G.easy?1:2})}
 
 function renderExtras(){
- const X=[["today","☀️",K("Today's adventure","오늘의 모험"),()=>tdOpen()],[G.view==="island"?"lib2":"island",G.view==="island"?"📚":"🏝️",G.view==="island"?K("Story Library","이야기 도서관"):K("Hangul Island","한글 섬 모험"),()=>{G.view=G.view==="island"?"library":"island";save();renderAll()}],["play","🎪",K("Playground","한글 놀이터"),()=>pgHub()],["case","🔎",K("Case Squad","사건 수사대"),()=>openCases()],["course","🌀",K("Adventure courses","모험 코스"),()=>window.courseMap?courseMap():startRun()],["battle","⚔️",K("Practice battle","연습 배틀"),()=>practiceBattle()],["shop","🦝",K("Shop","상점"),()=>showShop()]];
+ const X=[["today","☀️",K("Today's adventure","오늘의 모험"),()=>tdOpen()],[G.view==="island"?"lib2":"island",G.view==="island"?"📚":"🏝️",G.view==="island"?K("Story Library","이야기 도서관"):K("Hangul Island","한글 섬 모험"),()=>{G.view=G.view==="island"?"library":"island";save();renderAll()}],["play","🎪",K("Playground","한글 놀이터"),()=>pgHub()],["case","🔎",K("Case Squad","사건 수사대"),()=>openCases()],["course","🌀",K("Adventure courses","모험 코스"),()=>window.courseMap?courseMap():startRun()],["cards","🎴",K("Card battle","카드 배틀"),()=>window.cardArena?cardArena():pgPlay("ncard",1)],["battle","⚔️",K("Practice battle","연습 배틀"),()=>practiceBattle()],["shop","🦝",K("Shop","상점"),()=>showShop()]];
  $("extras").innerHTML=X.map(([k,ic,n])=>`<button class="xbtn" data-x="${k}"><span class="ic">${ic}</span>${n}${k==="today"?tdChip():""}${(k==="case"&&!(G.cases&&G.cases.k1))||(k==="play"&&!G.pgIntro)?'<span class="new">NEW</span>':""}</button>`).join("");
  $("extras").querySelectorAll(".xbtn").forEach((b,i)=>b.onclick=()=>{if(overlayOpen())return;sfx("tap");X[i][3]()});tdHudSet();
 }
@@ -6176,7 +6176,7 @@ window.CARDS=[
 var CARD_BY={};window.TCGC={};CARDS.forEach(function(c){CARD_BY[c.id]=c;TCGC[c.id]=1});
 var RANKN=[["Normal","노멀"],["Silver","실버"],["Gold","골드"]];
 function cardsG(){G.cards=G.cards||{};G.cards.own=G.cards.own||{};G.cards.q=G.cards.q||[];return G.cards}
-function cardOwnedN(){return Object.keys(cardsG().own).length}
+window.cardOwnedN=function cardOwnedN(){return Object.keys(cardsG().own).length}
 /* ---------- 카드 HTML (포켓몬식 프레임, 전부 코드) ---------- */
 window.cardHTML=function(id,rank,cls){var c=CARD_BY[id];if(!c)return "";
  var gc=CG[c.grp];
@@ -6202,7 +6202,7 @@ window.cardChip=function(){var n=cardsG().q.length,el=document.getElementById("c
  el.innerHTML="🎴<b>"+n+"</b>"};
 var _ra33=renderAll;renderAll=function(){_ra33.apply(this,arguments);try{cardChip()}catch(e){}};
 /* ---------- 수수께끼 개봉 ---------- */
-function cardOv(){var ov=document.getElementById("cardOv");
+window.cardOv=function(){var ov=document.getElementById("cardOv");
  if(!ov){ov=document.createElement("div");ov.id="cardOv";ov.className="crsov cardov";document.body.appendChild(ov)}
  return ov}
 window.cardOpenNext=function(){
@@ -6314,7 +6314,7 @@ function ncArtPool(){var own=Object.keys(cardsG().own);
  return shuffle(["rat","tiger","rabbit","dog","dragon","sheep","monkey","pig"])}
 function ncMode(S,i){var m=S.lad.math;if(m==="same")return i%2?"same":"cmp";
  if(m==="mix")return ["cmp","sum","ten","same","sum"][i%5];return m}
-function ncVFor(hand,mode){ /* 지금 손패로 풀 수 있는 악당 수 */
+window.ncVFor=function ncVFor(hand,mode){ /* 지금 손패로 풀 수 있는 악당 수 */
  var vs=hand.map(function(c){return c.v});
  if(mode==="cmp"){var mx=Math.max.apply(null,vs);var v=1+Math.floor(Math.random()*Math.max(1,mx-1));return Math.min(v,mx-1)||1}
  if(mode==="same")return vs[Math.floor(Math.random()*vs.length)];
@@ -6322,15 +6322,22 @@ function ncVFor(hand,mode){ /* 지금 손패로 풀 수 있는 악당 수 */
  /* sum: 손패 두 장 합 중 하나 */
  var sums=[];for(var i=0;i<vs.length;i++)for(var j=i+1;j<vs.length;j++)sums.push(vs[i]+vs[j]);
  return sums[Math.floor(Math.random()*sums.length)]}
-function ncSolvable(hand,mode,V){var vs=hand.map(function(c){return c.v});
+window.tcgSrc=function(id){return (window.TCGU&&TCGU[id])||("assets/img/card/tcg_"+id+".webp")};
+window.ncRepair=function ncRepair(hand,mode,V){ /* 어떤 경우에도 반드시 풀리게 손패를 최소 수정 */
+ if(mode==="cmp"){var t=Math.min(6,Math.max(2,V+1));hand[0].v=t;return V}
+ if(mode==="same"){if(V<1||V>6)V=hand[0].v;else hand[0].v=V;return V}
+ if(mode==="ten"){if(V<4||V>9)V=10-hand[0].v;else hand[0].v=10-V;return V}
+ if(V<2||V>12)V=hand[0].v+hand[1].v;
+ var x=Math.min(6,Math.max(1,Math.ceil(V/2)));hand[0].v=x;hand[1].v=V-x;return V}
+window.ncSolvable=function ncSolvable(hand,mode,V){var vs=hand.map(function(c){return c.v});
  if(mode==="cmp")return vs.some(function(x){return x>V});
  if(mode==="same")return vs.indexOf(V)>=0;
  if(mode==="ten")return vs.indexOf(10-V)>=0;
  for(var i=0;i<vs.length;i++)for(var j=i+1;j<vs.length;j++)if(vs[i]+vs[j]===V)return true;return false}
 PGM.ncard=function(){
  var A,NC;
- function card(i,c,sel){return '<button class="nchc'+(sel?' sel':'')+'" data-i="'+i+'">'
-  +'<img src="'+(CARD_BY[c.art]?CARD_BY[c.art].img:DA.hs[c.art]||PORT[c.art])+'" alt="">'
+ function card(i,c,sel){return '<button class="nchc tcgnc'+(sel?' sel':'')+'" data-i="'+i+'">'
+  +'<img src="'+tcgSrc(c.art)+'" alt="">'
   +'<span class="num">'+c.v+'</span>'+ncPips(c.v)+'</button>'}
  function draw(){return {v:1+Math.floor(Math.random()*6),art:NC.arts[NC.ai++%NC.arts.length]}}
  function render(){
@@ -6339,8 +6346,8 @@ PGM.ncard=function(){
    :m==="same"?K("Block with the SAME number!","똑같은 수 카드로 막아!")
    :m==="ten"?K("Make 10 together!","악당 수와 더해서 10을 만들어!")
    :K("Pick TWO cards that add up to it!","두 장을 더해서 똑같이 만들어!");
-  A.innerHTML='<div class="nc"><div class="ncfoe">'
-   +'<div class="ncv"><img src="'+(DA.vb[NC.vil]||PORT["v_"+NC.vil])+'" alt=""><span class="num">'+V+'</span>'+ncPips(V)+'<span class="nw">'+(NC_W[V]||V)+'</span></div>'
+  A.innerHTML='<div class="nc ncbg" style="--bgi:url('+((window.DARENA&&DARENA[NC.vil])||"assets/img/scene/island.webp")+')"><div class="ncfoe">'
+   +'<div class="ncv tcgnc"><img src="'+tcgSrc("v_"+NC.vil)+'" alt=""><span class="num">'+V+'</span>'+ncPips(V)+'<span class="nw">'+(NC_W[V]||V)+'</span></div>'
    +'<span class="vs">VS</span>'
    +'<div class="ncnext"><small>'+K("Next","다음 카드")+'</small><b>'+NC.next+'</b></div>'
    +'<div class="nchp">'+"😼"+"❤️".repeat(Math.max(0,S.goal-S.done))+"🤍".repeat(S.done)+'</div></div>'
@@ -6420,7 +6427,8 @@ PGM.ncard=function(){
    var m=ncMode(S,S.done);
    var V=(NC.next!=null&&ncSolvable(NC.hand,m,NC.nextMode===m?NC.next:-999))?NC.next:ncVFor(NC.hand,m);
    if(NC.next!=null&&V!==NC.next)pgBanner(K("The villain swapped cards!","악당이 카드를 바꿨다!"));
-   NC.mode=m;NC.V=V;
+   if(!ncSolvable(NC.hand,m,V))V=ncRepair(NC.hand,m,V);
+  NC.mode=m;NC.V=V;
    /* 다음 카드 예고(같은 모드 가정) */
    var nm=ncMode(S,S.done+1);NC.nextMode=nm;NC.next=ncVFor(NC.hand,nm);
    S.target=null;render();pgDots();
@@ -6449,6 +6457,30 @@ window.bookPrologue=async function(){
  }
  var ok=await readBook(pages,{last:"✨ "+K("Jump into the book!","책 속으로 들어가기!")});
  if(ok)bookEnter()};
+})();
+
+/* ===== v38: 카드 배틀 허브 ===== */
+(function(){
+"use strict";
+window.cardArena=function(){
+ var ov=cardOv(),open=pgOpenLv("ncard"),cur=pgRecLv("ncard"),own=cardOwnedN();
+ var vils=["gray","black","white","tiger","purple","fat"];
+ var vi=vils[Math.floor(Math.random()*vils.length)];
+ ov.innerHTML='<div class="crscard cardcard arena" style="--bgi:url('+((window.DARENA&&DARENA[vi])||"")+')">'
+  +'<div class="crshead"><h2>🎴 '+K("Card Battle","카드 배틀")+'</h2><span class="crsn">🃏 '+own+' / '+CARDS.length+'</span><button class="btn" id="caX">'+K("Close","닫기")+'</button></div>'
+  +'<div class="caduel"><img class="cahero" src="'+tcgSrc(G.char)+'" alt=""><span class="cavs">VS</span><img class="cavil" src="'+tcgSrc("v_"+vi)+'" alt=""></div>'
+  +'<p class="carule">'+K("Beat the cat with NUMBER cards — read a word for a critical hit!","숫자 카드로 고양이 악당을 이기자! 낱말을 읽으면 크리티컬 공격!")+'</p>'
+  +'<div class="calvs">'+[1,2,3,4,5].map(function(l){var nm=LADDER["nc"+l].n;
+    return l>open?'<button class="calv lock" disabled>🔒<small>'+nm+'</small></button>'
+     :'<button class="calv'+(l===cur?' cur':'')+'" data-l="'+l+'"><b>'+l+'</b><small>'+nm+'</small>'+('⭐'.repeat((pgStars?pgStars("ncard",l):0)||0))+'</button>'}).join('')+'</div>'
+  +'<div class="cabtns"><button class="btn pri big" id="caGo">▶ '+K("Battle!","바로 대결!")+' <small>Lv'+cur+'</small></button>'
+  +'<button class="btn" id="caBook">📚 '+K("Card book","카드 도감")+'</button></div></div>';
+ ov.hidden=false;
+ document.getElementById("caX").onclick=function(){sfx("tap");ov.hidden=true};
+ document.getElementById("caBook").onclick=function(){sfx("tap");cardBook()};
+ document.getElementById("caGo").onclick=function(){sfx("tap");ov.hidden=true;pgPlay("ncard",cur)};
+ ov.querySelectorAll(".calv[data-l]").forEach(function(b){b.onclick=function(){sfx("tap");ov.hidden=true;pgPlay("ncard",+b.dataset.l)}});
+};
 })();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
