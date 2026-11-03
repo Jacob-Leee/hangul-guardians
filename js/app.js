@@ -5324,25 +5324,20 @@ window.hqCabin=function(){var A=window.HQART&&HQART.room||{};if(!A.cabin||!A.sky
    콘솔이 깜빡이고, 영웅을 누르면 핑+말풍선. 영웅 선택 화면도 이 그림을 쓴다. ── */
 /* v31.1: 보호자 원본 그림(2576×1438 → 1920×1072). 좌표는 그림 기준 [가로%, 세로%, 너비%, 높이%] — 몸통 중심, 서로 안 겹치게 잼.
    그림·효과·단추를 한 무대(.stg)에 넣어 그림이 흔들려도 같이 움직인다(좌표 = 그림 좌표). */
-var HQPIC_SPOTS={rat:[12,38,10,26],dog:[20,68,16,40],pig:[40.5,34,11,26],rabbit:[40,72,12,40],dragon:[55,60,13,30],snake:[50,84,9,20],
- sheep:[82,66,9,24],tiger:[66.5,45,10,24],horse:[79,42,10,22],ox:[71,73,17,36],rooster:[92,73,12,34],monkey:[62,18,12,24]};
-var HQPIC_MENTOR=[54,35.5,10,15]; /* 새 그림에는 스승님이 가운데(삿갓)에 있음 → 따로 얹지 않고 그림 위 투명 단추 */
+var HQPIC_SPOTS={rat:[10,24,13,24],snake:[20.5,51,12,24],sheep:[9,78,14,32],rooster:[28.5,80,13,30],
+ ox:[36.5,23,12,24],tiger:[45,46,13,24],dog:[50.5,76,14,30],dragon:[66,22,11,20],horse:[69.5,45,12,26],
+ rabbit:[81,23,11,20],pig:[87.5,76,13,30],monkey:[91,40,10,24]};
+var HQPIC_MENTOR=[51,20,10,24]; /* 새 그림에는 스승님이 가운데(삿갓)에 있음 → 따로 얹지 않고 그림 위 투명 단추 */
 function hqPicStage(pic,forPick){var hots=CHARS.map(function(c,i){var p=HQPIC_SPOTS[c.id]||[10+i*7,60];
   return '<button class="hqhot" data-h="'+c.id+'" aria-label="'+escH(L(c.n))+'" style="left:'+p[0]+'%;top:'+p[1]+'%'+(p[2]?';width:'+p[2]+'%;height:'+p[3]+'%':'')+'"><i></i></button>'}).join("");
  var M=HQPIC_MENTOR,ml=K("Master Turtle","거북이 스승님");
- return '<div class="hqpic'+(forPick?' pick':'')+'"><div class="stg"><img class="pbg" src="'+pic+'" alt="">'
+ return '<div class="hqpic alive'+(forPick?' pick':'')+'"><div class="stg"><img class="pbg" src="'+pic+'" alt="">'
   +'<i class="cl2 c1"></i><i class="cl2 c2"></i><i class="cl2 c3"></i><i class="mist m1"></i><i class="mist m2"></i>'
   +'<i class="bird b1"></i><i class="bird b2"></i><i class="sweep"></i>'
-  +'<i class="scr radar" style="left:7.3%;top:63.5%;--w:6.6%"></i>'
-  +'<i class="scr roll" style="left:23.3%;top:36.5%;--w:2.4%;--ar:.62"></i>'
-  +'<i class="scr flick" style="left:25.7%;top:45.8%;--w:2.9%;--ar:1.8"></i>'
-  +'<i class="scr flick" style="left:32.5%;top:43%;--w:3.6%;--ar:2.3;animation-delay:.7s"></i>'
-  +'<i class="scr flick" style="left:64.4%;top:41.5%;--w:2.4%;--ar:1.8;animation-delay:1.3s"></i>'
-  +'<i class="scr roll" style="left:86.7%;top:18.4%;--w:4.4%;--ar:1.05"></i>'
-  +'<i class="scr roll" style="left:95%;top:42.8%;--w:4%;--ar:.8;animation-delay:.9s"></i>'
-  +'<i class="holo" style="left:34.4%;top:75.4%;--w:7.4%;--h:12.5%"></i>'
-  +'<i class="holo" style="left:44.8%;top:75.5%;--w:5.6%;--h:11.5%;animation-delay:.5s"></i>'
-  +'<i class="holo" style="left:50%;top:60.8%;--w:8%;--h:13%;animation-delay:.8s"></i>'
+    +'<i class="wglow" style="left:8.3%;top:17%;--w:5%"></i>'
+  +'<i class="wglow" style="left:49.6%;top:3.5%;--w:9%;animation-delay:.8s"></i>'
+  +'<i class="wglow" style="left:56.3%;top:65%;--w:4.4%;animation-delay:1.4s"></i>'
+  +'<i class="wglow hot" style="left:83%;top:78.5%;--w:5.2%;animation-delay:.4s"></i>'
   +'<i class="glow g1"></i><i class="glow g2"></i><i class="glow g3"></i><i class="glow g4"></i>'
   +'<i class="spk s1"></i><i class="spk s2"></i><i class="spk s3"></i>'
   +hots
@@ -6662,6 +6657,29 @@ function bindWk(root){
 }
 if(window.hqPic){var _hp=hqPic;window.hqPic=function(){var r=_hp.apply(this,arguments);try{if(r)bindWk(document.getElementById("hqCard"))}catch(e){}return r}}
 if(window.hqBase){var _hb=hqBase;window.hqBase=function(){var r=_hb.apply(this,arguments);try{bindWk(document.getElementById("hqCard"))}catch(e){}return r}}
+})();
+
+/* ===== v42: 본부 생동 타이머 ===== */
+(function(){
+"use strict";
+/* 영웅들이 번갈아 꿈틀 + 반짝 — 본부가 살아 있는 느낌 */
+var liveT=null;
+function hqLife(){
+ clearInterval(liveT);
+ liveT=setInterval(function(){
+  var ov=document.getElementById("hqOv");
+  var stg=document.querySelector(".hqpic.alive .stg");
+  if(!stg||!ov||ov.hidden){clearInterval(liveT);liveT=null;return}
+  var hs=[...stg.querySelectorAll(".hqhot")];if(!hs.length)return;
+  var b=hs[Math.floor(Math.random()*hs.length)];
+  b.classList.remove("live");void b.offsetWidth;b.classList.add("live");
+  var sp=document.createElement("i");sp.className="hlspark";sp.textContent="✨";
+  sp.style.left=(parseFloat(b.style.left)+(Math.random()*4-2))+"%";
+  sp.style.top=(parseFloat(b.style.top)-(parseFloat(b.style.height)||24)/2+2)+"%";
+  stg.appendChild(sp);setTimeout(function(){try{sp.remove()}catch(e){}},1600);
+ },3800);
+}
+if(window.hqPic){var _hp42=hqPic;window.hqPic=function(){var r=_hp42.apply(this,arguments);if(r)try{hqLife()}catch(e){}return r}}
 })();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
