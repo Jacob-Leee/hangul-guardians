@@ -6178,8 +6178,12 @@ var RANKN=[["Normal","노멀"],["Silver","실버"],["Gold","골드"]];
 function cardsG(){G.cards=G.cards||{};G.cards.own=G.cards.own||{};G.cards.q=G.cards.q||[];return G.cards}
 function cardOwnedN(){return Object.keys(cardsG().own).length}
 /* ---------- 카드 HTML (포켓몬식 프레임, 전부 코드) ---------- */
+window.TCGC={rat:1,ox:1,tiger:1,rabbit:1,dragon:1,snake:1,horse:1,sheep:1,monkey:1,rooster:1,dog:1,pig:1};
 window.cardHTML=function(id,rank,cls){var c=CARD_BY[id];if(!c)return "";
  var gc=CG[c.grp];
+ if(TCGC[c.id])return '<div class="ccard tcg r'+(rank||0)+' '+(cls||'')+'" style="--gc:'+gc[1]+'" data-cid="'+id+'">'
+  +'<img class="tcgi" src="assets/img/card/tcg_'+c.id+'.webp" alt="" loading="lazy">'
+  +'<b class="tcgn">'+escH(c.nm)+'</b><i class="cfoil"></i></div>';
  return '<div class="ccard r'+(rank||0)+' '+(cls||'')+'" style="--gc:'+gc[1]+'" data-cid="'+id+'">'
   +'<div class="chead"><b>'+escH(c.nm)+'</b><span class="cgrp">'+gc[0]+'</span></div>'
   +'<div class="cart"><img src="'+c.img+'" alt="" loading="lazy"></div>'

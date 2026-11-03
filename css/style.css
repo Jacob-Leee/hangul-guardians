@@ -2489,3 +2489,12 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .nccritfx{position:absolute;left:50%;top:-12px;translate:-50%;font-size:22px;color:#E2504C;text-shadow:0 2px 0 #fff;animation:hqPop .8s ease}
 @media (max-width:480px){.cdface{width:88px;height:88px}.nchc{width:76px}.ncv{width:96px}}
 @media (prefers-color-scheme:dark){.cdrid{background:#3A3014;color:#F0E8D8}.cdface{background:#2E2718;border-color:#4A3F28}.ncask{background:#3A3014;color:#F0E8D8}.nchc{background:#2E2718}.nccrit{background:#241E12;color:#F0E8D8}.ncwo{background:#2E2718;color:#F0E8D8}.ncnext{background:#352C19}.nchp{background:#241E12;border-color:#4A3F28}}
+/* v36: 영웅 TCG 카드(완성 일러스트) */
+.ccard.tcg{background:none;border:7px solid transparent;box-shadow:none;container-type:inline-size}
+.ccard.tcg::before{display:none}
+.ccard.tcg .tcgi{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 5px 10px rgba(0,0,0,.35))}
+.ccard.tcg .tcgn{position:absolute;left:50%;bottom:26.2%;transform:translate(-50%,50%);width:58%;text-align:center;
+ font-weight:900;color:#6B4512;font-size:15px;font-size:9cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.ccard.tcg.r1 .tcgi{filter:drop-shadow(0 0 7px rgba(205,218,255,.95)) drop-shadow(0 5px 10px rgba(0,0,0,.3))}
+.ccard.tcg.r2 .tcgi{filter:drop-shadow(0 0 8px rgba(255,210,80,.95)) drop-shadow(0 5px 10px rgba(0,0,0,.3))}
+.ccard.tcg .cfoil{border-radius:16px}
