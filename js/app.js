@@ -2679,8 +2679,8 @@ function openBook(id){
 function bookClose(){if(BK)BK.skip=true;hush();$("bookOv").hidden=true;BK=null;document.querySelectorAll(".dfly").forEach(e=>e.remove());renderAll()}
 async function bookPrologue(){const b=BK;const ok=await readBook(b.D.prologue.filter(pg=>!pg.onlyFor||pg.onlyFor.includes(G.char)),{last:"✨ "+K("Jump into the book!","책 속으로 들어가기!")});if(ok)bookEnter()}
 async function bookEnter(){const b=BK,B=b.B,D=b.D;capt(null);hush();sfx("evo");
- const art=D.enterArt&&(G.char===B.owner||(D.enterWith||[]).includes(G.char));
- await pageTurn(()=>{const p=$("bPov");p.hidden=false;p.innerHTML=art?`<img class="pimg kb-in enterart" src="${D.dir+D.enterArt}" alt=""><span class="pdeco" style="right:12%;top:18%">✨</span><span class="pdeco" style="right:30%;top:40%;animation-delay:.5s">✨</span>`:`<div class="portal"><img src="${ownerImg(B.owner)}" alt="">${G.char!==B.owner?`<img src="${ownerImg(G.char)}" alt="">`:""}</div>`});
+ const art=!!D.enterArt;
+ await pageTurn(()=>{const p=$("bPov");p.hidden=false;p.innerHTML=art?`<img class="pimg kb-in enterart" src="${(window.ENTU&&ENTU[B.id])||(D.dir+D.enterArt)}" alt=""><span class="pdeco" style="right:12%;top:18%">✨</span><span class="pdeco" style="right:30%;top:40%;animation-delay:.5s">✨</span>`:`<div class="portal"><img src="${ownerImg(B.owner)}" alt="">${G.char!==B.owner?`<img src="${ownerImg(G.char)}" alt="">`:""}</div>`});
  $("bQ").innerHTML=`<p class="endq">✨ ${K("Into the book…","책 속으로…")}</p>`;$("bkMsg").textContent="";
  await Promise.all([bSpeak(D.enterLine,"@"+B.owner,true),b.ready,wait(1700)]);if(!bAlive(b))return;
  b.vt++;$("bStage").classList.remove("gloom","cine","slow");setState("broken");actMark("turtle","?");claimShow(true);camSet({x:30,y:100,z:1.3},0);
@@ -4141,7 +4141,7 @@ function bookDive(b,art){
    <div class="bd-burst">${burst}</div>
   </div></div>
   <div class="bd-team">${team.map((id,i)=>`<img src="${ownerImg(id)}" alt="" style="--i:${i};--x0:${xs[i]}vw;--r0:${i?8:-8}deg;--r1:${i?320:-320}deg">`).join("")}</div>
-  ${art?`<img class="bd-artbg" src="${D.dir+art}" alt=""><img class="bd-art" src="${D.dir+art}" alt="">`:""}
+  ${art?(asrc=>`<img class="bd-artbg" src="${asrc}" alt=""><img class="bd-art" src="${asrc}" alt="">`)((window.ENTU&&ENTU[B.id])||(D.dir+art)):""}
   <div class="bd-flash"></div><div class="bd-say">✨ ${K("Into the book…","책 속으로…")}</div>`;
  document.body.appendChild(el);
  const T=[];const at=(ms,f)=>T.push(setTimeout(f,ms));
@@ -4153,7 +4153,7 @@ function bookDive(b,art){
 /* the v29 block wraps bookEnter (reading mission 1 first) and then calls the original kept in _bookEnter0,
    so the 3D entrance replaces that original, not the wrapper */
 var bookEnter3D=async function(){const b=BK,B=b.B,D=b.D;capt(null);hush();sfx("evo");
- const art=D.enterArt&&(G.char===B.owner||(D.enterWith||[]).includes(G.char))?D.enterArt:null;
+ const art=D.enterArt||null;
  const dv=bookDive(b,art);
  $("bQ").innerHTML=`<p class="endq">✨ ${K("Into the book…","책 속으로…")}</p>`;$("bkMsg").textContent="";
  try{await Promise.all([bSpeak(D.enterLine,"@"+B.owner,true),b.ready,dv.peak])}catch(e){}

@@ -1,7 +1,7 @@
 /* 〈시골 쥐와 도시 쥐〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b2) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b2={dir:"books/b2/",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b2={dir:"books/b2/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"spread.webp",
  actors:{
   country:{n:"시골 쥐",voice:"sb_country",h:26,poses:{stand:["country_stand.webp",1],walk:["country_stand.webp",1],scared:["country_scared.webp",.92],happy:["country_stand.webp",1]}},
   city:{n:"도시 쥐",voice:"sb_city",h:26,poses:{stand:["city_stand.webp",1],proud:["city_stand.webp",1],scared:["city_scared.webp",.92],walk:["city_stand.webp",1]}},

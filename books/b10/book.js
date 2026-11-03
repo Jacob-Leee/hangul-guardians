@@ -1,7 +1,7 @@
 /* 〈빨간 암탉〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b10) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b10={dir:"books/b10/",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b10={dir:"books/b10/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"spread.webp",
  actors:{
   hen:{n:"빨간 암탉",voice:"sb_hen",h:28,poses:{stand:["hen_stand.webp",1],walk:["hen_stand.webp",1],work:["hen_work.webp",1],happy:["hen_stand.webp",1]}},
   duck:{n:"오리 둥둥",voice:"sb_duck",h:26,poses:{stand:["duck_stand.webp",1],walk:["duck_stand.webp",1]}},

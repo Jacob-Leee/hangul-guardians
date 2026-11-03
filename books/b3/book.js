@@ -1,7 +1,7 @@
 /* 〈소가 된 게으름뱅이〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b3) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b3={dir:"books/b3/",cover:"cover.webp",bg:"spread.webp",
+BOOKDATA.b3={dir:"books/b3/",enterArt:"scene_enter.webp",cover:"cover.webp",bg:"spread.webp",
  actors:{
   boy:{n:"게으른 소년 돌이",voice:"sb_boy",h:30,poses:{stand:["boy_stand.webp",1],walk:["boy_stand.webp",1],sleep:["boy_sleep.webp",.96],happy:["boy_happy.webp",1],ox:["oxboy_stand.webp",1.18],oxwalk:["oxboy_stand.webp",1.18]}},
   old:{n:"탈 할아버지",voice:"sb_old",h:32,poses:{stand:["old_stand.webp",1],walk:["old_stand.webp",1]}}},

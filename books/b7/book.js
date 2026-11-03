@@ -1,7 +1,7 @@
 /* 〈바람을 배달하는 말〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b7) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b7={dir:"books/b7/",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b7={dir:"books/b7/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"spread.webp",
  actors:{
   dal:{n:"배달 말 다그닥이",voice:"sb_dal",h:32,poses:{stand:["dal_stand.webp",1],walk:["dal_run.webp",1],run:["dal_run.webp",1],happy:["dal_stand.webp",1]}},
   mill:{n:"풍차 마을 아저씨",voice:"sb_mill",h:30,poses:{stand:["mill_stand.webp",1],walk:["mill_stand.webp",1]}}},

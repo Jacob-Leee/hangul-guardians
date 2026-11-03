@@ -1,7 +1,7 @@
 /* 〈개와 그림자〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b11) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b11={dir:"books/b11/",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b11={dir:"books/b11/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"spread.webp",
  actors:{
   pup:{n:"강아지 콩이",voice:"sb_pup",h:28,poses:{stand:["pup_stand.webp",1],walk:["pup_stand.webp",1],look:["pup_look.webp",1],happy:["pup_happy.webp",1]}},
   shadow:{n:"물속 그림자",voice:"narrator",h:22,poses:{stand:["pup_look.webp",.9],walk:["pup_look.webp",.9]}}},

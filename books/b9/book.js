@@ -1,7 +1,7 @@
 /* 〈원숭이의 뒤죽박죽 도서관〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b9) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b9={dir:"books/b9/",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b9={dir:"books/b9/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"spread.webp",
  actors:{
   mon:{n:"사서 원숭이 또로",voice:"sb_mon",h:30,poses:{stand:["mon_stand.webp",1],walk:["mon_stand.webp",1],hang:["mon_hang.webp",1],happy:["mon_stand.webp",1]}},
   pand:{n:"꼬마 판다 포포",voice:"sb_pand",h:26,poses:{stand:["pand_stand.webp",1],walk:["pand_stand.webp",1],happy:["pand_happy.webp",1],sad:["pand_stand.webp",.92]}}},

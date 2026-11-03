@@ -1,7 +1,7 @@
 /* 〈아기 돼지 삼 형제〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b12) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b12={dir:"books/b12/",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b12={dir:"books/b12/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"spread.webp",
  actors:{
   p1:{n:"첫째 솔솔이",voice:"sb_p1",h:26,poses:{stand:["p1_stand.webp",1],walk:["p1_stand.webp",1],scared:["pig_scared.webp",.95]}},
   p2:{n:"둘째 뚝딱이",voice:"sb_p2",h:26,poses:{stand:["p2_stand.webp",1],walk:["p2_stand.webp",1],scared:["pig_scared.webp",.95]}},

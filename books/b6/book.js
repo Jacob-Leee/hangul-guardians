@@ -1,7 +1,7 @@
 /* 〈뱀의 숲속 우체국〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b6) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b6={dir:"books/b6/",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b6={dir:"books/b6/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"spread.webp",
  actors:{
   post:{n:"우체부 뱀 슈룩이",voice:"sb_post",h:28,poses:{stand:["post_stand.webp",1],walk:["post_slide.webp",1],slide:["post_slide.webp",1],happy:["post_stand.webp",1]}},
   owl:{n:"부엉이 부부장",voice:"sb_owl",h:28,poses:{stand:["owl_stand.webp",1],walk:["owl_stand.webp",1],happy:["owl_happy.webp",1]}}},
