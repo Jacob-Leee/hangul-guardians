@@ -2466,7 +2466,7 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .ncv img{max-width:94%;max-height:94%;object-fit:contain}
 .ncv.hit{animation:dquake .5s ease}
 .ncv .nw{position:absolute;left:50%;bottom:4px;translate:-50%;background:rgba(27,34,51,.85);color:#fff;border-radius:8px;padding:0 8px;font-size:13px}
-.num{position:absolute;left:5px;top:5px;background:#fff;border-radius:9px;font-weight:900;font-size:22px;padding:0 8px;box-shadow:0 2px 3px rgba(0,0,0,.35);color:#1E2436;z-index:2}
+.nchc .num,.ncv .num{position:absolute;left:5px;top:5px;background:#fff;border-radius:9px;font-weight:900;font-size:22px;padding:0 8px;box-shadow:0 2px 3px rgba(0,0,0,.35);color:#1E2436;z-index:2}
 .ncpips{position:absolute;right:5px;top:5px;background:rgba(255,255,255,.92);border-radius:8px;padding:3px 4px;display:grid;grid-template-columns:repeat(3,7px);gap:2.5px;z-index:2}
 .ncpips i{width:7px;height:7px;border-radius:50%;background:#E2504C}
 .nchc .ncpips i{background:#3550B8}
