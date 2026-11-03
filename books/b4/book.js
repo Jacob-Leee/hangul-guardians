@@ -1,7 +1,7 @@
 /* 〈해와 달이 된 오누이〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b4) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b4={dir:"books/b4/",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b4={dir:"books/b4/",cover:"cover.webp",bg:"spread.webp",enterArt:"scene_enter.webp",
  actors:{
   sis:{n:"누나 해순이",voice:"sb_sis",h:30,poses:{stand:["sis_stand.webp",1],walk:["sis_stand.webp",1],scared:["sis_scared.webp",.95]}},
   bro:{n:"동생 달이",voice:"sb_bro",h:27,poses:{stand:["bro_stand.webp",1],walk:["bro_stand.webp",1],scared:["bro_scared.webp",.95]}},
