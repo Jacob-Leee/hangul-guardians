@@ -2581,7 +2581,7 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .wglow{position:absolute;width:var(--w,5%);aspect-ratio:1;translate:-50% -50%;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(255,224,130,.85),rgba(255,200,80,.25) 55%,transparent 70%);mix-blend-mode:screen;animation:wgl 2.6s ease-in-out infinite}
 .wglow.hot{background:radial-gradient(circle,rgba(255,180,90,.9),rgba(255,120,40,.3) 55%,transparent 70%)}
 @keyframes wgl{0%,100%{opacity:.35;transform:scale(.92)}50%{opacity:.85;transform:scale(1.08)}}
-.hqhot.live i{opacity:1;box-shadow:0 0 0 3px rgba(255,214,107,.85),0 0 22px rgba(255,214,107,.6);animation:hqnudge 1.15s ease}
+.hqhot.live i{animation:hqnudge 1.15s ease}
 @keyframes hqnudge{0%,100%{transform:scale(1)}30%{transform:scale(1.06) rotate(-1.5deg)}60%{transform:scale(1.03) rotate(1.2deg)}}
 .hlspark{position:absolute;translate:-50% -50%;font-size:clamp(14px,2.2cqw,24px);pointer-events:none;animation:hlsp 1.5s ease forwards;z-index:5}
 @keyframes hlsp{0%{opacity:0;transform:translateY(6px) scale(.6)}30%{opacity:1}100%{opacity:0;transform:translateY(-18px) scale(1.15) rotate(18deg)}}
