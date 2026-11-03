@@ -2548,3 +2548,12 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 #rvBoxB.dim{opacity:.55}
 .pweek{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.6);display:grid;gap:6px;font-size:14px}
 .pchip{display:inline-block;background:#FFE0DC;color:#B3362A;border-radius:999px;padding:2px 9px;margin:2px 3px;font-weight:800}
+/* v41b 일하는 모습 팝업 */
+.wkpop{position:absolute;inset:0;display:grid;place-items:center;z-index:60;background:rgba(20,30,50,.28);border-radius:inherit;animation:wkin .25s ease-out}
+.wkpop .wkin{background:#FFFDF4;border:4px solid #2B3044;border-radius:22px;padding:14px 22px 16px;display:grid;justify-items:center;gap:4px;box-shadow:0 14px 40px rgba(0,0,0,.3);animation:wkpopin .3s cubic-bezier(.3,1.4,.5,1)}
+.wkpop img{height:min(42vh,340px);width:auto}
+.wkpop b{font-size:20px}
+.wkpop small{color:#7A6A4F;font-weight:800}
+.wkpop.out{opacity:0;transition:opacity .4s}
+@keyframes wkpopin{from{transform:scale(.6)}to{transform:scale(1)}}
+@keyframes wkin{from{opacity:0}to{opacity:1}}

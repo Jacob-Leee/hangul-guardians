@@ -3263,7 +3263,7 @@ PGM.fish=()=>{let F=[],A,svg,last=0,busy=false,caught=0,phase=0,hook=null,bend=0
  const ease=k=>k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
  const splash=(x,y,big)=>{const s=document.createElement("div");s.className="pgsplash"+(big?" big":"");s.style.left=x+"px";s.style.top=y+"px";s.innerHTML="<b></b><i></i><i></i><i></i><i></i><i></i>";A.appendChild(s);setTimeout(()=>s.remove(),900)};
  const mouth=f=>{const fw=f.el.offsetWidth,fh=f.el.offsetHeight,r=f.el.classList.contains("r");return [f.x+(r?fw*.94:fw*.06),f.y+fh*.56]};
- const mk=()=>{const el=document.createElement("button");el.className="pgfish";el.innerHTML=`<span class="in">${fishBody(FC2[F.length%FC2.length])}<span class="tag"></span></span>`;A.appendChild(el);
+ const mk=()=>{const el=document.createElement("button");el.className="pgfish";el.innerHTML=`<span class="in">${window.PGIMG?'<img class="fimg" src="'+PGIMG.fish[F.length%PGIMG.fish.length]+'" alt="">':fishBody(FC2[F.length%FC2.length])}<span class="tag"></span></span>`;A.appendChild(el);
   const f={el,x:Math.random()*Math.max(10,A.clientWidth-200)+40,y:0,vx:(F.length%2?-1:1)*(34+Math.random()*22),ph:Math.random()*6,item:null};el.onclick=()=>tap(f);return f};
  const cast=async f=>{const g=geo(),from=hook||idleHook(g),to=mouth(f);sfx2("cast");hook=from.slice();
   await tw(330,k=>{const e=ease(k);hook=[from[0]+(to[0]-from[0])*e,from[1]+(to[1]-from[1])*e-Math.sin(k*Math.PI)*g.H*.1];bend=.15*k});
@@ -4259,7 +4259,7 @@ var _showSettings1=showSettings;showSettings=function(){_showSettings1();const c
   const ref=c.querySelector(".credit");if(ref)ref.after(p);else c.appendChild(p)}};
 
 
-window.HQART={"room":{"base":"assets/img/hq/room_base.webp","case":"assets/img/hq/room_case.webp","deck":"assets/img/hq/room_deck.webp","living":"assets/img/hq/room_living.webp","pic":"assets/img/hq/room_pic.webp","study":"assets/img/hq/room_study.webp"},"item":{"balloons":"assets/img/hq/item_balloons.webp","basket":"assets/img/hq/item_basket.webp","bone":"assets/img/hq/item_bone.webp","books":"assets/img/hq/item_books.webp","booktag":"assets/img/hq/item_booktag.webp","bronze":"assets/img/hq/item_bronze.webp","cake":"assets/img/hq/item_cake.webp","candle":"assets/img/hq/item_candle.webp","cardbox":"assets/img/hq/item_cardbox.webp","cards":"assets/img/hq/item_cards.webp","clock":"assets/img/hq/item_clock.webp","cookies":"assets/img/hq/item_cookies.webp","door":"assets/img/hq/item_door.webp","fflag":"assets/img/hq/item_fflag.webp","finish":"assets/img/hq/item_finish.webp","frame":"assets/img/hq/item_frame.webp","gear":"assets/img/hq/item_gear.webp","gold":"assets/img/hq/item_gold.webp","goldbrick":"assets/img/hq/item_goldbrick.webp","hammer":"assets/img/hq/item_hammer.webp","hourglass":"assets/img/hq/item_hourglass.webp","hut":"assets/img/hq/item_hut.webp","invite":"assets/img/hq/item_invite.webp","key":"assets/img/hq/item_key.webp","kite":"assets/img/hq/item_kite.webp","lamp":"assets/img/hq/item_lamp.webp","lantern":"assets/img/hq/item_lantern.webp","mailbox":"assets/img/hq/item_mailbox.webp","meal":"assets/img/hq/item_meal.webp","mirror":"assets/img/hq/item_mirror.webp","orb":"assets/img/hq/item_orb.webp","paints":"assets/img/hq/item_paints.webp","paper":"assets/img/hq/item_paper.webp","piano":"assets/img/hq/item_piano.webp","plant":"assets/img/hq/item_plant.webp","puzzle":"assets/img/hq/item_puzzle.webp","rainbow":"assets/img/hq/item_rainbow.webp","raindrop":"assets/img/hq/item_raindrop.webp","rod":"assets/img/hq/item_rod.webp","rope4":"assets/img/hq/item_rope4.webp","runmedal":"assets/img/hq/item_runmedal.webp","scope":"assets/img/hq/item_scope.webp","shield":"assets/img/hq/item_shield.webp","silver":"assets/img/hq/item_silver.webp","sofa":"assets/img/hq/item_sofa.webp","sohat":"assets/img/hq/item_sohat.webp","star":"assets/img/hq/item_star.webp","station":"assets/img/hq/item_station.webp","sunflower":"assets/img/hq/item_sunflower.webp","tank":"assets/img/hq/item_tank.webp","teddy":"assets/img/hq/item_teddy.webp","train":"assets/img/hq/item_train.webp","trophy":"assets/img/hq/item_trophy.webp","truthbell":"assets/img/hq/item_truthbell.webp","umbrella":"assets/img/hq/item_umbrella.webp","warmbread":"assets/img/hq/item_warmbread.webp","windjar":"assets/img/hq/item_windjar.webp","yarn":"assets/img/hq/item_yarn.webp"},"launch":{"grid":"assets/img/hq/launch_grid.webp"},"work":{"rat":"assets/img/hq/work_rat.webp"}};
+window.HQART={"room":{"base":"assets/img/hq/room_base.webp","case":"assets/img/hq/room_case.webp","deck":"assets/img/hq/room_deck.webp","living":"assets/img/hq/room_living.webp","pic":"assets/img/hq/room_pic.webp","study":"assets/img/hq/room_study.webp"},"item":{"balloons":"assets/img/hq/item_balloons.webp","basket":"assets/img/hq/item_basket.webp","bone":"assets/img/hq/item_bone.webp","books":"assets/img/hq/item_books.webp","booktag":"assets/img/hq/item_booktag.webp","bronze":"assets/img/hq/item_bronze.webp","cake":"assets/img/hq/item_cake.webp","candle":"assets/img/hq/item_candle.webp","cardbox":"assets/img/hq/item_cardbox.webp","cards":"assets/img/hq/item_cards.webp","clock":"assets/img/hq/item_clock.webp","cookies":"assets/img/hq/item_cookies.webp","door":"assets/img/hq/item_door.webp","fflag":"assets/img/hq/item_fflag.webp","finish":"assets/img/hq/item_finish.webp","frame":"assets/img/hq/item_frame.webp","gear":"assets/img/hq/item_gear.webp","gold":"assets/img/hq/item_gold.webp","goldbrick":"assets/img/hq/item_goldbrick.webp","hammer":"assets/img/hq/item_hammer.webp","hourglass":"assets/img/hq/item_hourglass.webp","hut":"assets/img/hq/item_hut.webp","invite":"assets/img/hq/item_invite.webp","key":"assets/img/hq/item_key.webp","kite":"assets/img/hq/item_kite.webp","lamp":"assets/img/hq/item_lamp.webp","lantern":"assets/img/hq/item_lantern.webp","mailbox":"assets/img/hq/item_mailbox.webp","meal":"assets/img/hq/item_meal.webp","mirror":"assets/img/hq/item_mirror.webp","orb":"assets/img/hq/item_orb.webp","paints":"assets/img/hq/item_paints.webp","paper":"assets/img/hq/item_paper.webp","piano":"assets/img/hq/item_piano.webp","plant":"assets/img/hq/item_plant.webp","puzzle":"assets/img/hq/item_puzzle.webp","rainbow":"assets/img/hq/item_rainbow.webp","raindrop":"assets/img/hq/item_raindrop.webp","rod":"assets/img/hq/item_rod.webp","rope4":"assets/img/hq/item_rope4.webp","runmedal":"assets/img/hq/item_runmedal.webp","scope":"assets/img/hq/item_scope.webp","shield":"assets/img/hq/item_shield.webp","silver":"assets/img/hq/item_silver.webp","sofa":"assets/img/hq/item_sofa.webp","sohat":"assets/img/hq/item_sohat.webp","star":"assets/img/hq/item_star.webp","station":"assets/img/hq/item_station.webp","sunflower":"assets/img/hq/item_sunflower.webp","tank":"assets/img/hq/item_tank.webp","teddy":"assets/img/hq/item_teddy.webp","train":"assets/img/hq/item_train.webp","trophy":"assets/img/hq/item_trophy.webp","truthbell":"assets/img/hq/item_truthbell.webp","umbrella":"assets/img/hq/item_umbrella.webp","warmbread":"assets/img/hq/item_warmbread.webp","windjar":"assets/img/hq/item_windjar.webp","yarn":"assets/img/hq/item_yarn.webp"},"launch":{"grid":"assets/img/hq/launch_grid.webp"},"work":{"dog":"assets/img/hq/work_dog.webp","dragon":"assets/img/hq/work_dragon.webp","horse":"assets/img/hq/work_horse.webp","monkey":"assets/img/hq/work_monkey.webp","ox":"assets/img/hq/work_ox.webp","pig":"assets/img/hq/work_pig.webp","rabbit":"assets/img/hq/work_rabbit.webp","rat":"assets/img/hq/work_rat.webp","rooster":"assets/img/hq/work_rooster.webp","sheep":"assets/img/hq/work_sheep.webp","snake":"assets/img/hq/work_snake.webp","tiger":"assets/img/hq/work_tiger.webp"}};
 /* ===== v29.5 우리 본부 (HQ): the shop is gone; reading achievements give treasures to decorate the HQ in the library tree.
    Treasures come when something is achieved (a case solved, a book won back, a playground level, a battle tier, course runs,
    one lap of today's adventure), not for every game. Rooms open with the hero level (3, 6, 9).
@@ -5016,7 +5016,7 @@ PGM.trace=function(){var A,row,fill,boxes=[],qual=[],color="#3949AB";
      dc2.beginPath();dc2.moveTo(p[0][0],p[0][1]);acc=0;
      for(var s5=0;s5<segs.length;s5++){if(acc+segs[s5]>=dist){var f2=(dist-acc)/segs[s5];dc2.lineTo(p[s5][0]+(p[s5+1][0]-p[s5][0])*f2,p[s5][1]+(p[s5+1][1]-p[s5][1])*f2);break}acc+=segs[s5];dc2.lineTo(p[s5+1][0],p[s5+1][1])}
      dc2.stroke();
-     dc2.font=Math.floor(sz*.09)+"px sans-serif";dc2.textAlign="center";dc2.fillText("✏️",x+sz*.035,y-sz*.03);
+     if(window.PGPEN&&PGPEN.complete&&PGPEN.naturalWidth){var pw=sz*.18;dc2.drawImage(PGPEN,x-pw*.05,y-pw*.95,pw,pw)}else{dc2.font=Math.floor(sz*.09)+"px sans-serif";dc2.textAlign="center";dc2.fillText("✏️",x+sz*.035,y-sz*.03)}
      if(k<1)requestAnimationFrame(step);else setTimeout(function(){one(j+1)},180)}
     requestAnimationFrame(step)}
    one(i6)}
@@ -6591,6 +6591,77 @@ function wireRec(){
  };
 }
 var _rp40=readPage;window.readPage=function(){var r=_rp40.apply(this,arguments);try{setTimeout(wireRec,40)}catch(e){}return r};
+})();
+
+/* ===== v41: 놀이터 고퀄 스킨 — 배경 8장 + 스프라이트 (PGIMG/pgSkin) ===== */
+(function(){
+"use strict";
+var D="assets/img/pg/";
+window.PGIMG={
+ fish:[D+"fish_1.webp",D+"fish_2.webp",D+"fish_3.webp"],
+ engine:D+"train_engine.webp",car:D+"train_car.webp",
+ back:D+"pair_back.webp",pencil:D+"trace_pencil.webp",
+ bg:{fish:D+"fish_bg.webp",train:D+"train_bg.webp",pair:D+"pair_bg.webp",fill:D+"fill_bg.webp",
+     trace:D+"trace_bg.webp",dict:D+"dict_bg.webp",asm:D+"asm_bg.webp",opp:D+"opp_bg.webp"}};
+window.PGPEN=new Image();PGPEN.src=PGIMG.pencil;
+window.pgSkin=function(){
+ var st=document.getElementById("pgSkinCss");
+ if(!st){st=document.createElement("style");st.id="pgSkinCss";document.head.appendChild(st)}
+ var B=PGIMG.bg,u=function(x){return 'url("'+x+'")'};
+ try{PGPEN.src=PGIMG.pencil}catch(e){}
+ st.textContent=
+  '.pond3{background:'+u(B.fish)+' center/cover}.pond3 .lily{display:none}'
+ +'.pond3 .shore{background:none}.pond3 .water{background:linear-gradient(rgba(42,120,170,.18),rgba(20,70,110,.34))}'
+ +'.yard{background:'+u(B.train)+' center bottom/cover}.yard .sun,.yard .hill,.yard .cl{display:none}'
+ +'.yard .track{background:none}.yard .track .rail{display:none}'
+ +'.table{background:'+u(B.pair)+' center/cover}'
+ +'.fpage2{background:'+u(B.fill)+' center/cover}'
+ +'.opp3{background:'+u(B.opp)+' center/cover}'
+ +'.asm3{background:'+u(B.asm)+' center/cover}'
+ +'.dict3{background:'+u(B.dict)+' center/cover}'
+ +'#pgArea.pgtrace{background:'+u(B.trace)+' center/cover}'
+ +'.pgtrace .trace3{background:none}'
+ +'.trace3 .trbox{background:rgba(255,255,255,.88);box-shadow:0 4px 14px rgba(90,60,20,.18)}'
+ +'.pgfish .in .fimg{position:absolute;left:50%;top:50%;width:auto;height:150%;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 3px rgba(0,30,60,.3))}'
+ +'.pgfish.r .fimg{transform:translate(-50%,-50%) scaleX(-1)}'
+ +'.pcard .cb{background:'+u(PGIMG.back)+' center/cover;border-radius:inherit}.pcard .cb i{display:none}'
+ +'.train2 .car{background:'+u(PGIMG.car)+' center bottom/contain no-repeat;border:none;box-shadow:none;border-radius:0;height:clamp(74px,12.6cqw,110px);min-width:clamp(80px,13.5cqw,118px)}'
+ +'.train2 .car .wh{display:none}'
+ +'.train2 .car .slot{position:relative;top:-16%;background:none;border:none}'
+ +'.train2 .loco{background:'+u(PGIMG.engine)+' center bottom/contain no-repeat;border:none;border-radius:0;box-shadow:none;width:clamp(100px,16.5cqw,142px);height:clamp(96px,16cqw,138px)}'
+ +'.train2 .loco .chim,.train2 .loco .cab,.train2 .loco .wh,.train2 .loco .bump{display:none}'
+ +'.train2 .loco .plate{right:4%;top:30%;min-width:36%;height:38%}';
+};
+pgSkin();
+/* 따라 쓰기만 무대 div가 없어 pgArea에 표식 */
+var _pp41=pgPlay;window.pgPlay=function(g){var r=_pp41.apply(this,arguments);
+ try{var a=document.getElementById("pgArea");if(a){a.classList.remove("pgtrace");if(g==="trace")a.classList.add("pgtrace")}}catch(e){}
+ return r};
+})();
+
+/* ===== v41b: 본부 영웅 탭 → 일하는 모습 팝업 ===== */
+(function(){
+"use strict";
+function bindWk(root){
+ var WK=(window.HQART&&HQART.work)||{};
+ root.querySelectorAll(".hqhot,.hqcb").forEach(function(b){
+  if(b.__wk)return;b.__wk=1;
+  b.addEventListener("click",function(){
+   var id=b.dataset.h,wk=WK[id];if(!wk)return;
+   var c=CHARS.find(function(x){return x.id===id});if(!c)return;
+   var J=(window.JOBS&&JOBS[id])||["⭐",["is helping","열심히 돕는 중!"]];
+   var old=document.getElementById("wkPop");if(old)old.remove();
+   var d=document.createElement("div");d.id="wkPop";d.className="wkpop";
+   d.innerHTML='<div class="wkin"><img src="'+wk+'" alt=""><b>'+escH(L(c.n))+'</b><small>'+escH(K(J[1][0],J[1][1]))+'</small></div>';
+   d.onclick=function(){d.remove()};
+   var host=document.getElementById("hqCard")||document.body;
+   host.appendChild(d);
+   setTimeout(function(){if(!d.parentNode)return;d.classList.add("out");setTimeout(function(){d.remove()},420)},2800);
+  });
+ });
+}
+if(window.hqPic){var _hp=hqPic;window.hqPic=function(){var r=_hp.apply(this,arguments);try{if(r)bindWk(document.getElementById("hqCard"))}catch(e){}return r}}
+if(window.hqBase){var _hb=hqBase;window.hqBase=function(){var r=_hb.apply(this,arguments);try{bindWk(document.getElementById("hqCard"))}catch(e){}return r}}
 })();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
