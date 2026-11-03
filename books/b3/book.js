@@ -5,7 +5,7 @@ BOOKDATA.b3={dir:"books/b3/",cover:"cover.webp",bg:"spread.webp",
  actors:{
   boy:{n:"게으른 소년 돌이",voice:"sb_boy",h:30,poses:{stand:["boy_stand.webp",1],walk:["boy_stand.webp",1],sleep:["boy_sleep.webp",.96],happy:["boy_happy.webp",1],ox:["oxboy_stand.webp",1.18],oxwalk:["oxboy_stand.webp",1.18]}},
   old:{n:"탈 할아버지",voice:"sb_old",h:32,poses:{stand:["old_stand.webp",1],walk:["old_stand.webp",1]}},
-  cow:{n:"얼룩소",voice:"narrator",h:34,poses:{stand:["oxboy_stand.webp",1],walk:["oxboy_stand.webp",1]}}},
+  cow:{n:"얼룩소",voice:"narrator",h:30,poses:{stand:["cow_stand.webp",1],walk:["cow_stand.webp",1]}}},
  at:{home:[10,86],bench:[21,76],yard:[30,88],gate:[40,90],field:[52,88],field2:[63,86],hill:[71,86],meal:[84,84],barn:[93,82]},
  broken:{boy:["bench","sleep"],old:["field","stand"],cow:["barn","stand"]},
  endState:{boy:["field","happy"],old:["meal","stand"],cow:["field2","stand"]},

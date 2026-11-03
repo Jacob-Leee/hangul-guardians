@@ -1,47 +1,16 @@
 # 그림 프롬프트 전체 (v31.1, 2026-11-03)
 
-필요한 그림 **190장**의 완성 프롬프트예요. 그림마다 **저장 이름 · 첨부할 참고 그림 · 프롬프트**가 있고, 프롬프트는 그대로 복사해 ChatGPT에 붙여 넣으면 됩니다. 제작 체크리스트 페이지에도 같은 내용이 그림마다 [프롬프트 복사] 단추로 있어요.
+필요한 그림 **200장**의 완성 프롬프트예요. 그림마다 **저장 이름 · 첨부할 참고 그림 · 프롬프트**가 있고, 프롬프트는 그대로 복사해 ChatGPT에 붙여 넣으면 됩니다. 제작 체크리스트 페이지에도 같은 내용이 그림마다 [프롬프트 복사] 단추로 있어요.
 
-**오늘(11/3) 이미 끝난 것**: 본부 조종실 그림 원본 교체(room_pic) · 본부 방 4장(수사실·관측대·거실·서재, room_case/deck/living/study) — 그림 속 반짝이 자리에 보물 슬롯까지 맞춤. 이 그림들은 다시 만들 필요 없어요.
+**이미 끝난 것(11/3)**: 본부 조종실·방 4장 · 사건 9 물레방아 배경 · 사건 12 신문사 배경 · 보상 아이콘 5개(열쇠·오두막·등불·모래시계·망원경) · 3권 그림(표지·무대·이야기 1~2·돌이 3포즈·할아버지·소가 된 돌이). 이것들은 다시 만들 필요 없어요.
 
 공통 규칙: 화면 속 글자·숫자·로고 금지 · 투명 그림은 **진짜 투명 PNG**(체크무늬·검은 배경 ❌) · 기존 캐릭터·브랜드 흉내 금지 · 웹에서 찾은 사진은 참고로 쓰지 않음(참고 그림은 이 저장소 그림이나 보호자가 만든 그림만). 올리는 곳: 깃허브 `incoming/` 폴더에 저장 이름 그대로 (예: `incoming/item_key.png`, `incoming/b3_boy_stand.png`). 첨부할 참고 그림은 깃허브 저장소에서 내려받으면 돼요(파일을 열고 Download).
 
 동화책 무대(spread)는 1536×1024로 만들면 게임이 위아래 8%씩 잘라 씁니다. 프롬프트 속 위치(%)는 잘리기 전 그림 기준이에요.
 
-## 1순위 · 사건 그림 2장 (내용 오류 수정 + 빠진 배경) (2장)
-
-사건 9는 지금 그림이 글과 맞지 않아요(물이 흐름 ↔ "물이 흐르지 않아요"). 편집 한 번이면 끝나서 가장 먼저.
-
-### 1. `case09_monkey_blocked.png` — 사건 9 막힌 개울 (고친 그림)
-
-- 쓰임새: 사건 9 현장. 지금 그림은 물이 흘러서 "물이 흐르지 않아요"라는 글과 맞지 않아요. 지금 그림은 해결 장면(물이 다시 흐름)에 그대로 씁니다.
-- 첨부: assets/img/case/case09_monkey.webp (지금 사건 9 그림 — 이걸 고쳐 달라고 첨부)
-
-```
-Edit the attached image. Change only the stream: a big grey boulder now blocks the wooden sluice gate at the top left where the little waterfall was, so the water has stopped. No waterfall; the stream is low and still; the waterwheel stands still. Keep everything else exactly the same: framing, camera, lighting, colours, the mill house, the wheel, the grass and all other details. Same canvas 1536x1024. No characters, animals or people. No text.
-```
-
-### 2. `case12_pig.png` — 사건 12 배경 — 숲속 나무집 신문사
-
-- 쓰임새: 사건 12 현장 (지금은 코드로 그린 장면). 단서 자리(그림에는 단서 물건 없이 자리만): 책상 위(가로 46%, 세로 70%) · 창문 틈(76, 62) · 벽의 빈 사진틀(24, 58) · 작은 탁자(62, 84)
-- 첨부: assets/img/case/case01_rat.webp (배경 그림체)
-
-```
-A background for a cute 3D animated storybook game, matching the rendering of the attached reference image: soft, warm, slightly painterly 3D. Rich detail kept soft and low in contrast so characters and clue markers stand out.
-Scene: inside a treehouse newspaper office in the forest, morning. A small hand-cranked printing press, stacks of blank paper, a wooden desk. Busy and cheerful.
-Camera: at a small child's eye level, looking straight ahead, slightly wide.
-Middle ground: a wooden desk at about 46% from the left, its top at about 70% of the image height, with blank paper and an empty pen tray. A round window with a slightly open shutter at about 76% from the left, 62% height. On the left wall, three empty photo frames pinned to a board at about 24% from the left, 58% height. A small stool used as a side table at about 62% from the left near the bottom.
-Foreground: a wooden plank floor, open and low in contrast. The ground across the lower half is flat and open.
-Background: the printing press, shelves of paper rolls, leafy branches outside the window.
-Composition: the base of the back wall sits between 50% and 56% of the image height. The top 40% is only beams, hanging lamps and the window top (it may be cropped). Keep the far left and far right of the lower half free of large objects, because characters stand there.
-Light: warm morning light from the window and the upper left. Main colours: warm wood, paper cream, leaf green, ink blue.
-Do not include: characters, animals or people; any text, letters, numbers, headlines or signs with writing; ink spills, fur, photos with pictures, cups or any clue objects; logos, buttons or watermark.
-Canvas 1536x1024 (landscape).
-```
-
 ## 2순위 · 보상 아이콘 58개 (보호자 샘플 그림체, 투명 PNG) (58장)
 
-아이가 받는 보물 전부. 한 장에 한 개, 꼭 투명 PNG(검은 배경 ❌ — 검으면 광택이 잘려요). 샘플 시트에 이미 그린 것(열쇠·모래시계·망원경·트로피 등)도 한 개씩 투명으로 다시 뽑아 주세요. 하루 몇 개씩 와도 그때그때 바꿔 끼웁니다.
+아이가 받는 보물 전부. 한 장에 한 개, 꼭 투명 PNG(검은 배경 ❌ — 검으면 광택이 잘려요). 11/3 올려 주신 그림으로 5개(열쇠·오두막·등불·모래시계·망원경)는 이미 연결했어요 — 등불·모래시계·망원경은 검은 시트에서 오려 쓴 임시본이라, 투명 단일본이 오면 더 깨끗하게 교체합니다. 하루 몇 개씩 와도 그때그때 바꿔 끼웁니다.
 
 ### 1. `item_key.png` — 보상 아이콘 — 황금 열쇠 (사건)
 
@@ -855,7 +824,7 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1024x1024.
 ```
 
-## 3순위 · 동화책 3권 〈소가 된 게으름뱅이〉 (11장)
+## 3순위 · 동화책 3권 〈소가 된 게으름뱅이〉 (12장)
 
 순서대로 만드세요: ① 인물 기본 포즈 → ② 다른 포즈(기본 포즈 첨부) → ③ 무대 → ④ 이야기 그림(인물+무대 첨부) → ⑤ 표지. 한 권은 ChatGPT 대화 하나에서 이어서 만들면 그림체가 잘 맞아요.
 
@@ -947,7 +916,22 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1024x1024.
 ```
 
-### 7. `b3_spread.png` — 무대 (현장 조사 배경)
+### 7. `b3_cow_stand.png` — 얼룩소 — 기본 포즈 (먼저 만들기)
+
+- 쓰임새: 소가 된 게으름뱅이: 장면에서 움직이는 인물. 이 그림이 이 인물의 기준이 돼요
+- 첨부: books/b2/country_stand.webp (그림체 기준)
+
+```
+A single character for a cute 3D animated children's storybook game, in the art style of the attached reference image (soft, warm, slightly painterly 3D, rounded friendly shapes). Use the attached reference only for its art style and rendering — do not copy its character, clothes, accessories or places.
+Character: an ordinary gentle farm cow of the village: ivory-white body with soft warm-brown patches, a cream muzzle, small rounded horns, kind sleepy eyes, a tuft tail — clearly a REAL four-legged farm animal with NO clothes, NO hair tuft and NO jacket collar, so nobody confuses her with Dori-as-an-ox (from a Korean folk tale in an old (Joseon-era) countryside village).
+Pose: standing on four legs facing slightly left, calm and friendly, gently flicking her tail.
+Whole body visible, three-quarter view facing slightly to the viewer's left, feet near the bottom edge, nothing cropped.
+REAL transparent PNG background with an alpha channel (not a checkerboard pattern and NOT a black background). No floor, no cast shadow, no scenery, no motion lines.
+No text, letters, numbers, logos or watermark anywhere (no writing on signs, books, labels or screens). Friendly for a 5-year-old — nothing scary or violent.
+Canvas 1024x1024.
+```
+
+### 8. `b3_spread.png` — 무대 (현장 조사 배경)
 
 - 쓰임새: 소가 된 게으름뱅이: 현장 조사 무대. 반짝이 단서가 이 그림의 물건 위에 뜨고, 인물들이 정해진 자리에 서요
 - 첨부: books/b2/spread.webp (무대 그림체·형식 기준)
@@ -965,7 +949,7 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1536x1024 (landscape).
 ```
 
-### 8. `b3_page1.png` — 이야기 그림 1
+### 9. `b3_page1.png` — 이야기 그림 1
 
 - 쓰임새: 소가 된 게으름뱅이: 순서 맞추기 카드 + 이야기 장면
 - 첨부: b3_boy_stand.png · b3_spread.png (무대)
@@ -981,7 +965,7 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1536x1024 (landscape). The game may trim about 8% at the top and the bottom.
 ```
 
-### 9. `b3_page2.png` — 이야기 그림 2
+### 10. `b3_page2.png` — 이야기 그림 2
 
 - 쓰임새: 소가 된 게으름뱅이: 순서 맞추기 카드 + 이야기 장면
 - 첨부: b3_boy_stand.png · b3_old_stand.png · b3_oxboy_stand.png · b3_spread.png (무대)
@@ -997,7 +981,7 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1536x1024 (landscape). The game may trim about 8% at the top and the bottom.
 ```
 
-### 10. `b3_page3.png` — 이야기 그림 3
+### 11. `b3_page3.png` — 이야기 그림 3
 
 - 쓰임새: 소가 된 게으름뱅이: 순서 맞추기 카드 + 이야기 장면
 - 첨부: b3_boy_stand.png · b3_old_stand.png · b3_spread.png (무대)
@@ -1013,7 +997,7 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1536x1024 (landscape). The game may trim about 8% at the top and the bottom.
 ```
 
-### 11. `b3_cover.png` — 표지 (세로)
+### 12. `b3_cover.png` — 표지 (세로)
 
 - 쓰임새: 소가 된 게으름뱅이: 도서관 책장 표지 + 책 속으로 뛰어드는 3D 입장
 - 첨부: b3_boy_stand.png · b3_oxboy_stand.png · b3_old_stand.png · b3_spread.png (무대)
@@ -2359,6 +2343,153 @@ Composition: the top 25% is only sky or a soft background, kept plain for the ga
 Art style: the same cute, high-quality 3D animated storybook look as the attached images.
 NO title, NO text, NO letters, numbers, logos or watermark. Friendly for a 5-year-old.
 Canvas 1024x1536 (portrait).
+```
+
+## 3-1순위 · 책 속 입장 장면 11장 (2~12권) (11장)
+
+영웅이 빛나는 책 속으로 뛰어드는 연출 — 지금은 1권(토끼와 거북이)에만 있고, 나머지 책은 초상화 문으로 대신해요. 무대(spread)를 먼저 만든 뒤에 만들면 그림체가 맞아요.
+
+### 1. `b2_enter.png` — 2권 입장 장면 — 번개 쥐
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 번개 쥐(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/rat.webp (번개 쥐 기준 그림) · books/b2/spread.webp (2권 무대) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: the country mouse's sunny village: a grassy path, the big oak tree with the little round door, wildflowers, and far away the tall city houses — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
+```
+
+### 2. `b3_enter.png` — 3권 입장 장면 — 강철 소
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 강철 소(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/ox.webp (강철 소 기준 그림) · books/b3/spread.webp (3권 무대) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: an old Korean countryside farmyard: a thatched cottage, a golden barley field and a low wooden dinner table under a persimmon tree — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
+```
+
+### 3. `b4_enter.png` — 4권 입장 장면 — 대장 호랑이
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 대장 호랑이(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/tiger.webp (대장 호랑이 기준 그림) · b4_spread.png (4권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: an old Korean mountain village at dusk: a small cottage, a tall tree, and a golden rope of light reaching up into the starry sky — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
+```
+
+### 4. `b5_enter.png` — 5권 입장 장면 — 하늘 용
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 하늘 용(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/dragon.webp (하늘 용 기준 그림) · b5_spread.png (5권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: a sunny sky kingdom of fluffy clouds with a little cloud house and a rainbow waterfall — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
+```
+
+### 5. `b6_enter.png` — 6권 입장 장면 — 바람 뱀
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 바람 뱀(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/snake.webp (바람 뱀 기준 그림) · b6_spread.png (6권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: a cosy forest post office among big trees: a counter with pigeonhole shelves and letters, dappled light — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
+```
+
+### 6. `b7_enter.png` — 7권 입장 장면 — 질주 말
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 질주 말(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/horse.webp (질주 말 기준 그림) · b7_spread.png (7권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: a breezy windmill village: a dirt road, a wooden cart and spinning windmills on green hills — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
+```
+
+### 7. `b8_enter.png` — 8권 입장 장면 — 구름 양
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 구름 양(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/sheep.webp (구름 양 기준 그림) · b8_spread.png (8권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: a sunny hillside meadow with a flock of fluffy sheep, a shepherd's watch post and a village below — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
+```
+
+### 8. `b9_enter.png` — 9권 입장 장면 — 재주 원숭이
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 재주 원숭이(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/monkey.webp (재주 원숭이 기준 그림) · b9_spread.png (9권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: a grand cosy library with tall wooden bookshelves, ladders and warm lamps — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
+```
+
+### 9. `b10_enter.png` — 10권 입장 장면 — 새벽 닭
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 새벽 닭(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/rooster.webp (새벽 닭 기준 그림) · b10_spread.png (10권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: a cheerful farm: a wheat field, a little mill and a warm bakery oven by a red hen's house — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
+```
+
+### 10. `b11_enter.png` — 11권 입장 장면 — 용감한 개
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 용감한 개(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/dog.webp (용감한 개 기준 그림) · b11_spread.png (11권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: a sparkling forest stream with a one-log bridge and soft green banks — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
+```
+
+### 11. `b12_enter.png` — 12권 입장 장면 — 든든 돼지
+
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 든든 돼지(주인 영웅)로 플레이할 때 나와요
+- 첨부: assets/img/hero/pig.webp (든든 돼지 기준 그림) · b12_spread.png (12권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+
+```
+A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
+Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
+Through the book opening you can see the story world: a sunny meadow with three little houses in a row: straw, wood and brick — match the mood and colours of the second attached image.
+NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
+Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
 ```
 
 ## 4순위 · 놀이터 배경 8장 (선택) (8장)

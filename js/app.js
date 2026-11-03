@@ -4070,7 +4070,7 @@ var _pgResult1=pgResult;pgResult=function(){const S=PGS;_pgResult1.apply(this,ar
    Positions are % of the 3:2 picture and stay inside the part every screen shows (x 16–85, mostly y 25–90). */
 (()=>{const P="assets/img/case/";
  const BG={k1:"case01_rat",k2:"case02_ox",k4:"case04_rabbit",k5:"case05_dragon",k6:"case06_snake",k7:"case07_horse",
-  k8:"case08_sheep",k9:"case09_monkey",k10:"case10_rooster",k11:"case11_dog"};
+  k8:"case08_sheep",k9:"case09_monkey",k10:"case10_rooster",k11:"case11_dog",k12:"case12_pig"};
  for(const k in BG)KASSET.bg[k]=P+BG[k]+".webp";
  const SP={
   k1:{a:[51,58],b:[76,44],c:[26,59],d:[62,80]},   /* door step · thorn bush · under the mossy rock · leaves on the path */
@@ -4080,9 +4080,10 @@ var _pgResult1=pgResult;pgResult=function(){const S=PGS;_pgResult1.apply(this,ar
   k6:{a:[40,41],b:[55,67],c:[73,55],d:[27,46]},   /* box label · floor under the shelf · lower shelf · corner */
   k7:{a:[22,31],b:[47,61],c:[79,63],d:[67,43]},   /* picture board · under the table · floor to the back door · jug */
   k8:{a:[40,59],b:[26,50],c:[55,44],d:[78,33]},   /* floor in front of the shelves · under the window · book on the table · lamp */
-  k9:{a:[21,35],b:[50,62],c:[31,57],d:[80,63]},   /* sluice at the top of the stream · muddy bank · by the big rock · bank */
+  k9:{a:[23,38],b:[46,62],c:[31,50],d:[72,68]},   /* boulder at the sluice · muddy bank · grass by the rock · frog on the right bank */
   k10:{a:[17,33],b:[74,47],c:[24,41],d:[64,25]},  /* notice board (paper) · by the barrel · notice board (under the paper) · bunting */
-  k11:{a:[85,47],b:[60,55],c:[30,66],d:[39,46]}}; /* mine cart · mine entrance · path · big rock */
+  k11:{a:[85,47],b:[60,55],c:[30,66],d:[39,46]},
+  k12:{a:[48,53],b:[78,33],c:[17,30],d:[68,62]}}; /* ink on the desk · round window · photo board · stool cocoa */ /* mine cart · mine entrance · path · big rock */
  KC.forEach(c=>{const s0=SP[c.id];if(s0)c.spots.forEach(s=>{const v=s0[s.k];if(v){s.x=s._x0=v[0];s.y=s._y0=v[1]}})});
  /* spot fixes a parent made with 🛠 were for the old drawn scenes: drop them once for the cases that now have a picture */
  if(!G.lay293){if(isObj(G.lay))for(const k in BG)delete G.lay[k];G.lay293=1;save()}
@@ -4258,7 +4259,7 @@ var _showSettings1=showSettings;showSettings=function(){_showSettings1();const c
   const ref=c.querySelector(".credit");if(ref)ref.after(p);else c.appendChild(p)}};
 
 
-window.HQART={"room":{"base":"assets/img/hq/room_base.webp","case":"assets/img/hq/room_case.webp","deck":"assets/img/hq/room_deck.webp","living":"assets/img/hq/room_living.webp","pic":"assets/img/hq/room_pic.webp","study":"assets/img/hq/room_study.webp"},"item":{},"launch":{"grid":"assets/img/hq/launch_grid.webp"},"work":{"rat":"assets/img/hq/work_rat.webp"}};
+window.HQART={"room":{"base":"assets/img/hq/room_base.webp","case":"assets/img/hq/room_case.webp","deck":"assets/img/hq/room_deck.webp","living":"assets/img/hq/room_living.webp","pic":"assets/img/hq/room_pic.webp","study":"assets/img/hq/room_study.webp"},"item":{"hourglass":"assets/img/hq/item_hourglass.webp","hut":"assets/img/hq/item_hut.webp","key":"assets/img/hq/item_key.webp","lantern":"assets/img/hq/item_lantern.webp","scope":"assets/img/hq/item_scope.webp"},"launch":{"grid":"assets/img/hq/launch_grid.webp"},"work":{"rat":"assets/img/hq/work_rat.webp"}};
 /* ===== v29.5 우리 본부 (HQ): the shop is gone; reading achievements give treasures to decorate the HQ in the library tree.
    Treasures come when something is achieved (a case solved, a book won back, a playground level, a battle tier, course runs,
    one lap of today's adventure), not for every game. Rooms open with the hero level (3, 6, 9).
