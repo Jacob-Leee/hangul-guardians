@@ -2330,13 +2330,13 @@ NO title, NO text, NO letters, numbers, logos or watermark. Friendly for a 5-yea
 Canvas 1024x1536 (portrait).
 ```
 
-## 3-1순위 · 책 속 입장 장면 11장 (2~12권) (11장)
+## ☑ 거의 완료 · 책 속 입장 장면 (남은 1장: 8권 양) (11장)
 
-영웅이 빛나는 책 속으로 뛰어드는 연출 — 지금은 1권(토끼와 거북이)에만 있고, 나머지 책은 초상화 문으로 대신해요. 무대(spread)를 먼저 만든 뒤에 만들면 그림체가 맞아요.
+☑ 11/3 — 2~7·9~12권 입장 장면 연결 완료(각 책 전담 영웅이 자기 동화로 뛰어듦, 고른 영웅과 무관하게 나와요). 남은 건 8권 〈양치기 소년〉 구름 양 1장뿐 — 아래 b8_enter 프롬프트만 쓰면 끝.
 
 ### 1. `b2_enter.png` — 2권 입장 장면 — 번개 쥐
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 번개 쥐(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 번개 쥐(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/rat.webp (번개 쥐 기준 그림) · books/b2/spread.webp (2권 무대) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
@@ -2349,7 +2349,7 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 
 ### 2. `b3_enter.png` — 3권 입장 장면 — 강철 소
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 강철 소(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 강철 소(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/ox.webp (강철 소 기준 그림) · books/b3/spread.webp (3권 무대) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
@@ -2362,7 +2362,7 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 
 ### 3. `b4_enter.png` — 4권 입장 장면 — 대장 호랑이
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 대장 호랑이(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 대장 호랑이(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/tiger.webp (대장 호랑이 기준 그림) · b4_spread.png (4권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
@@ -2375,7 +2375,7 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 
 ### 4. `b5_enter.png` — 5권 입장 장면 — 하늘 용
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 하늘 용(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 하늘 용(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/dragon.webp (하늘 용 기준 그림) · b5_spread.png (5권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
@@ -2388,7 +2388,7 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 
 ### 5. `b6_enter.png` — 6권 입장 장면 — 바람 뱀
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 바람 뱀(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 바람 뱀(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/snake.webp (바람 뱀 기준 그림) · b6_spread.png (6권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
@@ -2401,7 +2401,7 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 
 ### 6. `b7_enter.png` — 7권 입장 장면 — 질주 말
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 질주 말(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 질주 말(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/horse.webp (질주 말 기준 그림) · b7_spread.png (7권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
@@ -2414,7 +2414,7 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 
 ### 7. `b8_enter.png` — 8권 입장 장면 — 구름 양
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 구름 양(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 구름 양(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/sheep.webp (구름 양 기준 그림) · b8_spread.png (8권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
@@ -2427,7 +2427,7 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 
 ### 8. `b9_enter.png` — 9권 입장 장면 — 재주 원숭이
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 재주 원숭이(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 재주 원숭이(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/monkey.webp (재주 원숭이 기준 그림) · b9_spread.png (9권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
@@ -2440,7 +2440,7 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 
 ### 9. `b10_enter.png` — 10권 입장 장면 — 새벽 닭
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 새벽 닭(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 새벽 닭(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/rooster.webp (새벽 닭 기준 그림) · b10_spread.png (10권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
@@ -2453,7 +2453,7 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 
 ### 10. `b11_enter.png` — 11권 입장 장면 — 용감한 개
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 용감한 개(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 용감한 개(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/dog.webp (용감한 개 기준 그림) · b11_spread.png (11권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
@@ -2466,7 +2466,7 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 
 ### 11. `b12_enter.png` — 12권 입장 장면 — 든든 돼지
 
-- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 든든 돼지(주인 영웅)로 플레이할 때 나와요
+- 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 든든 돼지(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
 - 첨부: assets/img/hero/pig.webp (든든 돼지 기준 그림) · b12_spread.png (12권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```

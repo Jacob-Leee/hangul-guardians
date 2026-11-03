@@ -6298,9 +6298,10 @@ pgResult=function(){var S=PGS,g=S&&S.g,lv=S&&S.lv,prev=(g&&typeof pgStars==="fun
 var _cr33=clearRun;clearRun=function(){var b4=!!(G.crs&&G.crs.s&&G.crs.s[10]);_cr33.apply(this,arguments);
  try{if(!b4&&G.crs&&G.crs.s&&G.crs.s[10])cardQueue(cardPickDraw(),2)}catch(e){}};
 /* ---------- 🎴 숫자 카드 대결 ---------- */
-PGAMES.ncard={ic:"🎴",n:{en:"Number Card Duel",ko:"숫자 카드 대결"},tag:{en:"Think & win",ko:"생각해서 이기기"},
+/* 메인 '카드 배틀' 전용 — 놀이터 목록·오늘의 모험 순환에는 안 나오게 열거 불가로 등록 */
+Object.defineProperty(PGAMES,"ncard",{configurable:true,enumerable:false,value:{ic:"🎴",n:{en:"Number Card Duel",ko:"숫자 카드 대결"},tag:{en:"Think & win",ko:"생각해서 이기기"},
  how:{en:"Beat the villain's card with numbers, then read the word for a critical hit!",ko:"숫자로 악당 카드를 이기고, 낱말까지 읽으면 크리티컬! 다음 카드를 보고 아껴 쓰는 게 비법이야."},
- lv:["nc1","nc2","nc3","nc4","nc5"],goal:5};
+ lv:["nc1","nc2","nc3","nc4","nc5"],goal:5}});
 PGCOL.ncard=["#B39DDB","#5E35B1"];
 LADDER.nc1={n:"더 큰 수",math:"cmp",items:function(){return WORDS2.map(function(x){return {t:x.w,p:x.p}})}};
 LADDER.nc2={n:"두 수의 합",math:"sum",items:LADDER.nc1.items};
