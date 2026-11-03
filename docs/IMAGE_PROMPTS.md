@@ -1,6 +1,6 @@
 # 그림 프롬프트 전체 (v31.1, 2026-11-03)
 
-필요한 그림 **200장**의 완성 프롬프트예요. 그림마다 **저장 이름 · 첨부할 참고 그림 · 프롬프트**가 있고, 프롬프트는 그대로 복사해 ChatGPT에 붙여 넣으면 됩니다. 제작 체크리스트 페이지에도 같은 내용이 그림마다 [프롬프트 복사] 단추로 있어요.
+필요한 그림 **199장**의 완성 프롬프트예요. 그림마다 **저장 이름 · 첨부할 참고 그림 · 프롬프트**가 있고, 프롬프트는 그대로 복사해 ChatGPT에 붙여 넣으면 됩니다. 제작 체크리스트 페이지에도 같은 내용이 그림마다 [프롬프트 복사] 단추로 있어요.
 
 **이미 끝난 것(11/3)**: 본부 조종실·방 4장 · 사건 9 물레방아 배경 · 사건 12 신문사 배경 · 보상 아이콘 5개(열쇠·오두막·등불·모래시계·망원경) · 3권 그림(표지·무대·이야기 1~2·돌이 3포즈·할아버지·소가 된 돌이). 이것들은 다시 만들 필요 없어요.
 
@@ -824,7 +824,7 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1024x1024.
 ```
 
-## 3순위 · 동화책 3권 〈소가 된 게으름뱅이〉 (12장)
+## 3순위 · 동화책 3권 〈소가 된 게으름뱅이〉 (11장)
 
 순서대로 만드세요: ① 인물 기본 포즈 → ② 다른 포즈(기본 포즈 첨부) → ③ 무대 → ④ 이야기 그림(인물+무대 첨부) → ⑤ 표지. 한 권은 ChatGPT 대화 하나에서 이어서 만들면 그림체가 잘 맞아요.
 
@@ -916,22 +916,7 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1024x1024.
 ```
 
-### 7. `b3_cow_stand.png` — 얼룩소 — 기본 포즈 (먼저 만들기)
-
-- 쓰임새: 소가 된 게으름뱅이: 장면에서 움직이는 인물. 이 그림이 이 인물의 기준이 돼요
-- 첨부: books/b2/country_stand.webp (그림체 기준)
-
-```
-A single character for a cute 3D animated children's storybook game, in the art style of the attached reference image (soft, warm, slightly painterly 3D, rounded friendly shapes). Use the attached reference only for its art style and rendering — do not copy its character, clothes, accessories or places.
-Character: an ordinary gentle farm cow of the village: ivory-white body with soft warm-brown patches, a cream muzzle, small rounded horns, kind sleepy eyes, a tuft tail — clearly a REAL four-legged farm animal with NO clothes, NO hair tuft and NO jacket collar, so nobody confuses her with Dori-as-an-ox (from a Korean folk tale in an old (Joseon-era) countryside village).
-Pose: standing on four legs facing slightly left, calm and friendly, gently flicking her tail.
-Whole body visible, three-quarter view facing slightly to the viewer's left, feet near the bottom edge, nothing cropped.
-REAL transparent PNG background with an alpha channel (not a checkerboard pattern and NOT a black background). No floor, no cast shadow, no scenery, no motion lines.
-No text, letters, numbers, logos or watermark anywhere (no writing on signs, books, labels or screens). Friendly for a 5-year-old — nothing scary or violent.
-Canvas 1024x1024.
-```
-
-### 8. `b3_spread.png` — 무대 (현장 조사 배경)
+### 7. `b3_spread.png` — 무대 (현장 조사 배경)
 
 - 쓰임새: 소가 된 게으름뱅이: 현장 조사 무대. 반짝이 단서가 이 그림의 물건 위에 뜨고, 인물들이 정해진 자리에 서요
 - 첨부: books/b2/spread.webp (무대 그림체·형식 기준)
@@ -949,7 +934,7 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1536x1024 (landscape).
 ```
 
-### 9. `b3_page1.png` — 이야기 그림 1
+### 8. `b3_page1.png` — 이야기 그림 1
 
 - 쓰임새: 소가 된 게으름뱅이: 순서 맞추기 카드 + 이야기 장면
 - 첨부: b3_boy_stand.png · b3_spread.png (무대)
@@ -965,7 +950,7 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1536x1024 (landscape). The game may trim about 8% at the top and the bottom.
 ```
 
-### 10. `b3_page2.png` — 이야기 그림 2
+### 9. `b3_page2.png` — 이야기 그림 2
 
 - 쓰임새: 소가 된 게으름뱅이: 순서 맞추기 카드 + 이야기 장면
 - 첨부: b3_boy_stand.png · b3_old_stand.png · b3_oxboy_stand.png · b3_spread.png (무대)
@@ -981,14 +966,14 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1536x1024 (landscape). The game may trim about 8% at the top and the bottom.
 ```
 
-### 11. `b3_page3.png` — 이야기 그림 3
+### 10. `b3_page3.png` — 이야기 그림 3
 
 - 쓰임새: 소가 된 게으름뱅이: 순서 맞추기 카드 + 이야기 장면
 - 첨부: b3_boy_stand.png · b3_old_stand.png · b3_spread.png (무대)
 
 ```
 A full storybook illustration that fills the whole picture, for a cute 3D animated children's game.
-Scene: Evening: Dori, a boy again, wipes the sweat from his forehead and happily eats a big bowl of rice at the outdoor dinner table, the harvested barley field glowing behind him. Far away on the path, the grandpa waves goodbye.
+Scene: Sunset: Dori, a boy again, stands by the outdoor dinner table joyfully holding a big white Korean radish with a bite taken out of it; the brown ox-head hat lies fallen on the ground at his feet, and the mask grandpa smiles warmly from the path behind. The barley field glows in the evening light.
 Attached images, in this order: 1) Dori, the lazy boy; 2) the mask grandpa; 3) the stage. Keep every character EXACTLY the same as in its image (face, colours, clothes, proportions). The stage image is the story world — keep its places and its art style.
 Camera: at a small child's eye level, slightly wide; the main characters in the middle of the height.
 Light: warm orange sunset.
@@ -997,7 +982,7 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1536x1024 (landscape). The game may trim about 8% at the top and the bottom.
 ```
 
-### 12. `b3_cover.png` — 표지 (세로)
+### 11. `b3_cover.png` — 표지 (세로)
 
 - 쓰임새: 소가 된 게으름뱅이: 도서관 책장 표지 + 책 속으로 뛰어드는 3D 입장
 - 첨부: b3_boy_stand.png · b3_oxboy_stand.png · b3_old_stand.png · b3_spread.png (무대)

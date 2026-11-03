@@ -61,5 +61,5 @@ BOOKDATA.b2={dir:"books/b2/",cover:"page1.webp",bg:"spread.webp",
      {t:"다음에는 함께 도시에 놀러 가기로 했어요",e:"🤝",s:[{move:"country",to:"road2",pose:"walk",end:"happy",ms:2000,par:true},{move:"city",to:"road2",pose:"walk",end:"stand",ms:2000},{fx:"confetti"}]}]},
  fin:["이야기를 되찾았어요!","{vil} 배를 두드리며 도망쳤어요.","\"잘했구나. 이 책을 도서관에 꽂아 두자.\""]};
 /* 〈소가 된 게으름뱅이〉 — book 3. 주인 영웅: 강철 소(ox), 악당: 회색냥(gray).
-   그림: books/b3/ 임시 그림(코드 생성). 진짜 그림이 오면 같은 이름으로 교체.
-   무대: 왼쪽 집·마당 평상(0~30%), 가운데 보리밭(30~70%), 오른쪽 저녁 밥상·외양간(70~100%). */;
+   v34: 원작 충실판(순한 번안) — 꾐 → 소로 변함(안 벗겨짐) → 고된 일과 후회 → 무 경고 → 무를 먹고 사람으로 → 교훈.
+   Voices (VOX.sb_*) and reading missions (RMS.b3) are at the end. Format: docs/HANDOVER.md → "동화책 데이터 형식". */;
