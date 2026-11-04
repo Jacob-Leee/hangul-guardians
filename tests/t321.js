@@ -14,9 +14,9 @@ const start=async(g,lv)=>{await p.evaluate(([g,lv])=>pgPlay(g,lv),[g,lv]);await 
 await start('ncard',1);
 const t2=await p.evaluate(async()=>{document.getElementById('pgHelp').click();await new Promise(r=>setTimeout(r,300));return {glow:document.querySelectorAll('.nchc.hintg').length,msg:document.getElementById('pgMsg').textContent}});
 R('t2 카드 배틀 도움 → 낼 카드 반짝',t2.glow>=1,t2);
-// t3 카드 배틀 🔊: 녹음 없으면 숨김
+// t3 카드 배틀 🔊: 11/4 녹음(ux_009 등)이 들어와서 이제 보여야 함 — 🔊는 녹음이 있을 때만
 const t3=await p.evaluate(()=>getComputedStyle(document.getElementById('pgSay')).visibility);
-R('t3 카드 배틀 🔊 녹음 없으면 숨김',t3==='hidden',t3);
+R('t3 카드 배틀 🔊 녹음 생겨서 보임',t3==='visible',t3);
 await p.evaluate(()=>pgStop());
 // t4 짝꿍 🔊 숨김
 await start('pair',1);

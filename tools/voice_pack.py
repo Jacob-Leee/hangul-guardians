@@ -89,7 +89,9 @@ def load_roles():
     """Every role with its lines in script order: {id: {"name", "group", "voice", "prio", "dir", "rows"}}."""
     chars = read_csv("dubbing_characters.csv")
     story = sum((read_csv("dubbing_b%d.csv" % _i) for _i in range(1, 13)), []) + read_csv("dubbing_cases.csv")
-    letters = read_csv("dubbing_letters.csv") + read_csv("dubbing_extra.csv")
+    extra = read_csv("dubbing_extra.csv")
+    # extra lines belong to the narrator unless the script names another speaker (11/4: battle hints are read by the mentor)
+    letters = read_csv("dubbing_letters.csv") + [r for r in extra if r["화자ID"].strip() in ("", "narrator")]
     rows_of = {}
     for r in chars:
         rows_of.setdefault(r["화자ID"].strip(), []).append(r)
@@ -98,6 +100,11 @@ def load_roles():
         if r["화자ID"].strip() == "mentor" and r["파일명"] not in seen:
             seen.add(r["파일명"])
             rows_of.setdefault("mentor", []).append(r)
+    for r in extra:
+        w = r["화자ID"].strip()
+        if w not in ("", "narrator") and r["파일명"] not in seen:
+            seen.add(r["파일명"])
+            rows_of.setdefault(w, []).append(r)
     rows_of["narrator"] = letters
     roles, n = {}, 0
     for rid, group, voice, prio in ROLES:
