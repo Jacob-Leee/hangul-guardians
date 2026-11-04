@@ -2429,8 +2429,9 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .ccard.cback::before{background:#1B2B4C}
 .ccard.cback span{font-size:46px;filter:drop-shadow(0 0 8px rgba(255,255,255,.4))}
 /* 칩 */
-#cardChip{position:fixed;right:12px;bottom:76px;z-index:55;border:3px solid #F2B04C;background:#FFF6DC;border-radius:16px;padding:7px 12px;font-size:22px;display:flex;align-items:center;gap:5px;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.15);animation:hq3bob 2.6s ease-in-out infinite}
-#cardChip b{font-size:15px;background:#E2504C;color:#fff;border-radius:10px;padding:0 7px}
+#cardChip{position:fixed;right:12px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:55;width:54px;aspect-ratio:39/50;border:0;padding:0;background:none;border-radius:7px;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.42);animation:hq3bob 2.6s ease-in-out infinite}
+#cardChip img{width:100%;height:100%;display:block;border-radius:7px}
+#cardChip b{position:absolute;top:-9px;right:-9px;min-width:24px;height:24px;box-sizing:border-box;display:grid;place-items:center;font-size:14px;line-height:1;background:#E2504C;color:#fff;border:2px solid #fff;border-radius:12px;padding:0 5px}
 /* 수수께끼 개봉 */
 .cardov{z-index:70}
 .cardcard{max-width:560px}
@@ -2626,3 +2627,37 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 .wbtabs .btn{min-height:44px}
 .vskip{min-height:44px}
 .rule input[type=checkbox]{width:22px;height:22px;vertical-align:middle}
+
+/* ===== v45: 카드 크기 통일(39:50) · 카드 배틀 크게 · 별 위 숫자 삭제 · 카드 뒷면 = 짝꿍 🐾 ===== */
+.ccard{aspect-ratio:39/50}
+.cdflip{aspect-ratio:39/50}
+.ccard.tcg{overflow:visible}
+.ccard.tcg.mini{border-width:4px}
+.ccard.tcg .tcgi.tfit{inset:auto;object-fit:fill;max-width:none;max-height:none;pointer-events:none}
+.ccard.cback.pawb{background:none;border:0;box-shadow:0 8px 18px rgba(0,0,0,.4);border-radius:7%;overflow:hidden}
+.ccard.cback.pawb::before{display:none}
+.ccard.cback.pawb img{width:100%;height:100%;display:block;object-fit:cover}
+.pawi{height:1.3em;width:auto;aspect-ratio:39/50;vertical-align:-.3em;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.xbtn .ic .pawi{height:1.45em;vertical-align:middle}
+/* 카드 배틀: 빈 공간 없이 화면에 맞춰 크게 (크기는 ncLayout이 계산) */
+.pg-ncard .pgprompt{display:none}
+.pg-ncard .pgarea{height:clamp(320px,calc(96vh - 190px),800px);display:flex;background:#1B2240}
+.nc.nc2wrap{flex:1;min-height:0;box-sizing:border-box;justify-content:space-evenly;gap:var(--gap,10px);padding:12px}
+.nc2wrap .ncfoe{gap:14px;flex-wrap:nowrap;align-items:center}
+.nc2wrap .ncside{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ncv.nc2{width:var(--fw,118px);aspect-ratio:39/50;margin-bottom:26px;flex:0 0 auto}
+.nchc.nc2{width:var(--cw,96px);aspect-ratio:39/50}
+.nc2wrap .nchand{display:grid;grid-template-columns:repeat(var(--cols,4),var(--cw,96px));gap:var(--gap,10px);justify-content:center}
+.nchc.nc2 img,.ncv.nc2 img{inset:auto;object-fit:fill;max-width:none;max-height:none;pointer-events:none}
+.ncv.nc2 .nw{top:calc(100% + 4px);bottom:auto;font-size:15px;padding:2px 10px;white-space:nowrap}
+.ncdots{position:absolute;display:grid;grid-template-columns:repeat(var(--c),var(--dpx,10px));grid-auto-rows:var(--dpx,10px);gap:calc(var(--dpx,10px)*.32);justify-content:center;align-content:center;pointer-events:none}
+.ncdots i{width:var(--dpx,10px);height:var(--dpx,10px);border-radius:50%;background:#3550B8;box-shadow:0 0 0 calc(var(--dpx,10px)*.13) #fff,0 1px 2px rgba(0,0,0,.4)}
+.ncdots.ncred i{background:#E2504C}
+/* 카드 배틀 허브: 같은 크기 카드, 이름은 양피지 가운데 */
+.caduel .cac{width:clamp(110px,14vw,160px);aspect-ratio:39/50}
+.caduel .cac img{position:absolute;inset:auto;object-fit:fill;max-width:none;pointer-events:none}
+.caduel .can{bottom:auto;transform:translateY(-50%)}
+@media (max-width:480px){.caduel .cac{width:118px}}
+/* v45b: 무작위 터치 점검 — 설정 단추(40→44, 숫자 단추 폭 32→44)와 읽기 미션 '건너뛰기'(32→44) */
+.setrow .seg button{min-height:44px;min-width:44px}
+.rmskip{min-height:44px}

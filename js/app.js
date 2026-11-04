@@ -6172,21 +6172,35 @@ var CARD_BY={};window.TCGC={};CARDS.forEach(function(c){CARD_BY[c.id]=c;TCGC[c.i
 var RANKN=[["Normal","노멀"],["Silver","실버"],["Gold","골드"]];
 function cardsG(){G.cards=G.cards||{};G.cards.own=G.cards.own||{};G.cards.q=G.cards.q||[];return G.cards}
 window.cardOwnedN=function cardOwnedN(){return Object.keys(cardsG().own).length}
+/* ---------- v45: 카드 뒷면 = 짝꿍(카드 뒤집기) 🐾 뒷면 — 화투(🎴) 모양 대신 ---------- */
+window.pawBackSrc=function(){return (window.PGIMG&&PGIMG.backTall)||"assets/img/pg/pair_back_tall.webp"};
+window.pawIco=function(){return '<img class="pawi" src="'+pawBackSrc()+'" alt="">'};
+/* ---------- v45: 카드 크기 통일 — 그림 파일(630x880) 안의 실제 카드 부분만 39:50 상자에 맞춤.
+   영웅 카드는 정사각형에 가까워(0.95) 다른 카드(0.65~0.86)보다 납작하게 보였다. 비율 차이는 최대 15%까지만 늘리고 나머지는 가운데 정렬.
+   [x0,y0,x1,y1,양피지 위,양피지 아래] ---------- */
+var TCGBOX={beaver:[29,0,601,757,582,690],bk_bird:[72,0,557,741,586,675],bk_boy:[70,0,560,749,568,682],bk_bro:[72,0,558,753,571,685],bk_cat:[70,0,559,764,572,685],bk_city:[70,0,560,747,568,681],bk_cloud:[72,0,557,750,582,685],bk_country:[69,0,560,749,569,683],bk_dal:[72,0,557,741,586,674],bk_duck:[73,0,556,741,586,674],bk_hen:[72,0,557,741,586,674],bk_lamb:[73,0,556,741,586,674],bk_mill:[72,0,557,741,586,674],bk_mon:[73,0,556,741,586,674],bk_old:[72,0,558,751,570,684],bk_owl:[68,0,562,750,567,683],bk_p1:[73,0,556,741,586,674],bk_p2:[74,0,556,740,586,674],bk_p3:[74,0,556,742,586,674],bk_pand:[72,0,557,741,586,675],bk_post:[68,0,562,753,569,685],bk_pup:[72,0,557,741,572,674],bk_rabbit:[69,0,561,750,582,684],bk_shep:[73,0,556,741,586,674],bk_sis:[71,0,559,751,571,684],bk_tig:[73,0,557,747,580,682],bk_turtle:[68,0,562,750,570,684],bk_wolf:[74,0,556,744,586,674],bk_yong:[71,0,558,751,570,685],dog:[0,133,630,766,570,695],dragon:[0,96,630,761,580,686],gull:[22,0,607,763,578,694],horse:[0,123,630,754,584,683],mentor:[51,0,579,755,576,681],mole:[44,0,586,763,578,694],monkey:[0,108,630,773,567,697],ox:[0,97,630,758,578,687],pig:[0,105,630,772,566,687],rabbit:[0,68,630,764,575,680],raccoon:[46,0,583,762,578,693],rat:[0,69,630,763,575,688],rooster:[0,133,630,766,570,694],sheep:[0,95,630,758,579,686],snake:[0,123,630,754,583,683],spider:[53,0,577,757,582,690],squirrel:[50,0,579,757,581,691],tiger:[0,94,630,757,579,686],v_black:[23,0,607,773,574,698],v_fat:[2,0,627,781,569,701],v_gray:[4,0,626,783,569,703],v_purple:[0,44,630,773,575,699],v_tiger:[21,0,609,774,575,698],v_white:[0,6,630,771,576,697]};
+var TCG_A=0.78,TCG_CAP=1.15;
+window.tcgFit=function(id){var b=TCGBOX[id]||[0,0,630,880,600,700];
+ var w=b[2]-b[0],h=b[3]-b[1],r=w/h,t=Math.min(Math.max(TCG_A,r/TCG_CAP),r*TCG_CAP),dw,dh;
+ if(t>=TCG_A){dw=1;dh=TCG_A/t}else{dh=1;dw=t/TCG_A}
+ var dx=(1-dw)/2,dy=(1-dh)/2;function P(v){return (v*100).toFixed(2)+"%"}function Y(c){return dy+dh*(c-b[1])/h}
+ return {img:"width:"+P(630/w*dw)+";height:"+P(880/h*dh)+";left:"+P(dx-b[0]/w*dw)+";top:"+P(dy-b[1]/h*dh),
+  box:"left:"+P(dx)+";right:"+P(dx)+";top:"+P(dy)+";bottom:"+P(dy),pt:Y(b[4]),pb:Y(b[5]),pl:dx+dw*.17,pr:dx+dw*.83}};
 /* ---------- 카드 HTML (포켓몬식 프레임, 전부 코드) ---------- */
 window.cardHTML=function(id,rank,cls){var c=CARD_BY[id];if(!c)return "";
- var gc=CG[c.grp];
+ var gc=CG[c.grp],tf=tcgFit(c.id);
  if(TCGC[c.id])return '<div class="ccard tcg r'+(rank||0)+' '+(cls||'')+'" style="--gc:'+gc[1]+'" data-cid="'+id+'">'
-  +'<img class="tcgi" src="assets/img/card/tcg_'+c.id+'.webp" alt="" loading="lazy">'
-  +'<b class="tcgn" style="font-size:min(8.6cqw,'+(60/Math.max(4,c.nm.length)).toFixed(1)+'cqw)">'+escH(c.nm)+'</b><i class="cfoil"></i></div>';
+  +'<img class="tcgi tfit" src="assets/img/card/tcg_'+c.id+'.webp" alt="" loading="lazy" style="'+tf.img+'">'
+  +'<b class="tcgn" style="bottom:'+((1-(tf.pt+tf.pb)/2)*100).toFixed(2)+'%;font-size:min(8.6cqw,'+(60/Math.max(4,c.nm.length)).toFixed(1)+'cqw)">'+escH(c.nm)+'</b><i class="cfoil" style="'+tf.box+'"></i></div>';
  return '<div class="ccard r'+(rank||0)+' '+(cls||'')+'" style="--gc:'+gc[1]+'" data-cid="'+id+'">'
   +'<div class="chead"><b>'+escH(c.nm)+'</b><span class="cgrp">'+gc[0]+'</span></div>'
   +'<div class="cart"><img src="'+c.img+'" alt="" loading="lazy"></div>'
   +'<div class="cfoot">'+escH(c.rid)+'</div>'
   +'<i class="cfoil"></i></div>'}
-function cardBackHTML(cls){return '<div class="ccard cback '+(cls||'')+'"><span>🐾</span></div>'}
+function cardBackHTML(cls){return '<div class="ccard cback pawb '+(cls||'')+'"><img src="'+pawBackSrc()+'" alt=""></div>'}
 /* ---------- 획득 큐 + 칩 ---------- */
 window.cardQueue=function(id,r){if(!CARD_BY[id])return;var cd=cardsG();cd.q.push({id:id,r:r||0});save();cardChip();
- try{toast("🎴 "+K("A new card arrived! Open it from the card button.","새 카드가 도착했어! 🎴 단추를 눌러 열어 봐."))}catch(e){}};
+ try{toast("🐾 "+K("A new card arrived! Open it from the card button.","새 카드가 도착했어! 🐾 단추를 눌러 열어 봐."))}catch(e){}};
 window.cardPickDraw=function(){var own=cardsG().own,q=cardsG().q.map(function(x){return x.id});
  var fresh=CARDS.filter(function(c){return own[c.id]==null&&q.indexOf(c.id)<0});
  var pool=fresh.length?fresh:CARDS;return pool[Math.floor(Math.random()*pool.length)].id};
@@ -6194,7 +6208,7 @@ window.cardChip=function(){var n=cardsG().q.length,el=document.getElementById("c
  if(!n){if(el)el.remove();return}
  if(!el){el=document.createElement("button");el.id="cardChip";document.body.appendChild(el);
   el.onclick=function(){sfx("tap");cardOpenNext()}}
- el.innerHTML="🎴<b>"+n+"</b>"};
+ el.innerHTML='<img src="'+pawBackSrc()+'" alt=""><b>'+n+'</b>';el.setAttribute("aria-label",K("Open new cards ("+n+")","새 카드 열기 ("+n+")"))};
 var _ra33=renderAll;renderAll=function(){_ra33.apply(this,arguments);try{cardChip()}catch(e){}};
 /* ---------- 수수께끼 개봉 ---------- */
 window.cardOv=function(){var ov=document.getElementById("cardOv");
@@ -6207,7 +6221,7 @@ window.cardOpenNext=function(){
  var others=shuffle(CARDS.filter(function(x){return x.id!==q.id&&x.grp===c.grp}));
  if(others.length<2)others=others.concat(shuffle(CARDS.filter(function(x){return x.id!==q.id&&x.grp!==c.grp})));
  var opts=shuffle([c].concat(others.slice(0,2)));
- ov.innerHTML='<div class="crscard cardcard"><div class="crshead"><h2>🎴 '+K("Card riddle","카드 수수께끼")+'</h2><span class="crsn">'+K("Left: ","남은 카드 ")+cd.q.length+'</span><button class="btn" id="cdX">'+K("Later","나중에")+'</button></div>'
+ ov.innerHTML='<div class="crscard cardcard"><div class="crshead"><h2>'+pawIco()+' '+K("Card riddle","카드 수수께끼")+'</h2><span class="crsn">'+K("Left: ","남은 카드 ")+cd.q.length+'</span><button class="btn" id="cdX">'+K("Later","나중에")+'</button></div>'
   +'<p class="cdrid">📖 '+escH(c.rid)+'</p>'
   +'<p class="cdtip">'+K("Read the riddle out loud, then tap the right friend!","수수께끼를 소리 내어 읽고, 맞는 친구를 골라 봐!")+'</p>'
   +'<div class="cdopts">'+opts.map(function(o){return '<button class="cdface tcgf" data-id="'+o.id+'"><img src="'+tcgSrc(o.id)+'" alt=""></button>'}).join('')+'</div>'
@@ -6227,7 +6241,7 @@ window.cardOpenNext=function(){
   ov.querySelector(".cdtip").textContent=K("You read it right — the card is yours!","수수께끼를 읽고 맞혔어! 카드는 네 거야!");
   st.innerHTML='<div class="cdflip">'+cardBackHTML("big")+cardHTML(q.id,rank,"big back2")+'</div>'
    +'<p class="cdrank r'+rank+'">'+(up?K("Rank up! ","등급 업! "):"")+(G.lang==="ko"?RANKN[rank][1]:RANKN[rank][0])+(rank===2?" ✨":rank===1?" ⭐":"")+'</p>'
-   +'<div class="tbtns">'+(cardsG().q.length?'<button class="btn pri" id="cdNext">🎴 '+K("Next card","다음 카드")+' ('+cardsG().q.length+')</button>':'')
+   +'<div class="tbtns">'+(cardsG().q.length?'<button class="btn pri" id="cdNext">'+pawIco()+' '+K("Next card","다음 카드")+' ('+cardsG().q.length+')</button>':'')
    +'<button class="btn" id="cdBook">📚 '+K("Card book","카드 도감")+'</button><button class="btn" id="cdDone">'+K("Done","닫기")+'</button></div>';
   setTimeout(function(){var f=st.querySelector(".cdflip");if(f)f.classList.add("go")},150);
   try{burstAt(st)}catch(e){}
@@ -6240,7 +6254,7 @@ window.cardOpenNext=function(){
 window.cardBook=function(){
  var ov=cardOv(),own=cardsG().own,grps=["hero","vil","frd","book"];
  ov.innerHTML='<div class="crscard cardcard wide"><div class="crshead"><h2>📚 '+K("Card book","카드 도감")+'</h2><span class="crsn">'+cardOwnedN()+' / '+CARDS.length+'</span><button class="btn" id="cbX">'+K("Close","닫기")+'</button></div>'
-  +(cardsG().q.length?'<button class="btn pri" id="cbOpen">🎴 '+K("Open new cards","새 카드 열기")+' ('+cardsG().q.length+')</button>':'')
+  +(cardsG().q.length?'<button class="btn pri" id="cbOpen">'+pawIco()+' '+K("Open new cards","새 카드 열기")+' ('+cardsG().q.length+')</button>':'')
   +grps.map(function(g){var list=CARDS.filter(function(c){return c.grp===g});
     return '<h3 class="cbh" style="color:'+CG[g][1]+'">'+CG[g][0]+' <small>'+list.filter(function(c){return own[c.id]!=null}).length+'/'+list.length+'</small></h3>'
      +'<div class="cbgrid">'+list.map(function(c){var r=own[c.id];
@@ -6267,7 +6281,7 @@ window.cardBook=function(){
 var _hub33=pgHub;pgHub=function(){_hub33.apply(this,arguments);
  try{var wb=document.getElementById("wlBook");
   if(wb&&!document.getElementById("cdBookB")){var b=document.createElement("button");b.className="btn";b.id="cdBookB";
-   b.innerHTML="🎴 "+K("Card book","카드 도감")+" <small>"+cardOwnedN()+"/"+CARDS.length+"</small>"+(cardsG().q.length?" <em class='cdn'>"+cardsG().q.length+"</em>":"");
+   b.innerHTML="📚 "+K("Card book","카드 도감")+" <small>"+cardOwnedN()+"/"+CARDS.length+"</small>"+(cardsG().q.length?" <em class='cdn'>"+cardsG().q.length+"</em>":"");
    b.onclick=function(){sfx("tap");if(cardsG().q.length)cardOpenNext();else cardBook()};
    wb.parentElement.appendChild(b)}}catch(e){}};
 /* ---------- 획득 연결 ---------- */
@@ -6300,7 +6314,7 @@ var _cr33=clearRun;clearRun=function(){var b4=!!(G.crs&&G.crs.s&&G.crs.s[10]);_c
  try{if(!b4&&G.crs&&G.crs.s&&G.crs.s[10])cardQueue(cardPickDraw(),2)}catch(e){}};
 /* ---------- 🎴 숫자 카드 대결 ---------- */
 /* 메인 '카드 배틀' 전용 — 놀이터 목록·오늘의 모험 순환에는 안 나오게 열거 불가로 등록 */
-Object.defineProperty(PGAMES,"ncard",{configurable:true,enumerable:false,value:{ic:"🎴",n:{en:"Number Card Duel",ko:"숫자 카드 대결"},tag:{en:"Think & win",ko:"생각해서 이기기"},
+Object.defineProperty(PGAMES,"ncard",{configurable:true,enumerable:false,value:{ic:"🐾",n:{en:"Number Card Duel",ko:"숫자 카드 대결"},tag:{en:"Think & win",ko:"생각해서 이기기"},
  how:{en:"Beat the villain's card with numbers, then read the word for a critical hit!",ko:"숫자로 악당 카드를 이기고, 낱말까지 읽으면 크리티컬! 다음 카드를 보고 아껴 쓰는 게 비법이야."},
  lv:["nc1","nc2","nc3","nc4","nc5"],goal:5}});
 PGCOL.ncard=["#B39DDB","#5E35B1"];
@@ -6338,11 +6352,26 @@ window.ncSolvable=function ncSolvable(hand,mode,V){var vs=hand.map(function(c){r
  if(mode==="same")return vs.indexOf(V)>=0;
  if(mode==="ten")return vs.indexOf(10-V)>=0;
  for(var i=0;i<vs.length;i++)for(var j=i+1;j<vs.length;j++)if(vs[i]+vs[j]===V)return true;return false}
+/* v45: 카드의 수 = 카드 양피지(빈 칸) 안의 점. 별 위에 올리던 검정 숫자는 없앰.
+   점 크기는 모든 카드에서 똑같이(--dpx) — 점이 크다고 더 많은 것처럼 보이지 않게, 개수로만 비교. 7개부터는 5개씩 두 줄(십 칸 틀) */
+function ncDots(v,f,cls){var cols=v<=6?v:(v<=10?5:6);
+ var out='<span class="ncdots'+(cls?' '+cls:'')+'" style="left:'+(f.pl*100).toFixed(1)+'%;right:'+((1-f.pr)*100).toFixed(1)+'%;top:'+(f.pt*100).toFixed(1)+'%;bottom:'+((1-f.pb)*100).toFixed(1)+'%;--c:'+cols+'">';
+ for(var i=0;i<v;i++)out+='<i></i>';return out+'</span>'}
+/* v45: 화면 크기에 맞춰 카드를 최대한 크게 — 손패 4장을 한 줄(가로 화면) 또는 2x2(세로 폰)로, 큰 쪽을 고름 */
+window.ncLayout=function(){var nc=document.querySelector("#pgArea .nc2wrap");if(!nc)return;
+ var cs=getComputedStyle(nc),W=nc.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),H=nc.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+ if(W<50||H<50)return;
+ var ask=nc.querySelector(".ncask"),askH=ask?ask.offsetHeight:34,gap=Math.round(Math.max(8,Math.min(16,H*.022))),wordH=24,KF=1.08,best=null;
+ [4,2].forEach(function(c){var r=4/c,cwW=(W-(c-1)*gap)/c,avail=H-askH-wordH-gap*3-(r-1)*gap,cwH=TCG_A*avail/(KF+r);
+  var cw=Math.floor(Math.min(cwW,cwH,240));if(!best||cw>best.cw)best={c:c,cw:cw}});
+ var fw=Math.floor(Math.max(60,Math.min(best.cw*KF,W-190)));
+ nc.style.setProperty("--cw",best.cw+"px");nc.style.setProperty("--dpx",Math.max(8,Math.round(best.cw*.075))+"px");nc.style.setProperty("--fw",fw+"px");nc.style.setProperty("--cols",best.c);nc.style.setProperty("--gap",gap+"px")};
+if(!window.__ncRz){window.__ncRz=1;var _rzT=null;window.addEventListener("resize",function(){clearTimeout(_rzT);_rzT=setTimeout(function(){try{ncLayout()}catch(e){}},80)})}
 PGM.ncard=function(){
  var A,NC;
- function card(i,c,sel){return '<button class="nchc tcgnc'+(sel?' sel':'')+'" data-i="'+i+'">'
-  +'<img src="'+tcgSrc(c.art)+'" alt="">'
-  +'<span class="num">'+c.v+'</span>'+ncPips(c.v)+'</button>'}
+ function card(i,c,sel){var f=tcgFit(c.art);return '<button class="nchc tcgnc nc2'+(sel?' sel':'')+'" data-i="'+i+'" aria-label="'+c.v+'">'
+  +'<img src="'+tcgSrc(c.art)+'" alt="" style="'+f.img+'">'
+  +ncDots(c.v,f)+'</button>'}
  function draw(){return {v:1+Math.floor(Math.random()*6),art:NC.arts[NC.ai++%NC.arts.length]}}
  function render(){
   var S=PGS,m=NC.mode,V=NC.V;
@@ -6350,13 +6379,15 @@ PGM.ncard=function(){
    :m==="same"?K("Block with the SAME number!","똑같은 수 카드로 막아!")
    :m==="ten"?K("Make 10 together!","악당 수와 더해서 10을 만들어!")
    :K("Pick TWO cards that add up to it!","두 장을 더해서 똑같이 만들어!");
-  A.innerHTML='<div class="nc ncbg" style="--bgi:url('+((window.DARENA&&DARENA[NC.vil])||"assets/img/scene/island.webp")+')"><div class="ncfoe">'
-   +'<div class="ncv tcgnc"><img src="'+tcgSrc("v_"+NC.vil)+'" alt=""><span class="num">'+V+'</span>'+ncPips(V)+'<span class="nw">'+(NC_W[V]||V)+'</span></div>'
+  var ff=tcgFit("v_"+NC.vil);
+  A.innerHTML='<div class="nc ncbg nc2wrap" style="--bgi:url('+((window.DARENA&&DARENA[NC.vil])||"assets/img/scene/island.webp")+')"><div class="ncfoe">'
+   +'<div class="ncv tcgnc nc2" aria-label="'+V+'"><img src="'+tcgSrc("v_"+NC.vil)+'" alt="" style="'+ff.img+'">'+ncDots(V,ff,"ncred")+'<span class="nw">'+(NC_W[V]||V)+'</span></div>'
    +'<span class="vs">VS</span>'
-   +'<div class="ncnext"><small>'+K("Next","다음 카드")+'</small><b>'+NC.next+'</b></div>'
-   +'<div class="nchp">'+"😼"+"❤️".repeat(Math.max(0,S.goal-S.done))+"🤍".repeat(S.done)+'</div></div>'
+   +'<div class="ncside"><div class="ncnext"><small>'+K("Next","다음 카드")+'</small><b>'+NC.next+'</b></div>'
+   +'<div class="nchp">'+"😼"+"❤️".repeat(Math.max(0,S.goal-S.done))+"🤍".repeat(S.done)+'</div></div></div>'
    +'<p class="ncask">'+ask+'</p>'
    +'<div class="nchand">'+NC.hand.map(function(c,i){return card(i,c,NC.sel.indexOf(i)>=0)}).join('')+'</div></div>';
+  ncLayout();
   A.__nc={mode:m,V:V,pick:ncSolution(),word:null};
   A.querySelectorAll(".nchc").forEach(function(b){b.onclick=function(){tap(+b.dataset.i,b)}});
  }
@@ -6438,7 +6469,7 @@ PGM.ncard=function(){
    S.target=null;render();pgDots();
    pgMsg("");},
   target:function(){},
-  prompt:function(){return '<span class="lab">🎴 '+K("Number card duel","숫자 카드 대결")+'</span><span class="pic">😼</span>'},
+  prompt:function(){return '<span class="lab">🐾 '+K("Number card duel","숫자 카드 대결")+'</span><span class="pic">😼</span>'},
   say:function(){var m=NC&&NC.mode;narrate([m==="sum"?K("Add two cards!","두 장을 더해서 똑같이!"):m==="ten"?K("Make ten!","더해서 10을 만들어!"):m==="same"?K("Block with the same!","똑같은 수로 막아!"):K("Play a bigger card!","더 큰 카드를 내!")],null)},
   hint:function(){var sol=ncSolution();sol.forEach(function(i){var b=A.querySelector('.nchc[data-i="'+i+'"]');if(b)b.classList.add("hintg")})},
   acc:function(){var S=PGS;return S.firstOK/S.goal},
@@ -6466,13 +6497,16 @@ window.bookPrologue=async function(){
 /* ===== v38: 카드 배틀 허브 ===== */
 (function(){
 "use strict";
+/* v45: 같은 크기 카드(39:50) + 이름은 별 위가 아니라 카드 양피지(빈 칸) 가운데 */
+function cac(id,cls){var f=tcgFit(id),nm=((window.CARDS&&CARDS.find(function(c){return c.id===id}))||{nm:""}).nm;
+ return '<span class="cac"><img class="'+cls+'" src="'+tcgSrc(id)+'" alt="" style="'+f.img+'"><b class="can" style="top:'+((f.pt+f.pb)/2*100).toFixed(1)+'%">'+escH(nm)+'</b></span>'}
 window.cardArena=function(){
  var ov=cardOv(),open=pgOpenLv("ncard"),cur=pgRecLv("ncard"),own=cardOwnedN();
  var vils=["gray","black","white","tiger","purple","fat"];
  var vi=vils[Math.floor(Math.random()*vils.length)];
  ov.innerHTML='<div class="crscard cardcard arena" style="--bgi:url('+((window.DARENA&&DARENA[vi])||"")+')">'
-  +'<div class="crshead"><h2>🎴 '+K("Card Battle","카드 배틀")+'</h2><span class="crsn">🃏 '+own+' / '+CARDS.length+'</span><button class="btn" id="caX">'+K("Close","닫기")+'</button></div>'
-  +'<div class="caduel"><span class="cac"><img class="cahero" src="'+tcgSrc(cardPick())+'" alt=""><b class="can">'+escH(((window.CARDS&&CARDS.find(function(c){return c.id===cardPick()}))||{nm:""}).nm)+'</b></span><span class="cavs">VS</span><span class="cac"><img class="cavil" src="'+tcgSrc("v_"+vi)+'" alt=""><b class="can">'+escH(((window.CARDS&&CARDS.find(function(c){return c.id==="v_"+vi}))||{nm:""}).nm)+'</b></span></div>'
+  +'<div class="crshead"><h2>'+pawIco()+' '+K("Card Battle","카드 배틀")+'</h2><span class="crsn">🃏 '+own+' / '+CARDS.length+'</span><button class="btn" id="caX">'+K("Close","닫기")+'</button></div>'
+  +'<div class="caduel">'+cac(cardPick(),"cahero")+'<span class="cavs">VS</span>'+cac("v_"+vi,"cavil")+'</div>'
   +'<p class="carule">'+K("Beat the cat with NUMBER cards — read a word for a critical hit!","숫자 카드로 고양이 악당을 이기자! 낱말을 읽으면 크리티컬 공격!")+'</p>'
   +'<div class="calvs">'+[1,2,3,4,5].map(function(l){var nm=LADDER["nc"+l].n;
     return l>open?'<button class="calv lock" disabled>🔒<small>'+nm+'</small></button>'
@@ -6827,6 +6861,14 @@ var _rx44=renderExtras;window.renderExtras=renderExtras=function(){var r=_rx44.a
   bt.innerHTML='<span class="ic">🗓️</span>'+K("Sticker board","스티커판");
   bt.onclick=function(){if(overlayOpen())return;sfx("tap");stickerBoard()};
   var more=ex.querySelector('[data-x="more"]');ex.insertBefore(bt,more||null)}}catch(e){}return r};
+try{renderExtras()}catch(e){}
+})();
+
+/* ===== v45: 메인 '카드 배틀' 단추 아이콘도 🐾 카드 뒷면 (화투 🎴 대신) ===== */
+(function(){
+"use strict";
+var _rx45=renderExtras;window.renderExtras=renderExtras=function(){var r=_rx45.apply(this,arguments);
+ try{var ic=document.querySelector('#extras [data-x="cards"] .ic');if(ic&&!ic.querySelector(".pawi"))ic.innerHTML=pawIco()}catch(e){}return r};
 try{renderExtras()}catch(e){}
 })();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
