@@ -2680,9 +2680,9 @@ No text, letters, numbers, logos or watermark anywhere (no writing on signs, boo
 Canvas 1024x1024.
 ```
 
-## 5순위 · 2권 포즈 5장 + 표지 (선택) (6장)
+## ☑ 완료 · 2권 포즈 5장 + 표지 (6장)
 
-없으면 기본 자세와 이야기 그림 1을 대신 써요.
+☑ 11/4 — 시골 쥐 걷기·보리밥, 도시 쥐 걷기·가방 들고 걷기·윙크, 고양이 웅크림·뛰어오르기, 표지 전부 연결. 아래 프롬프트는 보관용.
 
 ### 1. `b2_country_walk.png` — 2권 포즈 — country_walk
 

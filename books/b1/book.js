@@ -59,9 +59,9 @@ BOOKDATA.b1={dir:"books/b1/",cover:"cover.webp",bg:"spread.webp",
 /* 〈시골 쥐와 도시 쥐〉 — book 2 data (v29.3: in the game, pictures made with ChatGPT on 2026-10-30).
    Pictures in books/b2/: spread, page1, page2, country_stand, country_scared, city_stand, city_scared, cat_prowl (.webp)
    and page3.webp, which for now is a stand-in made from the stage picture + country_stand (replace it with the painted one).
-   The other poses and the cover reuse those pictures until the optional ones exist; then only the file name changes:
-     walk/happy (country) -> country_walk / country_happy, walk/proud (city) -> city_walk / city_proud,
-     pounce (cat) -> cat_pounce, cover -> cover.webp.
+   2026-11-04: the guardian's poses and cover arrived (ChatGPT) — country_walk (bundle on a stick) / country_happy (barley bowl),
+     city_walk / city_travel (briefcase: arriving in and leaving the countryside) / city_proud (wink), cat_ready (crouch) →
+     cat_pounce (leap), cover.webp. All face right like the others (the engine mirrors an actor walking left).
    Positions (at/records) follow the painted spread (1536×864): oak-root home with its round door at 10–16%, the path along
    the front at about 75% height, stone bridge 38–55%, the dining room from 57%: table top at about 36%, mouse hole at 94%.
    The dining room is drawn at a person's scale and the stage is short on wide screens (only about the lower 58% shows), so the

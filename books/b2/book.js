@@ -1,11 +1,11 @@
 /* 〈시골 쥐와 도시 쥐〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b2) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b2={dir:"books/b2/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b2={dir:"books/b2/",enterArt:"scene_enter.webp",cover:"cover.webp",bg:"spread.webp",
  actors:{
-  country:{n:"시골 쥐",voice:"sb_country",h:26,poses:{stand:["country_stand.webp",1],walk:["country_stand.webp",1],scared:["country_scared.webp",.92],happy:["country_stand.webp",1]}},
-  city:{n:"도시 쥐",voice:"sb_city",h:26,poses:{stand:["city_stand.webp",1],proud:["city_stand.webp",1],scared:["city_scared.webp",.92],walk:["city_stand.webp",1]}},
-  cat:{n:"고양이",voice:"narrator",h:30,poses:{stand:["cat_prowl.webp",1],prowl:["cat_prowl.webp",1],pounce:["cat_prowl.webp",1]}}},
+  country:{n:"시골 쥐",voice:"sb_country",h:26,poses:{stand:["country_stand.webp",1],walk:["country_walk.webp",1],scared:["country_scared.webp",.92],happy:["country_happy.webp",1]}},
+  city:{n:"도시 쥐",voice:"sb_city",h:26,poses:{stand:["city_stand.webp",1],proud:["city_proud.webp",1],scared:["city_scared.webp",.92],walk:["city_walk.webp",1],travel:["city_travel.webp",1]}},
+  cat:{n:"고양이",voice:"narrator",h:30,poses:{stand:["cat_prowl.webp",1],prowl:["cat_prowl.webp",1],ready:["cat_ready.webp",1],pounce:["cat_pounce.webp",1]}}},
  at:{home:[14,67],field:[27,75],path:[34,76],bridge:[46,76],road2:[56,76],catIn:[65,74],table1:[78,73],table2:[87,73],
      hole:[92,70],hole2:[87,71],cityHome:[80,73],catHome:[27,75]},
  broken:{country:["table1","stand"],city:["table2","proud"],cat:["catHome","prowl"]},
@@ -35,7 +35,7 @@ BOOKDATA.b2={dir:"books/b2/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"
     {claim:false},{mark:["country",null]},{cam:[78,62,1.1]},
     {move:"cat",to:"catIn",pose:"prowl",ms:2600},
     {say:"\"야옹!\" 커다란 고양이가 도시 집 식탁으로 다가왔어요."},
-    {pose:["cat","pounce"]},{fx:"burst",at:[70,64]},
+    {pose:["cat","ready"]},{wait:550},{pose:["cat","pounce"]},{fx:"burst",at:[70,64]},
     {move:"city",to:"hole",pose:"scared",ms:900,par:true},
     {move:"country",to:"hole2",pose:"scared",ms:1000},
     {say:"두 쥐는 쥐구멍으로 후다닥 숨었어요."},
@@ -48,17 +48,17 @@ BOOKDATA.b2={dir:"books/b2/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"
   {pov:{img:"page1.webp",kb:"in"},text:"시골 쥐가 도시 쥐를 시골 집에 초대했어요. 밥상에는 보리와 콩이 조금 놓여 있었어요."},
   {scene:[{gloom:false},{state:{country:["home","stand"],city:["field","proud"],cat:["catIn","stand"]}},{cam:["city",1.5],cms:0}],who:"city",text:"도시 쥐가 말했어요. \"이것밖에 없어? 도시에는 맛있는 음식이 가득해. 같이 가 보자!\""},
   {pov:{img:"page2.webp",kb:"pan"},text:"도시의 큰 집 식탁에는 치즈와 케이크가 가득했어요. 그때 커다란 고양이가 나타났어요!"},
-  {scene:[{state:{country:["table1","stand"],city:["table2","stand"],cat:["catIn","prowl"]}},{cam:[80,62,1.25],cms:0},{pose:["cat","pounce"]},{move:"city",to:"hole",pose:"scared",ms:900,par:true},{move:"country",to:"hole2",pose:"scared",ms:1000}],text:"두 쥐는 쥐구멍으로 후다닥 숨었어요. 시골 쥐는 덜덜 떨었어요."},
+  {scene:[{state:{country:["table1","stand"],city:["table2","stand"],cat:["catIn","prowl"]}},{cam:[80,62,1.25],cms:0},{pose:["cat","ready"]},{wait:550},{pose:["cat","pounce"]},{move:"city",to:"hole",pose:"scared",ms:900,par:true},{move:"country",to:"hole2",pose:"scared",ms:1000}],text:"두 쥐는 쥐구멍으로 후다닥 숨었어요. 시골 쥐는 덜덜 떨었어요."},
   {pov:{img:"page3.webp",kb:"in"},who:"country",text:"시골 쥐는 짐을 쌌어요. \"맛있는 음식도 좋지만, 나는 걱정 없이 먹는 우리 집 밥이 더 좋아.\""},
   {scene:[{state:"end"},{cam:["country",1.4],cms:0}],text:"시골 쥐는 시골 집으로 돌아가 보리밥을 맛있게 먹었어요. 이야기가 다시 제자리로 돌아왔어요."}],
  ending:{title:"보너스: 도시 쥐가 시골에 놀러 온다면?",ask:"도시 쥐가 시골에 놀러 온다면? 둘은 무엇을 할까?",lead:"도시 쥐는 시골에서…",lead2:"마지막에는…",ask2:"마지막에는 어떻게 되었을까?",
-  start:{country:["home","stand"],city:["path","walk"],cat:["catIn","stand"]},tpl:"도시 쥐는 시골에서 {A}. 마지막에 {B}.",
+  start:{country:["home","stand"],city:["path","travel"],cat:["catIn","stand"]},tpl:"도시 쥐는 시골에서 {A}. 마지막에 {B}.",
   A:[{t:"꽃밭에서 숨바꼭질을 했어요",e:"🌼",s:[{move:"city",to:"field",pose:"walk",end:"proud",ms:1400},{move:"country",to:"field",pose:"walk",end:"happy",ms:900}]},
      {t:"시냇물에서 물놀이를 했어요",e:"💧",s:[{move:"city",to:"bridge",pose:"walk",end:"stand",ms:1000},{move:"country",to:"path",pose:"walk",end:"happy",ms:1400},{prop:["💧",47,70]}]},
      {t:"밤하늘의 별을 구경했어요",e:"⭐",s:[{move:"city",to:"field",pose:"walk",end:"stand",ms:1200},{prop:["⭐",26,22]},{prop:["✨",38,15]}]}],
   B:[{t:"둘이 보리밥을 나눠 먹었어요",e:"🍚",s:[{move:"city",to:"home",pose:"walk",end:"stand",ms:1600},{prop:["🍚",18,66]},{fx:"confetti"}]},
      {t:"도시 쥐도 시골이 좋아졌어요",e:"💛",s:[{pose:["city","proud"]},{prop:["💛",36,64]},{fx:"confetti"}]},
-     {t:"다음에는 함께 도시에 놀러 가기로 했어요",e:"🤝",s:[{move:"country",to:"road2",pose:"walk",end:"happy",ms:2000,par:true},{move:"city",to:"road2",pose:"walk",end:"stand",ms:2000},{fx:"confetti"}]}]},
+     {t:"다음에는 함께 도시에 놀러 가기로 했어요",e:"🤝",s:[{move:"country",to:"road2",pose:"walk",end:"happy",ms:2000,par:true},{move:"city",to:"road2",pose:"travel",end:"travel",ms:2000},{fx:"confetti"}]}]},
  fin:["이야기를 되찾았어요!","{vil} 배를 두드리며 도망쳤어요.","\"잘했구나. 이 책을 도서관에 꽂아 두자.\""]};
 /* 〈소가 된 게으름뱅이〉 — book 3. 주인 영웅: 강철 소(ox), 악당: 회색냥(gray).
    v34: 원작 충실판(순한 번안) — 꾐 → 소로 변함(안 벗겨짐) → 고된 일과 후회 → 무 경고 → 무를 먹고 사람으로 → 교훈.
