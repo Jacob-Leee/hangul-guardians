@@ -2661,3 +2661,51 @@ body:has(#runOv:not([hidden])) .vskip{left:auto!important;right:14px!important}
 /* v45b: 무작위 터치 점검 — 설정 단추(40→44, 숫자 단추 폭 32→44)와 읽기 미션 '건너뛰기'(32→44) */
 .setrow .seg button{min-height:44px;min-width:44px}
 .rmskip{min-height:44px}
+/* v46: 베타 측정 — 보호자 질문 칩(어른 확인 뒤 설정의 🧪 베타 테스트로) */
+.betachip{background:#FFF3C4;font-size:16px;padding:0 12px}
+.betachip b{margin-left:3px}
+.betasec{background:#F2F9FF;border:2px solid #8FC9EE;border-radius:16px;padding:12px}
+.betasec .btq{flex-basis:100%;font-weight:700;margin-top:6px}
+.betasec .btopts{display:flex;gap:8px;flex-wrap:wrap}
+.betasec .btstars{display:flex;gap:2px;flex-basis:100%}
+.betasec .btstars button{font-size:28px;min-width:48px;min-height:48px;background:none;border:none;filter:grayscale(1);opacity:.45;cursor:pointer}
+.betasec .btstars button.on{filter:none;opacity:1}
+.betasec .bttxt{flex-basis:100%;box-sizing:border-box;font:inherit;font-size:15px;border:2px solid var(--ink);border-radius:10px;padding:8px}
+.betasec .btdone{flex-basis:100%;display:flex;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.betasec .btdone .ok{color:#2E8B57;font-weight:700}
+.betasec .btrc:empty{display:none}
+.betasec .btrc{flex-basis:100%}
+/* v46b: 처음 일주일 — 도서관 책상 아래 오늘의 모험 해님 돌 3개 */
+.obtd{display:flex;flex-direction:column;align-items:center;gap:8px;margin:6px auto 2px;max-width:640px}
+.obtd .obh{color:#FFE9A8;font-size:17px;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.obtd .obh span{background:#FFE58A;color:var(--ink);border-radius:999px;padding:1px 10px;margin-left:6px;font-size:14px;text-shadow:none}
+.obtd .obrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.obtd .obst{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:104px;min-height:96px;padding:10px 12px;border:3px solid var(--ink);border-radius:999px 999px 26px 26px;background:linear-gradient(160deg,#FFF6CF,#FFD86B);box-shadow:0 5px 0 rgba(0,0,0,.28);cursor:pointer;font:inherit}
+.obtd .obst .sic{font-size:32px;line-height:1}
+.obtd .obst b{font-size:14px}
+.obtd .obst.on{background:linear-gradient(160deg,#E4F8E6,#9EDFA8);opacity:.9}
+.obtd .obok{margin:0;color:#D9F7DF;font-weight:700}
+@media (max-width:480px){.obtd .obrow{gap:8px}.obtd .obst{min-width:84px;min-height:82px;padding:8px 6px}.obtd .obst .sic{font-size:26px}.obtd .obst b{font-size:13px}}
+/* v46c: 읽기 점검 (설정 카드 안에서 진행) */
+.rcbox{display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;padding:4px 2px 8px}
+.rcbox p{margin:0;line-height:1.5}
+.rcsteps,.rcpart{font-weight:700}
+.rcbig{font-family:var(--f-k);font-size:clamp(64px,13vw,120px);line-height:1.15;padding:18px 34px;border:3px solid var(--ink);border-radius:22px;background:#FFFDF4;min-width:2.2em}
+.rcans .btn{min-height:64px;font-size:20px;padding:0 22px}
+.rcok{background:#D9F7DF}.rcno{background:#FFE1DA}
+.rctext{font-family:var(--f-k);font-size:clamp(22px,3.4vw,30px);line-height:1.9;text-align:left;max-width:720px;background:#FFFDF4;border:3px solid var(--ink);border-radius:18px;padding:12px 16px}
+.rctext span{border-radius:8px;padding:1px 3px}
+.rctext.pick span{cursor:pointer}
+.rctext span.rd{background:#E4F3FF}
+.rctext span.lst{background:#FFD86B;outline:2px solid var(--ink)}
+.rctime{font-size:26px;font-weight:700}
+.rcq{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.rcres{flex-basis:100%;font-size:14px}
+.rcd{color:#2E8B57;font-weight:700}
+.prc{margin-top:10px;border-top:2px dashed var(--line,#ddd);padding-top:8px}
+.prc h3{margin:0 0 6px;font-size:17px}.prc h3 small{font-size:12px;color:var(--muted)}
+.prc i.ka,.prc i.kb{display:inline-block;width:10px;height:10px;border-radius:3px;background:#9CC8F0;margin:0 3px 0 6px}.prc i.kb{background:#F2B04C}
+.rcrow{display:grid;grid-template-columns:minmax(110px,32%) 1fr;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+.rcbars{display:flex;flex-direction:column;gap:3px}
+.rcbars i{display:block;height:16px;border-radius:6px;font-style:normal;font-size:11px;font-weight:700;text-align:right;padding-right:5px;min-width:22px;box-sizing:border-box}
+.rcbars i.ra{background:#9CC8F0}.rcbars i.rb{background:#F2B04C}

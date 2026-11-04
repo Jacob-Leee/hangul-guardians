@@ -6871,5 +6871,305 @@ var _rx45=renderExtras;window.renderExtras=renderExtras=function(){var r=_rx45.a
  try{var ic=document.querySelector('#extras [data-x="cards"] .ic');if(ic&&!ic.querySelector(".pawi"))ic.innerHTML=pawIco()}catch(e){}return r};
 try{renderExtras()}catch(e){}
 })();
+
+/* ===== v46: 베타 측정 (1단계) =====
+   목적: 다른 집 아이 5~10명이 2주 동안 써 본 결과로 '스토어 준비로 넘어갈지' 판단한다.
+   - 기록은 이 기기에만(G.beta + 하루 기록 G.days). 서버·추적 없음, 아이 이름·녹음·사진 없음.
+   - 보호자가 메뉴(어른 확인) → 🧪 베타 테스트 → '리포트 보내기'로 코드를 직접 보낸다(카톡·메일).
+   - 첫날 질문(혼자 했나요?) · 7일째·14일째 평가(별점 + 불편한 점 한 줄) · 읽기 점검(3단계, window.rcBeta).
+   - 처음 시작한 기기는 자동으로 켜짐, 이미 진행이 있던 기기는 꺼짐(설정에서 켜기). 주소에 ?beta=1 / ?beta=0.
+   - 헷갈림 신호: 버튼이 아닌 곳을 5초 안에 3번 누르면 1회(게임 판·지도 위는 셈하지 않음). 추정치라 리포트에도 '신호'로만 씀. */
+(function(){
+"use strict";
+var APPV="v46";
+function snap(){var g=0,k;for(k in (G.days||{}))if(isObj(G.days[k]))g+=(+G.days[k].games||0);
+ var bd=0;for(k in (G.books||{}))if(G.books[k]&&G.books[k].done)bd++;
+ var cs=0;for(k in (G.cases||{}))if(G.cases[k])cs++;
+ return {g:g,b:bd,c:cs}}
+function B(){
+ if(!isObj(G.beta))G.beta={v:1,on:hasProgress()?0:1};
+ var b=G.beta;
+ if(!b.id)b.id="B"+Math.random().toString(36).slice(2,8).toUpperCase();
+ if(!isObj(b.f))b.f={first:-1,conf:0,help:0,acts:0,am:0,end:0};
+ if(!isObj(b.ack))b.ack={};
+ if(!Array.isArray(b.rc))b.rc=[];
+ if(b.on&&!b.d0){b.d0=dkey();b.t0=Date.now();b.f.g0=snap()}
+ return b}
+function on(){return !!B().on}
+function dayIdx(){var b=B();if(!b.d0)return 0;var a=new Date(b.d0+"T12:00:00"),n=new Date();n.setHours(12,0,0,0);return Math.max(1,Math.round((n-a)/864e5)+1)}
+window.betaState=function(){return {on:on(),day:dayIdx(),pending:pend(),b:B()}};
+window.betaDay=dayIdx;
+try{var mq=/[?&]beta=([01])/.exec(location.search||"");if(mq){B().on=mq[1]==="1"?1:0;B();save()}}catch(e){}
+B();save();
+
+/* 첫 15분(실제로 조작한 시간 기준): 첫 놀이까지 걸린 시간 · 헷갈림 신호 · 도움 단추 · 시작한 놀이 · 끝낸 놀이 */
+function endFirst(){var b=B(),f=b.f;if(f.end)return;f.end=1;f.endAt=dkey();var s=snap(),g0=f.g0||{g:0,b:0,c:0};
+ f.done=Math.max(0,(s.g-g0.g)+(s.b-g0.b)+(s.c-g0.c))}
+if(on()&&!B().f.end&&dayIdx()>=2){endFirst();save()}
+setInterval(function(){if(!on())return;var f=B().f;if(f.end)return;
+ if(document.hidden||Date.now()-lastAct>90000)return;var sp=$("splashOv");if(sp&&!sp.hidden)return;
+ f.am=Math.round(((+f.am||0)+.25)*100)/100;if(f.am>=15||dayIdx()>=2)endFirst();save();chip()},15000);
+
+/* 놀이 시작 기록: 하루 기록 D.act[종류] + 첫 15분 */
+var TYPE={openBook:"book",pgPlay:"play",caseStart:"case",startRun:"course",practiceBattle:"battle",hqOpen:"hq",cardBook:"cards",cardArena:"cards",tdOpen:"today",stickerBoard:"stk"};
+function act(t){if(!on())return;var b=B(),f=b.f;
+ dayLog(function(D){if(!isObj(D.act))D.act={};D.act[t]=(+D.act[t]||0)+1});
+ if(!f.end){f.acts++;if(f.first<0&&b.t0&&/^(book|play|case|course|battle)$/.test(t))f.first=Math.round((Date.now()-b.t0)/1000)}
+ save()}
+Object.keys(TYPE).forEach(function(n){var f0=window[n];if(typeof f0!=="function")return;
+ window[n]=function(){try{act(TYPE[n])}catch(e){}return f0.apply(this,arguments)}});
+
+/* 헷갈림 신호 · 도움 단추 */
+var CL='button,a,input,select,textarea,label,summary,[role=button],[onclick],[tabindex],[data-x]';
+var SKIP='#map,canvas,#pgArea,.kzstage,#kzStage,.bstage,#runOv,#duelOv,#batOv,#chalOv';
+function live(el){for(var i=0;el&&el.nodeType===1&&i<7;i++,el=el.parentElement){if(el.matches(CL)||typeof el.onclick==="function")return true;
+ try{if(getComputedStyle(el).cursor==="pointer")return true}catch(e){}}return false}
+var dead=[];
+document.addEventListener("pointerdown",function(ev){if(!on())return;var t=ev.target;if(!t||t.nodeType!==1||!t.closest)return;
+ if(t.closest(SKIP)||live(t))return;var now=Date.now();dead=dead.filter(function(x){return now-x<5000});dead.push(now);
+ if(dead.length>=3){dead=[];dayLog(function(D){D.conf=(+D.conf||0)+1});var f=B().f;if(!f.end)f.conf++;save()}},true);
+document.addEventListener("click",function(ev){if(!on())return;var bt=ev.target&&ev.target.closest&&ev.target.closest("button");if(!bt)return;
+ if(/help/i.test(bt.id||"")||/도움|힌트|💡/.test(bt.textContent||"")){dayLog(function(D){D.hlp=(+D.hlp||0)+1});var f=B().f;if(!f.end)f.help++;save()}},true);
+
+/* 보호자 질문: 첫날(15분이 지나면) · 7일째 · 14일째 · 읽기 점검(3단계) */
+function pend(){var b=B(),p=[];if(!b.on)return p;var di=dayIdx();
+ if(!b.q1&&(b.f.end||di>=2))p.push("q1");
+ if(di>=7&&!b.r7)p.push("r7");
+ if(di>=14&&!b.r14)p.push("r14");
+ try{if(window.rcBeta)p=p.concat(rcBeta.pending())}catch(e){}
+ return p}
+window.betaPending=pend;
+function chip(){var tools=document.querySelector(".hud .tools");if(!tools)return;var c=$("betaChip");
+ if(!c){c=document.createElement("button");c.id="betaChip";c.className="iconbtn betachip";tools.insertBefore(c,$("menuBtn")||null);
+  c.onclick=function(){if(overlayOpen())return;sfx("tap");pgate(function(){showSettings();setTimeout(function(){var s=$("betaSec");if(s)s.scrollIntoView({block:"start",behavior:"smooth"})},80)})}}
+ var n=pend().length;c.hidden=!n;c.innerHTML="🔒 <b>"+n+"</b>";c.setAttribute("aria-label",K("Questions for grown-ups: ","보호자 질문 ")+n)}
+window.betaChip=chip;
+var _ra46=renderAll;renderAll=function(){_ra46.apply(this,arguments);try{chip()}catch(e){}};
+
+/* 리포트 코드: 숫자 기록 + 보호자 답만 (이름·녹음·사진 없음) */
+function devType(){var u=navigator.userAgent||"";if(/iPad/.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1))return "ipad";if(/iPhone|iPod/.test(u))return "iphone";if(/Android/.test(u))return "android";return "other"}
+function report(){var b=B(),days={},acts={},keys=Object.keys(G.days||{}).filter(function(k){return /^\d{4}-\d\d-\d\d$/.test(k)&&(!b.d0||k>=b.d0)}).sort();
+ keys.forEach(function(k){var D=isObj(G.days[k])?G.days[k]:{},a=isObj(D.act)?D.act:{},na=0;for(var x in a){na+=(+a[x]||0);acts[x]=(acts[x]||0)+(+a[x]||0)}
+  days[k]=[Math.round((+D.min||0)*10)/10,+D.games||0,na,(+D.hlp||0)+(+D.help||0),+D.conf||0,+D.words||0,+D.rm||0]});
+ var s=snap(),pwa=0;try{pwa=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone?1:0}catch(e){}
+ var o={k:"HGB",v:1,app:APPV,id:b.id,d0:b.d0||null,at:dkey(),di:dayIdx(),
+  dev:{t:devType(),w:screen.width,h:screen.height,vw:innerWidth,vh:innerHeight,pwa:pwa,lang:G.lang},
+  f:b.f,q1:b.q1||0,r7:b.r7||null,r14:b.r14||null,rc:b.rc||[],days:days,acts:acts,
+  prog:{lv:G.lv||1,books:s.b,cases:s.c,games:s.g,cards:(G.cards&&isObj(G.cards.own))?Object.keys(G.cards.own).length:0,hq:(G.hq&&isObj(G.hq.got))?Object.keys(G.hq.got).length:0,easy:G.easy?1:0,rd:+G.rd||0,wl:+G.wl||0}};
+ return "HGB1."+b64e(new TextEncoder().encode(JSON.stringify(o)))}
+window.betaReport=report;
+function copyText(code,ta,note){var done=function(ok){if(note)note.textContent=ok?K("Copied! Paste it into a message to the developer.","복사했어요! 개발 담당에게 보내는 메시지에 붙여 넣으세요."):K("Select all the text above and copy it.","위 글자를 길게 눌러 전체 선택한 뒤 복사하세요.")};
+ try{navigator.clipboard.writeText(code).then(function(){done(true)},function(){fb()})}catch(e){fb()}
+ function fb(){var ok=false;try{ta.focus();ta.select();ok=document.execCommand("copy")}catch(e){}done(ok)}}
+function sendUI(){var box=$("betaRep");if(!box)return;var code=report();
+ box.innerHTML='<textarea id="betaTxt" readonly rows="3" spellcheck="false" aria-label="'+K("Beta report code","베타 리포트 코드")+'"></textarea><div class="tbtns">'
+  +(navigator.share?'<button class="btn pri" id="betaShare">📤 '+K("Send","보내기")+'</button>':'')+'<button class="btn'+(navigator.share?'':' pri')+'" id="betaCopy">📋 '+K("Copy","복사하기")+'</button></div>'
+  +'<small id="betaNote">'+K(code.length+" characters · numbers and your answers only (no name, no recordings, no photos)",code.length+"자 · 숫자 기록과 보호자 답만 들어가요 (이름·녹음·사진 없음)")+'</small>';
+ var ta=$("betaTxt");ta.value=code;B().sent=dkey();save();
+ if($("betaShare"))$("betaShare").onclick=function(){try{navigator.share({title:K("Hangul Zodiac Guardians beta report","한글 수비대 베타 리포트"),text:code}).catch(function(){})}catch(e){copyText(code,ta,$("betaNote"))}};
+ $("betaCopy").onclick=function(){copyText(code,ta,$("betaNote"))}}
+
+/* 설정 맨 위: 🧪 베타 테스트 */
+function starsHTML(key){return '<div class="btstars" role="group" aria-label="'+K("Rating","별점")+'">'+[1,2,3,4,5].map(function(n){return '<button type="button" data-bs="'+key+'" data-n="'+n+'" aria-label="'+n+'">⭐</button>'}).join("")+'</div>'}
+function rateHTML(key,title){return '<div class="btq">'+title+'</div>'+starsHTML(key)
+ +'<textarea class="bttxt" id="bt_'+key+'" rows="2" placeholder="'+K("The most inconvenient thing (one line)","가장 불편했던 점 (한 줄)")+'"></textarea>'
+ +'<textarea class="bttxt" id="bg_'+key+'" rows="2" placeholder="'+K("What your child liked (optional)","아이가 좋아한 것 (선택)")+'"></textarea>'
+ +'<div class="tbtns"><button class="btn pri" data-bsave="'+key+'">'+K("Save","저장")+'</button></div>'}
+function betaSec(){var c=$("setCard");if(!c)return;var old=$("betaSec");if(old)old.remove();var b=B(),di=dayIdx(),p=pend();
+ var d=document.createElement("div");d.className="setrow betasec";d.id="betaSec";
+ var h='<b>🧪 '+K("Beta test","베타 테스트")+'</b><div class="box seg" role="group"><button data-bon="1" aria-pressed="'+(b.on?"true":"false")+'">'+K("On","참여")+'</button><button data-bon="0" aria-pressed="'+(b.on?"false":"true")+'">'+K("Off","안 함")+'</button></div>';
+ if(!b.on){h+='<small>'+K("Taking part in the 2-week test? Turn it on: the game keeps simple counts on this device only, and you send a report code yourself.","2주 베타 테스트에 참여하면 켜 주세요. 이 기기에만 간단한 숫자 기록을 남기고, 보호자가 리포트 코드를 직접 보내요.")+'</small>'}
+ else{
+  h+='<small>'+K("Day "+di+" of the test · started "+b.d0+" · no. "+b.id,"베타 "+di+"일째 · 시작 "+b.d0+" · 번호 "+b.id)+'</small>';
+  if(p.indexOf("q1")>=0)h+='<div class="btq">'+K("Q1. How did your child manage the first 15 minutes?","질문 1. 아이가 처음 15분을 어떻게 했나요?")+'</div><div class="btopts">'
+   +[[1,K("On their own","혼자 했어요")],[2,K("A little help","조금 도와줬어요")],[3,K("A lot of help","많이 도와줬어요")]].map(function(o){return '<button class="btn" data-q1="'+o[0]+'">'+o[1]+'</button>'}).join("")+'</div>';
+  if(p.indexOf("r7")>=0)h+=rateHTML("r7",K("Day 7: how many stars would you give it?","7일째: 별점을 준다면?"));
+  if(p.indexOf("r14")>=0)h+=rateHTML("r14",K("Day 14: how many stars would you give it?","14일째: 별점을 준다면?"));
+  h+='<div class="btdone">'+[["q1",K("Day 1 question","첫날 질문")],["r7",K("Day 7 rating","7일째 평가")],["r14",K("Day 14 rating","14일째 평가")]].map(function(x){return '<span class="'+(b[x[0]]?"ok":"")+'">'+(b[x[0]]?"✓ ":"○ ")+x[1]+'</span>'}).join("")+'</div>';
+  h+='<div class="btrc" id="betaRc"></div>';
+  h+='<div class="tbtns"><button class="btn pri" id="betaSend">📤 '+K("Send the report","리포트 보내기")+'</button></div><small>'+K("Send it on days 7 and 14 (or whenever you are asked).","7일째와 14일째에 보내 주세요 (요청이 오면 그때도).")+(b.sent?' · '+K("last sent ","마지막 보냄 ")+b.sent:'')+'</small><div class="bkbox" id="betaRep"></div>'}
+ d.innerHTML=h;
+ var head=c.querySelector(".libhead");if(head&&head.nextSibling)c.insertBefore(d,head.nextSibling);else c.appendChild(d);
+ d.querySelectorAll("[data-bon]").forEach(function(x){x.onclick=function(){sfx("tap");var b2=B();b2.on=x.dataset.bon==="1"?1:0;B();save();chip();betaSec()}});
+ d.querySelectorAll("[data-q1]").forEach(function(x){x.onclick=function(){sfx("tap");var b2=B();b2.q1=+x.dataset.q1;b2.q1d=dkey();save();chip();betaSec();toast(K("Thank you!","고맙습니다!"))}});
+ var pick={};d.querySelectorAll("[data-bs]").forEach(function(x){x.onclick=function(){sfx("tap");var k=x.dataset.bs,n=+x.dataset.n;pick[k]=n;
+  d.querySelectorAll('[data-bs="'+k+'"]').forEach(function(y){y.classList.toggle("on",+y.dataset.n<=n)})}});
+ d.querySelectorAll("[data-bsave]").forEach(function(x){x.onclick=function(){var k=x.dataset.bsave;if(!pick[k]){toast(K("Please choose the stars first.","별점을 먼저 골라 주세요."));return}
+  var b2=B();b2[k]={s:pick[k],t:String(($("bt_"+k)||{}).value||"").trim().slice(0,300),g:String(($("bg_"+k)||{}).value||"").trim().slice(0,300),d:dkey()};save();chip();betaSec();toast(K("Thank you!","고맙습니다!"))}});
+ if($("betaSend"))$("betaSend").onclick=function(){sfx("tap");sendUI()};
+ try{if(window.rcBeta&&b.on)rcBeta.settingsRow($("betaRc"))}catch(e){}}
+var _ss46=showSettings;showSettings=function(){_ss46.apply(this,arguments);try{betaSec()}catch(e){}};
+try{chip()}catch(e){}
+})();
+
+/* ===== v46b: 처음 일주일 단순하게 (2단계) =====
+   점검 결과(11/4): 새 아이 첫날부터 메인 메뉴에 놀이터·사건·카드·본부·섬·더보기(코스·배틀·스티커판)가 모두 보이고,
+   오늘의 모험은 섬(해님 돌)에만 있어 도서관 화면에서는 안 보이며, 하루 10가지(게임 8 + 이야기 + 낱말)였다.
+   → 새로 시작한 아이(스플래시의 '모험 시작'을 진행 없이 누른 기기, G.ob.on)만:
+     - 메뉴를 진행에 따라 하나씩 연다: 처음 = 도서관 + 놀이터 / 1권 끝 = 카드·본부 / 2일째 또는 2권 = 사건·섬·오늘의 모험 / 3일째 또는 3권 = 더보기
+     - 열릴 때마다 거북이 스승님이 한 번 소개(대사 ux_081~086, 녹음 전에는 글자만)
+     - 처음 7일은 오늘의 모험 3가지(이야기·놀이 한 판·낱말 복습)를 도서관 책상 아래 해님 돌로도 보여 줌, 8일째부터 원래대로 한 바퀴
+   기존 기기(진행이 있던 기기)와 시험(스플래시를 건너뜀)은 그대로. */
+(function(){
+"use strict";
+function ob(){return isObj(G.ob)?G.ob:null}
+function obOn(){var o=ob();return !!(o&&o.on)}
+document.addEventListener("click",function(ev){try{var t=ev.target&&ev.target.closest&&ev.target.closest("#spGo,#spGo2");
+ if(t&&!hasProgress()&&!isObj(G.ob)){G.ob={on:1,d0:dkey(),shown:{},last:0};save()}}catch(e){}},true);
+function obDay(){var o=ob();if(!o||!o.d0)return 0;var a=new Date(o.d0+"T12:00:00"),n=new Date();n.setHours(12,0,0,0);return Math.max(1,Math.round((n-a)/864e5)+1)}
+function playDays(){var o=ob(),n=0;for(var k in (G.days||{}))if(/^\d{4}-\d\d-\d\d$/.test(k)&&(!o||!o.d0||k>=o.d0)&&isObj(G.days[k])&&(+G.days[k].min||0)>=1)n++;return n}
+function booksDone(){var n=0;for(var k in (G.books||{}))if(G.books[k]&&G.books[k].done)n++;return n}
+function vis(f){if(!obOn())return true;var bd=booksDone(),pd=playDays();
+ if(f==="cards")return bd>=1||!!(G.cards&&((isObj(G.cards.own)&&Object.keys(G.cards.own).length)||(Array.isArray(G.cards.q)&&G.cards.q.length)));
+ if(f==="hq")return bd>=1||!!(G.hq&&isObj(G.hq.got)&&Object.keys(G.hq.got).length);
+ if(f==="case"||f==="island"||f==="today")return pd>=2||bd>=2||Object.keys(G.cases||{}).length>0;
+ if(f==="more")return pd>=3||bd>=3||(G.lv||1)>=3;
+ return true}
+window.obState=function(){return {on:obOn(),day:obDay(),playDays:playDays(),books:booksDone(),vis:{cards:vis("cards"),hq:vis("hq"),case:vis("case"),today:vis("today"),more:vis("more")},ob:ob(),tdLen:G.tdLen||null}};
+/* 처음 7일은 오늘의 모험 3가지, 8일째부터 한 바퀴 */
+function tdMode(){if(!obOn())return;var o=ob(),d=obDay();
+ if(d<=7){if(G.tdLen!=="short"){G.tdLen="short";save()}}
+ else if(!o.lapSet){o.lapSet=1;G.tdLen="lap";save()}}
+tdMode();
+
+/* 메뉴 단추: 아직 안 열린 것은 숨김 */
+function obHide(){if(!obOn())return;var ex=$("extras");if(!ex)return;
+ var hide=[];if(!vis("case"))hide.push("case");if(!vis("cards"))hide.push("cards");if(!vis("hq"))hide.push("hq");
+ if(!vis("more"))hide.push("course","battle","stk","more");if(G.view!=="island"&&!vis("island"))hide.push("island");
+ hide.forEach(function(k){var b=ex.querySelector('[data-x="'+k+'"]');if(b){b.style.display="none";b.dataset.obh="1"}})}
+var _rx46b=renderExtras;window.renderExtras=renderExtras=function(){var r=_rx46b.apply(this,arguments);try{obHide()}catch(e){}return r};
+
+/* 도서관 책상 아래 해님 돌 3개 (처음 7일, 오늘의 모험이 열린 뒤) */
+function stones(){if(!obOn()||obDay()>7||!vis("today"))return;var box=$("stageMap");if(!box||!box.classList.contains("lib"))return;var desk=box.querySelector(".desk");if(!desk||box.querySelector(".obtd"))return;
+ var T=tdFresh(),st=tdStory(),R=tdGame(),P=PGAMES[R.g]||{ic:"🎮",n:{ko:"놀이",en:"Game"}},all=tdDone();
+ var row=function(k,ic,nm,done){return '<button class="obst'+(done?" on":"")+'" data-obs="'+k+'"><span class="sic">'+(done?"✓":ic)+'</span><b>'+nm+'</b></button>'};
+ var d=document.createElement("div");d.className="obtd";
+ d.innerHTML='<b class="obh">☀️ '+K("Today's adventure","오늘의 모험")+' <span>'+tdCount()+'/3</span></b><div class="obrow">'
+  +row("story",st.kind==="book"?"📖":"🔎",K("A story","이야기 하나"),!!T.story)+row("play",P.ic,K("One game","놀이 한 판"),!!T.play)+row("words","🔤",K("Word review","낱말 복습"),!!T.words)+'</div>'
+  +(all?'<p class="obok">🎉 '+K("All done for today!","오늘 모험 완료!")+'</p>':'');
+ desk.insertAdjacentElement("afterend",d);
+ d.querySelectorAll("[data-obs]").forEach(function(b){b.onclick=function(){if(overlayOpen())return;sfx("tap");var k=b.dataset.obs;goStone(k==="play"?R.g:k)}})}
+/* 섬의 해님 돌과 같은 곳으로 (tdGoStone은 다른 블록 안에 있어 같은 동작을 여기 둠) */
+function goStone(k){try{hush()}catch(e){}
+ if(k==="story"){var st=tdStory();if(st.kind==="book")openBook("b1");else{openCases();caseStart(st.i)}return}
+ if(k==="words")return rmWords(function(){try{renderAll()}catch(e){}});
+ if(k==="course")return startRun();if(k==="battle")return practiceBattle();
+ pgPlay(k,tdPgLv(k))}
+function sayM(t){try{if(G.lang!=="ko"||!window.recAny||!recAny("mentor",t))return;narrate([t],null,"ko",{voice:"mentor"})}catch(e){}}
+
+/* 거북이 스승님 소개 (한 번씩, 한 번에 하나, 40초 간격) */
+var LINES={
+ cards:{ko:"카드와 보물을 받았구나! 카드는 카드 배틀에서 쓰고, 보물은 우리 본부에 놓아 보렴.",en:"You got a card and a treasure! Use cards in the card battle, and put treasures in our HQ.",go:[["Card battle","카드 배틀"],function(){window.cardArena?cardArena():pgPlay("ncard",1)}]},
+ today:{ko:"오늘의 모험이 생겼단다. 이야기 하나, 놀이 한 판, 낱말 복습. 해님 돌을 눌러 보렴!",en:"Today's adventure is here: one story, one game and a word review. Tap the sun stones!",go:null},
+ "case":{ko:"사건 수사대가 열렸어! 숲속 친구들의 사건을 함께 풀어 볼까?",en:"The Case Squad is open! Shall we solve the forest friends' cases together?",go:[["Case Squad","사건 수사대"],function(){openCases()}]},
+ more:{ko:"더보기에 새 놀이가 생겼어. 모험 코스, 연습 배틀, 스티커판도 해 보렴.",en:"New games are in 'More': adventure courses, practice battles and the sticker board.",go:[["Show me","보여 줘"],function(){var ex=$("extras");if(ex){ex.classList.add("open");renderExtras()}}]},
+ lap:{ko:"이제 게임 한 바퀴에 도전해 볼까? 놀이터 게임을 하나씩 모두 해 보는 거란다.",en:"Ready for a full lap? Today's adventure now has every playground game, one by one.",go:[["Let's go","좋아요"],function(){tdOpen()}]},
+ back:{ko:"다시 왔구나! 오늘도 해님 돌 세 개를 모아 볼까?",en:"Welcome back! Shall we collect three sun stones today?",go:null}};
+window.OB_LINES=LINES;
+function busy(){try{if(overlayOpen())return true}catch(e){return true}
+ return !!document.querySelector('.ov:not([hidden]),#hqGiftOv:not([hidden]),#restOv,.wkpop')}
+function nextIntro(){var o=ob();if(!o)return null;o.shown=isObj(o.shown)?o.shown:{};var S=o.shown;
+ if(vis("cards")&&!S.cards)return "cards";
+ if(vis("today")&&!S.today)return "today";
+ if(vis("case")&&!S["case"])return "case";
+ if(vis("more")&&!S.more)return "more";
+ if(obDay()>=8&&!S.lap)return "lap";
+ var d=obDay();if(d>=2&&d<=7&&vis("today")&&S.back!==dkey()&&!tdDone())return "back";
+ return null}
+function intro(){if(!obOn()||busy())return;var o=ob(),k=nextIntro();if(!k)return;if(Date.now()-(+o.last||0)<40000)return;
+ var L0=LINES[k],txt=G.lang==="ko"?L0.ko:L0.en;o.shown[k]=k==="back"?dkey():1;o.last=Date.now();save();
+ var btns=[];if(L0.go)btns.push({label:K("Later","나중에")}),btns.push({label:K(L0.go[0][0],L0.go[0][1]),pri:1,fn:L0.go[1]});else btns.push({label:K("OK!","좋아요!"),pri:1});
+ dialog(portrait("captain"),K("Master Turtle","거북이 스승님"),txt,btns);
+ sayM(L0.ko)}
+var T46=null;
+function after(){try{tdMode();obHide();stones()}catch(e){}
+ if(!obOn())return;clearTimeout(T46);T46=setTimeout(function(){try{intro()}catch(e){}},1400)}
+var _ra46b=renderAll;renderAll=function(){_ra46b.apply(this,arguments);after()};
+window.obIntro=intro;window.obNext=nextIntro;
+try{after()}catch(e){}
+})();
+
+/* ===== v46c: 읽기 점검 (3단계) — 첫날 A · 14일째 B =====
+   보호자가 진행: 아이가 소리 내어 읽고, 보호자가 ⭕/❌만 누름(녹음 없음). 약 3분.
+   글자 10 · 받침 없는 낱말 10 · 받침 있는 낱말 10 · 짧은 글 1분 읽기(어절 수).
+   낱말은 게임 어디에도 안 나오는 것만 골라(11/4 게임 글자 전체와 대조) '외운 것'이 아니라 '읽는 힘'을 잰다.
+   A/B는 같은 짜임(글자: 같은 모음·자음 종류, 낱말: 받침 위치 같은 비율, 글: 9문장 37어절·받침 글자 48개).
+   결과는 G.beta.rc(베타 리포트 코드에 들어감) + 설정 베타 칸 + 부모 리포트에 '첫날 vs 14일째'. */
+(function(){
+"use strict";
+var FORMS={
+ A:{syl:["버","소","지","무","해","키","토","프","추","녀"],
+    open:["미소","자두","파도","호수","두부","우비","차표","해마","라디오","기러기"],
+    closed:["봄비","산길","칠판","필통","호박","국수","냄비","이불","손목","김치"],
+    text:"토요일 아침이에요. 민지는 엄마와 시장에 갔어요. 시장에는 사과와 배가 많았어요. 민지는 빨간 사과를 골랐어요. 엄마는 생선과 두부를 샀어요. 집에 오는 길에 비가 내렸어요. 민지와 엄마는 우산을 쓰고 천천히 걸었어요. 집에 와서 사과를 깎아 먹었어요. 정말 달고 맛있었어요."},
+ B:{syl:["머","조","리","부","개","티","코","트","주","뇨"],
+    open:["이마","허리","시소","어부","이사","투수","대추","수저","비디오","저고리"],
+    closed:["담요","감기","연기","걸레","수건","치약","눈길","돌담","송편","동전"],
+    text:"일요일 오후예요. 준호는 아빠와 공원에 갔어요. 공원에는 나무와 꽃이 많았어요. 준호는 노란 공을 찼어요. 아빠는 사진을 많이 찍었어요. 집에 오는 길에 바람이 불었어요. 준호와 아빠는 모자를 꼭 잡고 걸었어요. 집에 와서 따뜻한 우유를 마셨어요. 정말 기분이 좋았어요."}};
+var PARTS=[["syl","Letter sounds","글자 소리"],["open","Words without a final consonant","받침 없는 낱말"],["closed","Words with a final consonant","받침 있는 낱말"]];
+function rc(){return (G.beta&&Array.isArray(G.beta.rc))?G.beta.rc:[]}
+function get(f){var r=rc().filter(function(x){return x.f===f});return r.length?r[r.length-1]:null}
+function day(){try{return betaDay()}catch(e){return 0}}
+window.rcBeta={
+ forms:FORMS,
+ pending:function(){if(!(G.beta&&G.beta.on))return [];var p=[];if(!get("A")&&!get("B"))p.push("rcA");if(day()>=14&&!get("B"))p.push("rcB");return p},
+ settingsRow:function(box){if(!box)return;var a=get("A"),b=get("B"),di=day(),h='<div class="btq">📖 '+K("Reading check (about 3 min, run by a grown-up)","읽기 점검 (약 3분, 보호자가 진행)")+'</div>';
+  if(a)h+='<p class="rcres">'+line("A",a)+'</p>';if(b)h+='<p class="rcres">'+line("B",b)+(a?' '+diff(a,b):'')+'</p>';
+  var btn=[];if(!a&&!b)btn.push(['A',K("Start check A (day 1)","읽기 점검 A 시작 (첫날)")]);
+  if(!b&&(a||di>=14))btn.push(['B',di>=14?K("Start check B (day 14)","읽기 점검 B 시작 (14일째)"):K("Check B opens on day 14","읽기 점검 B는 14일째에 열려요")]);
+  h+='<div class="tbtns">'+btn.map(function(x){var off=x[0]==="B"&&di<14;return '<button class="btn'+(off?'':' pri')+'" data-rcgo="'+x[0]+'"'+(off?' disabled':'')+'>📖 '+x[1]+'</button>'}).join("")+'</div>';
+  if(!a&&!b)h+='<small>'+K("Best done before playing much on day 1. Words never used in the game, so it measures reading, not memory.","첫날 많이 놀기 전에 해 주세요. 게임에 안 나오는 낱말이라 외운 것이 아니라 읽는 힘을 재요.")+'</small>';
+  box.innerHTML=h;box.querySelectorAll("[data-rcgo]").forEach(function(x){x.onclick=function(){if(x.disabled)return;sfx("tap");run(x.dataset.rcgo)}})},
+ get:get};
+function line(f,r){return '<b>'+f+'</b> '+(r.d||"")+' · '+K("letters","글자")+' '+r.s[0]+' · '+K("open words","낱말")+' '+r.s[1]+' · '+K("final consonant","받침")+' '+r.s[2]+' /10 · '+K("1-minute reading ","1분 읽기 ")+r.w+K(" words"," 어절")}
+function diff(a,b){var d=function(x){return (x>0?"+":"")+x};return '<span class="rcd">('+d(b.s[0]-a.s[0])+' · '+d(b.s[1]-a.s[1])+' · '+d(b.s[2]-a.s[2])+' · '+d(b.w-a.w)+K(" words"," 어절")+')</span>'}
+var S=null;
+function card(){return $("setCard")}
+function head(t){return '<div class="libhead"><h2>📖 '+t+'</h2><button class="btn" id="rcX">'+K("Stop","그만하기")+'</button></div>'}
+function bindX(){var x=$("rcX");if(x)x.onclick=function(){sfx("tap");stopT();S=null;showSettings()}}
+function stopT(){if(S&&S.tm){clearInterval(S.tm);S.tm=null}}
+function run(f){var F=FORMS[f];if(!F)return;S={f:f,F:F,part:0,i:0,res:[[],[],[]],t0:0,tm:null};var c=card();if(!c)return;
+ c.innerHTML=head(K("Reading check ","읽기 점검 ")+f)+'<div class="rcbox"><p>'+K("Your child reads each item aloud. Tap ⭕ if it was read correctly, ❌ if it was wrong or took longer than about 3 seconds. Please don't give hints.","아이가 화면의 글자를 소리 내어 읽어요. 맞게 읽으면 ⭕, 틀리거나 3초 넘게 망설이면 ❌를 눌러 주세요. 힌트는 주지 말아 주세요.")+'</p><p class="rcsteps">'+K("Letters 10 → open words 10 → final-consonant words 10 → short text, 1 minute","글자 10개 → 받침 없는 낱말 10개 → 받침 있는 낱말 10개 → 짧은 글 1분 읽기")+'</p><div class="tbtns"><button class="btn pri" id="rcGo">▶ '+K("Start","시작")+'</button></div></div>';
+ bindX();$("rcGo").onclick=function(){sfx("tap");item()}}
+function item(){var c=card();if(!c||!S)return;var P=PARTS[S.part],list=S.F[P[0]],w=list[S.i];
+ c.innerHTML=head(K("Reading check ","읽기 점검 ")+S.f)+'<div class="rcbox"><p class="rcpart">'+K(P[1],P[2])+' · '+(S.i+1)+'/'+list.length+'</p><div class="rcbig noemj">'+escH(w)+'</div>'
+  +'<div class="tbtns rcans"><button class="btn rcok" data-rc="1">⭕ '+K("Read correctly","맞게 읽었어요")+'</button><button class="btn rcno" data-rc="0">❌ '+K("Wrong / didn't know","틀림·모름")+'</button></div></div>';
+ bindX();c.querySelectorAll("[data-rc]").forEach(function(b){b.onclick=function(){sfx("tap");S.res[S.part].push(b.dataset.rc==="1"?1:0);S.i++;
+  if(S.i>=list.length){S.part++;S.i=0}if(S.part>=PARTS.length)passage();else item()}})}
+function passage(){var c=card();if(!c||!S)return;var ws=S.F.text.split(" ");S.ws=ws;
+ c.innerHTML=head(K("Reading check ","읽기 점검 ")+S.f)+'<div class="rcbox"><p class="rcpart">'+K("Short text · 1 minute","짧은 글 · 1분 읽기")+'</p><p>'+K("Ask your child to read from the beginning when you tap Start. The timer stops after 1 minute.","'시작'을 누르면 아이가 처음부터 읽어요. 1분이 지나면 멈춰요.")+'</p>'
+  +'<div class="rctext noemj" id="rcText">'+ws.map(function(w,i){return '<span data-wi="'+i+'">'+escH(w)+'</span>'}).join(" ")+'</div>'
+  +'<p class="rctime" id="rcTime">1:00</p><div class="tbtns" id="rcBtns"><button class="btn pri" id="rcStart">▶ '+K("Start","시작")+'</button></div></div>';
+ bindX();$("rcStart").onclick=function(){sfx("tap");S.t0=Date.now();$("rcBtns").innerHTML='<button class="btn" id="rcEnd">✋ '+K("Finished reading","다 읽었어요")+'</button>';
+  $("rcEnd").onclick=function(){sfx("tap");mark(true)};
+  S.tm=setInterval(function(){if(!S)return;var left=Math.max(0,60-Math.floor((Date.now()-S.t0)/1000));var e=$("rcTime");if(e)e.textContent="0:"+String(left).padStart(2,"0");if(left<=0)mark(false)},250)}}
+function mark(early){if(!S||S.marked)return;stopT();S.marked=1;S.secs=Math.min(60,Math.max(1,Math.round((Date.now()-S.t0)/1000)));var ws=S.ws,last=early?ws.length-1:-1,err=0;
+ var tx=$("rcText"),tm=$("rcTime"),bt=$("rcBtns");if(!tx||!bt)return;tx.classList.add("pick");
+ if(tm)tm.textContent=early?K("Done in "+S.secs+" s","다 읽음 · "+S.secs+"초"):K("Time's up!","1분 끝!");
+ var draw=function(){tx.querySelectorAll("[data-wi]").forEach(function(s){var i=+s.dataset.wi;s.classList.toggle("rd",i<=last);s.classList.toggle("lst",i===last)});
+  bt.innerHTML='<p class="rcq">'+K("Tap the last word your child read.","아이가 마지막으로 읽은 낱말을 눌러 주세요.")+'</p><p class="rcq">'+K("Words read wrongly: ","틀리게 읽은 낱말 수: ")+'<button class="btn" id="rcM">−</button> <b id="rcE">'+err+'</b> <button class="btn" id="rcP">+</button></p>'
+   +'<button class="btn pri" id="rcSave"'+(last<0?' disabled':'')+'>'+K("Save","저장")+'</button>';
+  $("rcM").onclick=function(){err=Math.max(0,err-1);draw()};$("rcP").onclick=function(){err=Math.min(last+1,err+1);draw()};
+  $("rcSave").onclick=function(){if(last<0)return;sfx("star");save1(last+1,err)}};
+ tx.querySelectorAll("[data-wi]").forEach(function(s){s.onclick=function(){last=+s.dataset.wi;err=Math.min(err,last+1);draw()}});draw()}
+function save1(words,err){var r={f:S.f,d:dkey(),di:day(),s:S.res.map(function(a){return a.reduce(function(x,y){return x+y},0)}),m:S.res.map(function(a){return a.join("")}),
+ ws:words,e:err,t:S.secs,w:Math.round(Math.max(0,words-err)*60/S.secs)};
+ if(G.beta){if(!Array.isArray(G.beta.rc))G.beta.rc=[];G.beta.rc.push(r)}save();try{betaChip()}catch(e){}
+ var a=get("A"),c=card();S=null;if(!c)return;
+ c.innerHTML=head(K("Reading check ","읽기 점검 ")+r.f)+'<div class="rcbox"><p class="rcpart">'+K("Saved!","저장했어요!")+'</p><p class="rcres">'+line(r.f,r)+(r.f==="B"&&a?' '+diff(a,r):'')+'</p>'
+  +'<p>'+K("Please don't tell your child the score. Check B opens on day 14 for comparison.","아이에게 점수는 알려 주지 마세요. 14일째에 읽기 점검 B로 비교해요.")+'</p><div class="tbtns"><button class="btn pri" id="rcDone">'+K("Back to settings","설정으로")+'</button></div></div>';
+ bindX();$("rcDone").onclick=function(){sfx("tap");showSettings()}}
+window.rcRun=run;
+/* 부모 리포트: 읽기 점검 결과 (있을 때만) */
+if(typeof showPartner==="function"){var _sp46=showPartner;window.showPartner=showPartner=function(){_sp46.apply(this,arguments);
+ try{var a=get("A"),b=get("B");if(!a&&!b)return;var wk=$("pWeek");if(!wk)return;var old=$("pRc");if(old)old.remove();
+  var row=function(nm,x,y,mx){var w=function(v){return Math.round(Math.max(0,Math.min(1,v/mx))*100)};
+   return '<div class="rcrow"><span>'+nm+'</span><div class="rcbars">'+(x!=null?'<i class="ra" style="width:'+w(x)+'%">'+x+'</i>':'')+(y!=null?'<i class="rb" style="width:'+w(y)+'%">'+y+'</i>':'')+'</div></div>'};
+  var d=document.createElement("div");d.id="pRc";d.className="prc";
+  d.innerHTML='<h3>📖 '+K("Reading check","읽기 점검")+' <small>'+(a?'<i class="ka"></i>A '+(a.d||""):"")+(b?' <i class="kb"></i>B '+(b.d||""):"")+'</small></h3>'
+   +row(K("Letters /10","글자 /10"),a&&a.s[0],b&&b.s[0],10)+row(K("Open words /10","받침 없는 낱말 /10"),a&&a.s[1],b&&b.s[1],10)+row(K("Final consonant /10","받침 있는 낱말 /10"),a&&a.s[2],b&&b.s[2],10)
+   +row(K("Words read in 1 min","1분에 읽은 어절"),a&&a.w,b&&b.w,Math.max(40,(a&&a.w)||0,(b&&b.w)||0));
+  wk.appendChild(d)}catch(e){}}}
+})();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
