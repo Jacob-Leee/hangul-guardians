@@ -51,14 +51,14 @@ BOOKDATA.b2={dir:"books/b2/",enterArt:"scene_enter.webp",cover:"cover.webp",bg:"
   {scene:[{state:{country:["table1","stand"],city:["table2","stand"],cat:["catIn","prowl"]}},{cam:[80,62,1.25],cms:0},{pose:["cat","ready"]},{wait:550},{pose:["cat","pounce"]},{move:"city",to:"hole",pose:"scared",ms:900,par:true},{move:"country",to:"hole2",pose:"scared",ms:1000}],text:"두 쥐는 쥐구멍으로 후다닥 숨었어요. 시골 쥐는 덜덜 떨었어요."},
   {pov:{img:"page3.webp",kb:"in"},who:"country",text:"시골 쥐는 짐을 쌌어요. \"맛있는 음식도 좋지만, 나는 걱정 없이 먹는 우리 집 밥이 더 좋아.\""},
   {scene:[{state:"end"},{cam:["country",1.4],cms:0}],text:"시골 쥐는 시골 집으로 돌아가 보리밥을 맛있게 먹었어요. 이야기가 다시 제자리로 돌아왔어요."}],
- ending:{title:"보너스: 도시 쥐가 시골에 놀러 온다면?",ask:"도시 쥐가 시골에 놀러 온다면? 둘은 무엇을 할까?",lead:"도시 쥐는 시골에서…",lead2:"마지막에는…",ask2:"마지막에는 어떻게 되었을까?",
-  start:{country:["home","stand"],city:["path","travel"],cat:["catIn","stand"]},tpl:"도시 쥐는 시골에서 {A}. 마지막에 {B}.",
+ ending:{title:"보너스: 도시 쥐가 시골에 놀러 온다면?",ask:"도시 쥐가 시골에 놀러 온다면? 둘은 무엇을 할까?",lead:"도시 쥐는 시골에 와서…",lead2:"마지막에는…",ask2:"마지막에는 어떻게 되었을까?",
+  start:{country:["home","stand"],city:["path","travel"],cat:["catIn","stand"]},tpl:"도시 쥐는 시골에 와서 {A}. 마지막에 {B}.",
   A:[{t:"꽃밭에서 숨바꼭질을 했어요",e:"🌼",s:[{move:"city",to:"field",pose:"walk",end:"proud",ms:1400},{move:"country",to:"field",pose:"walk",end:"happy",ms:900}]},
      {t:"시냇물에서 물놀이를 했어요",e:"💧",s:[{move:"city",to:"bridge",pose:"walk",end:"stand",ms:1000},{move:"country",to:"path",pose:"walk",end:"happy",ms:1400},{prop:["💧",47,70]}]},
      {t:"밤하늘의 별을 구경했어요",e:"⭐",s:[{move:"city",to:"field",pose:"walk",end:"stand",ms:1200},{prop:["⭐",26,22]},{prop:["✨",38,15]}]}],
   B:[{t:"둘이 보리밥을 나눠 먹었어요",e:"🍚",s:[{move:"city",to:"home",pose:"walk",end:"stand",ms:1600},{prop:["🍚",18,66]},{fx:"confetti"}]},
      {t:"도시 쥐도 시골이 좋아졌어요",e:"💛",s:[{pose:["city","proud"]},{prop:["💛",36,64]},{fx:"confetti"}]},
-     {t:"다음에는 함께 도시에 놀러 가기로 했어요",e:"🤝",s:[{move:"country",to:"road2",pose:"walk",end:"happy",ms:2000,par:true},{move:"city",to:"road2",pose:"travel",end:"travel",ms:2000},{fx:"confetti"}]}]},
+     {t:"도시에 같이 놀러 가자고 약속했어요",e:"🤝",s:[{move:"country",to:"road2",pose:"walk",end:"happy",ms:2000,par:true},{move:"city",to:"road2",pose:"travel",end:"travel",ms:2000},{fx:"confetti"}]}]},
  fin:["이야기를 되찾았어요!","{vil} 배를 두드리며 도망쳤어요.","\"잘했구나. 이 책을 도서관에 꽂아 두자.\""]};
 /* 〈소가 된 게으름뱅이〉 — book 3. 주인 영웅: 강철 소(ox), 악당: 회색냥(gray).
    11/4 아이 혼자 점검: 망가진 문장을 프롤로그("모자를 써도 변하지 않고")와 맞춤 — "소가 되지 않았어요" → "되었어요"(고친 문장은 녹음 b3_024 그대로).

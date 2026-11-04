@@ -53,11 +53,11 @@ BOOKDATA.b3={dir:"books/b3/",enterArt:"scene_enter.webp",cover:"cover.webp",bg:"
   {pov:{img:"page3.webp",kb:"in"},text:"\"이 소는 무를 먹으면 큰일 난단다.\" 할아버지의 말에 돌이는 '차라리…' 하고 하얀 무를 덥석 먹었어요. 펑! 돌이는 다시 사람이 되었지요."},
   {scene:[{state:"end"},{cam:["boy",1.4],cms:0}],who:"old",text:"할아버지가 빙그레 웃으며 말했어요. \"게으름을 고치려고 꾸민 일이란다.\" 다음 날부터 돌이는 아침 일찍 일어나 부지런히 일했어요. 이야기가 다시 제자리로 돌아왔어요."}],
  ending:{title:"보너스: 부지런해진 돌이의 아침은?",ask:"다시 아침이 밝았어요. 돌이는 무엇을 할까?",lead:"돌이는 아침에…",lead2:"마지막에는…",ask2:"마지막에는 어떻게 되었을까?",
-  start:{boy:["home","stand"],old:["gate","stand"]},tpl:"소년은 아침에 {A}. 마지막에 {B}.",
+  start:{boy:["home","stand"],old:["gate","stand"]},tpl:"돌이는 아침에 {A}. 마지막에 {B}.",
   A:[{t:"할아버지보다 먼저 밭에 나갔어요",e:"🌾",s:[{move:"boy",to:"field",pose:"walk",end:"stand",ms:1600}]},
      {t:"마당을 쓸고 물도 길어 왔어요",e:"🧹",s:[{move:"boy",to:"yard",pose:"walk",end:"stand",ms:1400},{prop:["✨",30,80]}]},
      {t:"평상을 반짝반짝 닦았어요",e:"✨",s:[{move:"boy",to:"bench",pose:"walk",end:"stand",ms:1200},{prop:["✨",22,76]}]}],
-  B:[{t:"할아버지가 소년을 꼭 안아 주었어요",e:"💛",s:[{move:"old",to:"field",pose:"walk",ms:1200},{prop:["💛",52,70]},{fx:"confetti"}]},
+  B:[{t:"할아버지가 돌이를 꼭 안아 주었어요",e:"💛",s:[{move:"old",to:"field",pose:"walk",ms:1200},{prop:["💛",52,70]},{fx:"confetti"}]},
      {t:"저녁밥을 두 그릇이나 먹었어요",e:"🍚",s:[{move:"boy",to:"meal",pose:"walk",end:"happy",ms:1600},{prop:["🍚",84,78]},{fx:"confetti"}]},
      {t:"소 모자는 벽에 잘 걸어 두기로 했어요",e:"🎩",s:[{move:"boy",to:"home",pose:"walk",end:"stand",ms:1500},{prop:["🎩",10,70]},{fx:"confetti"}]}]},
  fin:["이야기를 되찾았어요!","{vil} 하품을 하며 도망쳤어요.","\"잘했구나. 이 책을 도서관에 꽂아 두자.\""]};
