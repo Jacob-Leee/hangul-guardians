@@ -532,10 +532,30 @@ def split_srt(audio, srt, out=None, dry=False, small=True):
         if r["화자ID"].strip() == "narrator" and r["파일명"] not in seen:   # the story narrator (letters are already in roles)
             seen.add(r["파일명"])
             index.setdefault(loose_key(r["대사"]), {}).setdefault("narrator", []).append(r)
+    # book 3-12 characters are only in their book script (not in dubbing_characters.csv): add a line when no role has it yet,
+    # under its own speaker id, so it gets its own volume like every other role (11/4, book 6)
+    for r in sum((read_csv("dubbing_b%d.csv" % _i) for _i in range(3, 13)), []):
+        w = r["화자ID"].strip()
+        if w and w not in ("narrator", "mentor") and r["파일명"] not in seen:
+            lst = index.setdefault(loose_key(r["대사"]), {}).setdefault(w, [])
+            if all(x["파일명"] != r["파일명"] for x in lst):
+                seen.add(r["파일명"])
+                lst.append(r)
     entries = parse_srt(srt)
     if not entries:
         sys.exit("no subtitle lines found in " + srt)
     cand = [index.get(loose_key(t)) for _, _, t in entries]
+    # the book this recording is for = the most common file prefix among lines only one role says (b6_001 -> b6).
+    # A line several books share ("가자! 이야기를 되찾자!" is said by each book's hero) then goes to this book's speaker and file.
+    pre = {}
+    for c in cand:
+        if c and len(c) == 1:
+            for rr in next(iter(c.values())):
+                k2 = rr["파일명"].split("_")[0]
+                pre[k2] = pre.get(k2, 0) + 1
+    book = max(pre, key=pre.get) if pre else None
+    def in_book(rows):
+        return bool(book) and any(rr["파일명"].startswith(book + "_") for rr in rows)
     who = []
     for i, c in enumerate(cand):
         if not c:
@@ -543,6 +563,10 @@ def split_srt(audio, srt, out=None, dry=False, small=True):
             continue
         if len(c) == 1:
             who.append(next(iter(c)))
+            continue
+        inb = [rid for rid, rows in c.items() if in_book(rows)]
+        if len(inb) == 1:
+            who.append(inb[0])
             continue
         prev = next((who[j] for j in range(i - 1, -1, -1) if who[j]), None)
         nxt = next((next(iter(cand[j])) for j in range(i + 1, len(cand)) if cand[j] and len(cand[j]) == 1), None)
@@ -583,7 +607,7 @@ def split_srt(audio, srt, out=None, dry=False, small=True):
         if not sp:
             continue
         key = (w, loose_key(t))
-        rows = cand[k][w]
+        rows = sorted(cand[k][w], key=lambda rr: 0 if book and rr["파일명"].startswith(book + "_") else 1)   # this book's file first
         q = queue.setdefault(key, list(rows))
         row = q.pop(0) if q else rows[-1]
         name = row["파일명"].strip()
