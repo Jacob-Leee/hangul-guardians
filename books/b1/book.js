@@ -32,10 +32,10 @@ BOOKDATA.b1={dir:"books/b1/",cover:"cover.webp",bg:"spread.webp",
     {claim:false},{mark:["turtle",null]},{cam:[45,58,1.15]},
     {pose:["turtle","stand"]},{say:"\"어? 내가 왜 여기 있지? 다시 걸어야지!\"",who:"turtle"},
     {move:"turtle",to:"mid",pose:"walk",ms:2800,par:true},
+    {say:"거북이는 다시 엉금엉금 걷기 시작했어요."},
     {move:"rabbit",to:"tree",pose:"run",end:"sleep",ms:1800},
     {zz:"rabbit"},
     {say:"토끼는 나무 아래로 돌아가 쿨쿨 잠들었어요."},
-    {say:"거북이는 다시 엉금엉금 걷기 시작했어요."},
     {cam:null}],next:"다음: 책장 순서 맞추기"},
   {type:"order",name:"순서",ask:"일어난 순서대로 책장을 놓아 봐!",hint:"무엇이 먼저 일어나야 다음 일이 생길까? 출발해야 달릴 수 있겠지?",
    pages:[{img:"card1.webp",t:"탕! 토끼와 거북이가 함께 출발했어요.",cl:["출발"]},{img:"card2.webp",t:"토끼가 나무 아래에서 쿨쿨 잠들었어요.",cl:["잠들었어요"]},{img:"card3.webp",t:"거북이가 먼저 결승점에 도착했어요.",cl:["도착"]}]},
@@ -66,4 +66,6 @@ BOOKDATA.b1={dir:"books/b1/",cover:"cover.webp",bg:"spread.webp",
    the front at about 75% height, stone bridge 38–55%, the dining room from 57%: table top at about 36%, mouse hole at 94%.
    The dining room is drawn at a person's scale and the stage is short on wide screens (only about the lower 58% shows), so the
    mice stay on the floor by the table instead of on its top (like page2.webp), mice h 26, cat h 30.
+   2026-11-04 (아이 혼자 점검): 미리보기 첫 장에 '도시 쥐는 시골 쥐를 도시로 데려갔어요.' 추가(시골 초대 → 도시 식탁 사이 빈칸), 변화 장면의
+   고양이는 시골에서 걸어오지 않고 시골 쪽에서 '펑' 사라진 뒤 도시 집 오른쪽에서 들어와요(catEdge).
    To load it in the project folder see docs/HANDOVER.md → "새 책 추가 체크리스트" (BD.b2 → BOOKDATA.b2; VOX/RMS lines go to app.js). */;

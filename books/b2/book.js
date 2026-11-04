@@ -7,7 +7,7 @@ BOOKDATA.b2={dir:"books/b2/",enterArt:"scene_enter.webp",cover:"cover.webp",bg:"
   city:{n:"도시 쥐",voice:"sb_city",h:26,poses:{stand:["city_stand.webp",1],proud:["city_proud.webp",1],scared:["city_scared.webp",.92],walk:["city_walk.webp",1],travel:["city_travel.webp",1]}},
   cat:{n:"고양이",voice:"narrator",h:30,poses:{stand:["cat_prowl.webp",1],prowl:["cat_prowl.webp",1],ready:["cat_ready.webp",1],pounce:["cat_pounce.webp",1]}}},
  at:{home:[14,67],field:[27,75],path:[34,76],bridge:[46,76],road2:[56,76],catIn:[65,74],table1:[78,73],table2:[87,73],
-     hole:[92,70],hole2:[87,71],cityHome:[80,73],catHome:[27,75]},
+     hole:[92,70],hole2:[87,71],cityHome:[80,73],catHome:[27,75],catEdge:[99,74]},
  broken:{country:["table1","stand"],city:["table2","proud"],cat:["catHome","prowl"]},
  endState:{country:["home","happy"],city:["cityHome","stand"],cat:["catIn","stand"]},
  claim:{who:"country",t:"시골 집에 고양이가 나왔어! 나는 도시에서 살래!"},
@@ -33,7 +33,7 @@ BOOKDATA.b2={dir:"books/b2/",enterArt:"scene_enter.webp",cover:"cover.webp",bg:"
   {type:"fix",name:"수정",alts:["바닷가","숲속"],ask1:"기록과 다른 낱말은 어디일까? 콕 눌러 봐!",ask2:"어떤 낱말로 고칠까?",hint1:"기록에는 '야옹' 소리가 어디에서 났다고 적혀 있었니? 책 속 문장과 비교해 보렴.",hint2:"식탁 기록을 다시 읽어 보렴. 그 식탁은 누구의 집에 있었지?",cl:["야옹","도시 쥐가 식탁에서"]},
   {type:"script",name:"변화",intro:"문장이 바로잡혔어요! 이야기가 바뀌는 걸 봐요.",script:[
     {claim:false},{mark:["country",null]},{cam:[78,62,1.1]},
-    {move:"cat",to:"catIn",pose:"prowl",ms:2600},
+    {fx:"burst",at:[27,66]},{state:{cat:["catEdge","prowl"]}},{move:"cat",to:"catIn",pose:"prowl",ms:1800},
     {say:"\"야옹!\" 커다란 고양이가 도시 집 식탁으로 다가왔어요."},
     {pose:["cat","ready"]},{wait:550},{pose:["cat","pounce"]},{fx:"burst",at:[70,64]},
     {move:"city",to:"hole",pose:"scared",ms:900,par:true},
@@ -42,7 +42,7 @@ BOOKDATA.b2={dir:"books/b2/",enterArt:"scene_enter.webp",cover:"cover.webp",bg:"
     {say:"\"나는 조용한 우리 집이 좋아.\"",who:"country"},
     {cam:null},{move:"country",to:"home",pose:"walk",end:"happy",ms:3800}],next:"다음: 책장 순서 맞추기"},
   {type:"order",name:"순서",ask:"일어난 순서대로 책장을 놓아 봐!",hint:"도시에 가기 전에 무슨 일이 있었을까? 초대를 받아야 놀러 갈 수 있겠지?",
-   pages:[{img:"page1.webp",t:"시골 쥐가 도시 쥐를 시골 집에 초대했어요.",cl:["초대했어요"]},{img:"page2.webp",t:"도시 집 식탁에 커다란 고양이가 나타났어요.",cl:["나타났어요"]},{img:"page3.webp",t:"시골 쥐는 시골 집으로 돌아갔어요.",cl:["돌아갔어요"]}]},
+   pages:[{img:"page1.webp",t:"시골 쥐가 도시 쥐를 시골 집에 초대했어요. 도시 쥐는 시골 쥐를 도시로 데려갔어요.",cl:["초대했어요"]},{img:"page2.webp",t:"도시 집 식탁에 커다란 고양이가 나타났어요.",cl:["나타났어요"]},{img:"page3.webp",t:"시골 쥐는 시골 집으로 돌아갔어요.",cl:["돌아갔어요"]}]},
   {type:"story",name:"완성",pages:"restored"}],
  restored:[
   {pov:{img:"page1.webp",kb:"in"},text:"시골 쥐가 도시 쥐를 시골 집에 초대했어요. 밥상에는 보리와 콩이 조금 놓여 있었어요."},
@@ -61,5 +61,6 @@ BOOKDATA.b2={dir:"books/b2/",enterArt:"scene_enter.webp",cover:"cover.webp",bg:"
      {t:"다음에는 함께 도시에 놀러 가기로 했어요",e:"🤝",s:[{move:"country",to:"road2",pose:"walk",end:"happy",ms:2000,par:true},{move:"city",to:"road2",pose:"travel",end:"travel",ms:2000},{fx:"confetti"}]}]},
  fin:["이야기를 되찾았어요!","{vil} 배를 두드리며 도망쳤어요.","\"잘했구나. 이 책을 도서관에 꽂아 두자.\""]};
 /* 〈소가 된 게으름뱅이〉 — book 3. 주인 영웅: 강철 소(ox), 악당: 회색냥(gray).
+   11/4 아이 혼자 점검: 망가진 문장을 프롤로그("모자를 써도 변하지 않고")와 맞춤 — "소가 되지 않았어요" → "되었어요"(고친 문장은 녹음 b3_024 그대로).
    v34: 원작 충실판(순한 번안) — 꾐 → 소로 변함(안 벗겨짐) → 고된 일과 후회 → 무 경고 → 무를 먹고 사람으로 → 교훈.
    Voices (VOX.sb_*) and reading missions (RMS.b3) are at the end. Format: docs/HANDOVER.md → "동화책 데이터 형식". */;
