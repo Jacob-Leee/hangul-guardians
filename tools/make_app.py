@@ -64,9 +64,11 @@ rest = [f for f in files if f not in core]
 hsh = hashlib.sha256()
 for f in files: hsh.update(f.encode()); hsh.update(open(os.path.join(OUT, f), 'rb').read())
 version = hsh.hexdigest()[:12]
+fhash = {('./' if f == 'index.html' else f): hashlib.sha256(open(os.path.join(OUT, f), 'rb').read()).hexdigest()[:12] for f in files}
+if 'index.html' in files: fhash['index.html'] = fhash['./']
 size = sum(os.path.getsize(os.path.join(OUT, f)) for f in files)
 sw = open(os.path.join(HERE, 'sw_template.js'), encoding='utf-8').read()
-sw = sw.replace('__VERSION__', version).replace('__CORE__', json.dumps(['./'] + core, ensure_ascii=False)).replace('__REST__', json.dumps(rest, ensure_ascii=False))
+sw = sw.replace('__VERSION__', version).replace('__CORE__', json.dumps(['./'] + core, ensure_ascii=False)).replace('__REST__', json.dumps(rest, ensure_ascii=False)).replace('__HASH__', json.dumps(fhash, ensure_ascii=False, separators=(',', ':')))
 open(f'{OUT}/sw.js', 'w', encoding='utf-8').write(sw)
 open(f'{OUT}/.nojekyll', 'w').write('')
 print(f'app ok: version {version}, {len(files)} files precached ({size/1e6:.1f} MB), core {len(core)}')

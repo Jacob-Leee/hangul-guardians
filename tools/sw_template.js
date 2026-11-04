@@ -5,14 +5,35 @@ const VERSION = "__VERSION__";
 const CACHE = "hg-" + VERSION;
 const CORE = __CORE__;   /* must all be saved, or this version is not installed */
 const REST = __REST__;   /* saved too; one missing file does not stop the install */
+const HASH = __HASH__;   /* file → content hash: an update copies unchanged files from the saved copy instead of downloading them again */
 
 self.addEventListener("install", e => {
   e.waitUntil((async () => {
     const c = await caches.open(CACHE), total = CORE.length + REST.length;
-    let done = 0;
-    const tell = async () => { (await self.clients.matchAll({ includeUncontrolled: true })).forEach(x => x.postMessage({ type: "cache", done, total, version: VERSION })); };
+    let done = 0, reused = 0, fetched = 0;
+    const tell = async () => { (await self.clients.matchAll({ includeUncontrolled: true })).forEach(x => x.postMessage({ type: "cache", done, total, reused, fetched, version: VERSION })); };
+    /* earlier copies of the app, newest first: a file whose bytes still match its hash is copied, not downloaded */
+    const olds = [];
+    for (const k of (await caches.keys()).reverse()) if (k.startsWith("hg-") && k !== CACHE) olds.push(await caches.open(k));
+    const hex = b => Array.from(new Uint8Array(b), x => x.toString(16).padStart(2, "0")).join("");
+    const reuse = async u => {
+      const want = HASH[u];
+      if (!want || !olds.length || !(self.crypto && crypto.subtle)) return false;
+      for (const oc of olds) {
+        const r = await oc.match(u);
+        if (!r || !r.ok) continue;
+        const buf = await r.arrayBuffer();
+        if (hex(await crypto.subtle.digest("SHA-256", buf)).slice(0, want.length) !== want) return false;
+        await c.put(u, new Response(buf, { status: 200, statusText: "OK", headers: r.headers }));
+        return true;
+      }
+      return false;
+    };
     const put = async (u, must) => {
-      try { const r = await fetch(new Request(u, { cache: "reload" })); if (!r.ok) throw new Error(u + " " + r.status); await c.put(u, r); }
+      try {
+        if (await reuse(u).catch(() => false)) reused++;
+        else { const r = await fetch(new Request(u, { cache: "reload" })); if (!r.ok) throw new Error(u + " " + r.status); await c.put(u, r); fetched++; }
+      }
       catch (err) { if (must) throw err; }
       done++;
     };

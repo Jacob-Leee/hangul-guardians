@@ -2533,7 +2533,7 @@ function renderLibrary(){
  const box=$("stageMap");box.classList.add("lib");G.books=G.books||{};
  const n=BOOKS.filter(b=>bookDone(b.id)).length,next=BOOKS.find(b=>BD[b.id]&&!bookDone(b.id));
  box.innerHTML=`<div class="libv"><div class="lhead"><b>📚 ${K("The Library of Twelve Stories","열두 이야기 도서관")}</b><small>${K(`Books restored ${n} / 12`,`되찾은 책 ${n} / 12`)}</small></div>
- <div class="shelfg">${BOOKS.map(b=>{const d=bookDone(b.id),bs=(G.books[b.id]||{}),cv=d&&bkCover(b.id);return `<div class="bcell"><button class="bslot${d?" done":""}${cv?" cov":""}${SHELF_NEW===b.id?" new":""}" data-bk="${b.id}" style="--bc:${b.c[0]};--bc2:${b.c[1]};${cv?`background-image:url(${cv})`:""}"><span class="ow"><img src="${ownerImg(b.owner)}" alt=""></span><span class="tt">${G.lang==="ko"?b.t:b.te}</span><span class="st">${d?"⭐".repeat(bs.stars||1)+(bs.end?" ✏️":""):(BD[b.id]?K("broken","망가짐"):"")}</span></button></div>`}).join("")}</div>
+ <div class="shelfg">${BOOKS.map(b=>{const d=bookDone(b.id),bs=(G.books[b.id]||{}),cv=d&&bkCover(b.id);return `<div class="bcell"><button class="bslot${d?" done":""}${cv?" cov":""}${SHELF_NEW===b.id?" new":""}" data-bk="${b.id}" style="--bc:${b.c[0]};--bc2:${b.c[1]};${cv?`background-image:url(${cv})`:""}"><span class="ow"><img src="${PORT[b.owner]||ownerImg(b.owner)}" alt=""></span><span class="tt">${G.lang==="ko"?b.t:b.te}</span><span class="st">${d?"⭐".repeat(bs.stars||1)+(bs.end?" ✏️":""):(BD[b.id]?K("broken","망가짐"):"")}</span></button></div>`}).join("")}</div>
  <div class="desk"><img class="mt" src="${DA.mentor||PORT.mentor}" alt="">
   ${next?`<button class="bbook${bkCover(next.id)?" cov":""}" id="deskBook" ${bkCover(next.id)?`style="background-image:url(${bkCover(next.id)})"`:""}><span class="lbl">${G.lang==="ko"?next.t:next.te}<small>${K("Torn by the Cat Gang","고양이 악당이 망가뜨린 책")}</small></span></button>
    <div class="dcall"><b>${K("Master Turtle","거북이 스승님")}</b>${K("Someone changed this story! Tap the book to find out what happened.","누군가 이 이야기를 바꿨구나! 책을 눌러 무슨 일이 있었는지 알아보렴.")}</div>`
@@ -6539,21 +6539,13 @@ var _pgRec40=pgRec;window.pgRec=function(t,ok){
  var M=G.pgm||{},e0=M[t],prev=e0?(e0.box||0):0,hadW=e0?(e0.w||0):0;
  _pgRec40.apply(this,arguments);
  try{if(ok&&hadW>=2&&prev<4&&G.pgm[t]&&(G.pgm[t].box||0)>=4){sfx("star");toast("🧰 ‘"+t+"’ "+K("graduated the review box! ✨","복습 상자 졸업! 참 잘했어요 ✨"))}}catch(e){}};
-/* --- 부모 리포트: 주간 요약 + 자주 틀린 낱말 TOP5 --- */
-var _sp40=showPartner;window.showPartner=function(){_sp40.apply(this,arguments);
- try{var st=document.getElementById("pStats");if(!st)return;
-  var old=document.getElementById("pWeek");if(old)old.remove();
-  var days=G.days||{},d=new Date(),i,g=0,w=0,qn=0,qok=0;
-  for(i=0;i<7;i++){var D=days[dkey(d)];if(D){g+=D.games||0;w+=D.words||0;qn+=D.qn||0;qok+=D.qok||0}d.setDate(d.getDate()-1)}
-  var agg={};d=new Date();
-  for(i=0;i<14;i++){var E=days[dkey(d)];if(E&&E.wrong)Object.keys(E.wrong).forEach(function(t){agg[t]=(agg[t]||0)+E.wrong[t]});d.setDate(d.getDate()-1)}
-  var top=Object.keys(agg).sort(function(a,b){return agg[b]-agg[a]}).slice(0,5);
-  var bw=boxWords();
-  var html='<div id="pWeek" class="pweek"><div><b>📅 '+K("This week","이번 주")+'</b> '+K("games ","게임 ")+g+K(" · word reviews ","판 · 낱말 복습 ")+w+(qn?K(" · reading quiz ","개 · 읽기 질문 ")+qok+"/"+qn:K("","개"))+'</div>'
-   +(top.length?'<div><b>⚠️ '+K("Tricky words (2 weeks)","자주 틀린 낱말 (2주)")+'</b> '+top.map(function(t){return '<span class="pchip">'+escH(t)+' ×'+agg[t]+'</span>'}).join('')+'</div>':'')
-   +'<div><b>🧰 '+K("Review box","복습 상자")+'</b> '+bw.length+K(" words","개")+(bw.length?' — '+bw.slice(0,5).map(function(x){return escH(x.t)}).join(", "):'')+'</div></div>';
-  st.insertAdjacentHTML("afterend",html);
- }catch(e){}};
+/* --- 부모 리포트: 원래 있던 '이번 주(최근 7일)' 화면(renderWeek)은 그대로 두고, 복습 상자 줄만 덧붙인다
+   (v40에서 이 화면을 지우고 간단한 요약으로 바꿔 버렸던 것을 되돌림) --- */
+var _sp40=showPartner;window.showPartner=showPartner=function(){_sp40.apply(this,arguments);
+ try{var wk=document.getElementById("pWeek");if(!wk)return;var old=document.getElementById("pBoxLine");if(old)old.remove();
+  var bw=boxWords();var d=document.createElement("p");d.id="pBoxLine";d.className="pboxline";
+  d.innerHTML='🧰 <b>'+K("Review box","복습 상자")+'</b> '+bw.length+K(" words","개")+(bw.length?' — '+bw.slice(0,6).map(function(x){return escH(x.t)}).join(", "):' — '+K("empty","비어 있음"));
+  wk.appendChild(d)}catch(e){}};
 /* --- 내 목소리: 책 페이지 녹음→재생 (지원 기기에서만) --- */
 var KREC={url:null};
 function micSup(){try{return !!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder)}catch(e){return false}}
@@ -6680,6 +6672,162 @@ function hqLife(){
  },3800);
 }
 if(window.hqPic){var _hp42=hqPic;window.hqPic=function(){var r=_hp42.apply(this,arguments);if(r)try{hqLife()}catch(e){}return r}}
+})();
+
+/* ===== v43: 품질 1단계 — 버그 수정 + 🔊 정직하게(녹음 있을 때만) + 안내 문구 음성 연결 ===== */
+(function(){
+"use strict";
+/* 녹음 여부 */
+function recW(w,t){try{return !!(t&&VAUD[vKey(w||"narrator",t)])}catch(e){return false}}
+function recAny(w,t){return recW(w,t)||recW("narrator",t)}
+window.recAny=recAny;
+function audioIdle(){try{return !(window.VA&&!VA.paused&&!VA.ended)&&!(window.VO&&VO.pend)}catch(e){return true}}
+/* 1) 녹음 없는 낱말은 say()가 아무것도 하지 않게 — 기계음이 꺼져 있어서, 예전엔 소리 없이 '지금 나오는 다른 소리'만 끊었다 */
+var _say43=say;window.say=say=function(txt){if(!recW("learn",txt))return;return _say43.apply(this,arguments)};
+/* 2) 인물 목소리 녹음이 없고 내레이터 녹음이 있으면 내레이터로 — 게임 설명(영웅 목소리 요청)을 한 벌 녹음으로 살린다 */
+var _nar43=narrate;window.narrate=narrate=function(lines,done,lang,o){
+ try{if(o&&(o.voice||o.who)){var w=o.voice||o.who,L=Array.isArray(lines)?lines:[lines];
+  if(L.every(function(t){return typeof t!=="string"||!recW(w,t)})&&L.some(function(t){return typeof t==="string"&&recW("narrator",t)})){o=Object.assign({},o);delete o.voice;delete o.who}}}catch(e){}
+ return _nar43.call(this,lines,done,lang,o)};
+/* 3) 도움(pgHint): 목표 낱말이 없는 게임(카드 배틀)도 힌트가 나오게 */
+window.pgHint=pgHint=function(byUser){var S=PGS;if(!S||S.lock||!S.mod.hint)return;if(!S.target&&S.g!=="pair"&&S.g!=="ncard")return;
+ S.hint=true;S.first=false;S.mod.hint();pgMsg(K("Look for the glowing one!","반짝이는 걸 찾아봐!"));if(byUser)sfx("tap")};
+/* 4) 🔊 단추: 실제로 녹음이 재생될 때만 보이기 (dry-run으로 무엇을 말할지 미리 확인) */
+function wouldPlay(S){if(!S)return false;var got=[],s0=say,n0=narrate;
+ window.say=say=function(t){got.push(["learn",t])};
+ window.narrate=narrate=function(L,d,lang,o){(Array.isArray(L)?L:[L]).forEach(function(t){got.push([(o&&(o.voice||o.who))||"narrator",t])})};
+ try{if(S.mod.say)S.mod.say();else if(S.target)got.push(["learn",S.target.t])}catch(e){}
+ finally{window.say=say=s0;window.narrate=narrate=n0}
+ return got.some(function(x){return typeof x[1]==="string"&&recAny(x[0],x[1])})}
+window.pgSayRefresh=function(){var S=PGS;var ok=!!S&&!S.dead&&wouldPlay(S);
+ ["pgSay","pgSpk"].forEach(function(id){var b=document.getElementById(id);if(b&&b.dataset.hid!=="game")b.style.visibility=ok?"":"hidden"})};
+var _pgNext43=pgNext;window.pgNext=pgNext=function(){var r=_pgNext43.apply(this,arguments);try{setTimeout(pgSayRefresh,30);setTimeout(pgSayRefresh,1200)}catch(e){}return r};
+var _pp43=pgPlay;window.pgPlay=pgPlay=function(){var r=_pp43.apply(this,arguments);
+ try{var sb=document.getElementById("pgSay");if(sb){if(sb.style.display==="none")sb.dataset.hid="game";
+   sb.onclick=function(){var S=PGS;if(!S)return;if(S.mod.say)return S.mod.say();if(S.target)say(S.target.t)}}
+  setTimeout(pgSayRefresh,60)}catch(e){}return r};
+/* 5) 안내 문구(pgMsg): 녹음이 있으면 소리로 — 다른 소리가 나는 중이면 양보. 목표 낱말에 녹음이 없으면 '다시 들어 봐' 대신 '그림을 다시 봐' */
+var ALT={"그건 아니야. 다시 들어 봐!":"그건 아니야. 그림을 다시 봐!","다시 듣고 골라 봐!":"그림을 다시 보고 골라 봐!"};
+var _msg43=pgMsg;window.pgMsg=pgMsg=function(t,bad){
+ try{var S=PGS;if(t&&ALT[t]&&G.lang==="ko"&&S&&S.target&&!recW("learn",S.target.t))t=ALT[t]}catch(e){}
+ var r=_msg43.call(this,t,bad);
+ try{if(t&&G.lang==="ko"&&recW("narrator",t)){var me=t;setTimeout(function(){var m=document.getElementById("pgMsg");if(m&&m.textContent===me&&audioIdle())narrate([me],null,"ko")},70)}}catch(e){}
+ return r};
+/* 6) 책 '도움': 이야기 읽는 단계(단계 시작 전)에는 아무 반응이 없었다 → 다시 읽어 주고 '다음' 단추를 반짝 */
+if(window.bHelp){var _bh43=bHelp;window.bHelp=bHelp=function(){var b=BK;if(!b)return;
+ var S=b.si>=0&&b.D&&b.D.steps?b.D.steps[b.si]:null;
+ if(!S||b.si<0){try{if(b.replay&&!b.busy)b.replay()}catch(e){}
+  var n=document.getElementById("sbNext");if(n){n.classList.remove("pghint");void n.offsetWidth;n.classList.add("pghint");setTimeout(function(){n.classList.remove("pghint")},2600)}
+  var m=document.getElementById("bkMsg");if(m)m.textContent=K("When you're done listening, tap Next ▶.","다 들었으면 '다음 ▶'을 눌러요.");sfx("tap");return}
+ if(b.busy){var m2=document.getElementById("bkMsg");if(m2)m2.textContent=K("Just a moment…","잠깐만 기다려요…");return}
+ return _bh43.apply(this,arguments)};
+ try{var hb=document.getElementById("bHelp");if(hb)hb.onclick=function(){bHelp()}}catch(e){}}
+})();
+
+/* ===== v43c: 언어 전환(EN/한)에도 기존 어른 확인(pgate, 두 자리 덧셈) 적용 — 설정은 이미 pgate로 잠겨 있음 ===== */
+(function(){
+"use strict";
+var pass=false;
+document.addEventListener("click",function(e){
+ if(pass)return;
+ var t=e.target&&e.target.closest&&e.target.closest("#lKo,#lEn");if(!t)return;
+ if(t.id==="lKo"&&G.lang==="ko")return;if(t.id==="lEn"&&G.lang!=="ko")return;
+ if(typeof pgate!=="function"||(window.GATE&&Date.now()<GATE.until))return;
+ e.preventDefault();e.stopImmediatePropagation();
+ pgate(function(){pass=true;try{t.click()}finally{pass=false}});
+},true);
+})();
+
+/* ===== v43d: 카드 수수께끼 안내·새 카드 알림도 녹음이 있으면 소리로 ===== */
+(function(){
+"use strict";
+function idle(){try{return !(window.VA&&!VA.paused&&!VA.ended)&&!(window.VO&&VO.pend)}catch(e){return true}}
+function speakIf(t){try{if(t&&G.lang==="ko"&&window.recAny&&recAny("narrator",t)&&idle())narrate([t],null,"ko")}catch(e){}}
+window.speakIfRec=speakIf;
+/* 수수께끼 안내 문구(.cdtip)가 바뀔 때마다 */
+var _co43=window.cardOpenNext;if(_co43){window.cardOpenNext=cardOpenNext=function(){var r=_co43.apply(this,arguments);
+ try{var tip=document.querySelector(".cardcard .cdtip");if(tip){setTimeout(function(){speakIf(tip.textContent)},500);
+  var mo=new MutationObserver(function(){speakIf(tip.textContent)});mo.observe(tip,{childList:true,characterData:true,subtree:true});
+  setTimeout(function(){mo.disconnect()},120000)}}catch(e){}return r}}
+/* 새 카드 알림(토스트) */
+var _toast43=window.toast;if(typeof _toast43==="function"){window.toast=toast=function(m){var r=_toast43.apply(this,arguments);try{var t=String(m||"").replace(/^[^가-힣A-Za-z]+/,"");if(/새 카드가 도착/.test(t))setTimeout(function(){speakIf(t)},200)}catch(e){}return r}}
+})();
+
+/* ===== v44: 3단계 — 하루 이용 시간 · 낱말 레벨 하향 적응 · 출석 스티커판 ===== */
+(function(){
+"use strict";
+var TL_LINE="오늘 모험은 여기까지 하자. 내일 또 만나자꾸나!",DOWN_LINE="조금 쉬운 낱말로 다시 연습해 보자!",STK_LINE="오늘의 스티커를 받았어요!";
+function say2(t,w){try{if(G.lang!=="ko"||!window.recAny||!recAny(w||"narrator",t))return;narrate([t],null,"ko",w&&w!=="narrator"?{voice:w}:undefined)}catch(e){}}
+/* ---------- 1) 하루 이용 시간 ---------- */
+function usedMin(){var D=G.days&&G.days[dkey()];return D?(+D.min||0):0}
+function limitMin(){var L=+G.tlim||0;if(!L)return 0;var e=(G.tlimExt&&G.tlimExt.d===dkey())?(+G.tlimExt.m||0):0;return L+e}
+function overLimit(){var L=limitMin();return L>0&&usedMin()>=L}
+window.tlOver=overLimit;
+function restShow(){
+ if(document.getElementById("restOv"))return;
+ try{hush()}catch(e){}
+ var ov=document.createElement("div");ov.id="restOv";ov.className="restov";
+ ov.innerHTML='<div class="restbox"><img class="restm" src="'+((window.DA&&DA.mentor)||PORT.mentor)+'" alt=""><h2>🌙 '+K("That's all for today!","오늘 모험은 여기까지!")+'</h2>'
+  +'<p>'+K("See you tomorrow, little hero.","내일 또 만나요, 꼬마 영웅!")+'</p><div class="restz">💤</div>'
+  +'<button class="btn" id="restMore">🔒 '+K("Grown-ups: 10 more minutes","어른: 10분 더")+'</button></div>';
+ document.body.appendChild(ov);
+ setTimeout(function(){say2(TL_LINE,"mentor")},400);
+ document.getElementById("restMore").onclick=function(){sfx("tap");pgate(function(){var d=dkey();G.tlimExt={d:d,m:((G.tlimExt&&G.tlimExt.d===d)?(+G.tlimExt.m||0):0)+10};save();ov.remove()})};
+}
+window.restShow=restShow;
+/* 새 활동을 시작하는 순간(자연스러운 쉼표)에만 막는다 — 하던 놀이는 끝까지 */
+["pgPlay","duel","caseStart","openBook","startRun","cardArena","openCases","tdOpen"].forEach(function(fn){
+ var f0=window[fn];if(typeof f0!=="function")return;
+ var w=function(){if(overLimit()){restShow();return}return f0.apply(this,arguments)};
+ try{window[fn]=w;(0,eval)(fn+"=window."+fn)}catch(e){}});
+/* 메인 화면으로 돌아왔을 때도 확인 */
+setInterval(function(){try{if(overLimit()&&!overlayOpen()&&!document.getElementById("restOv"))restShow()}catch(e){}},20000);
+setTimeout(function(){try{if(overLimit()&&!overlayOpen())restShow()}catch(e){}},3000);
+/* 설정: 하루 이용 시간 줄 추가 (설정 자체가 어른 확인 뒤에 열림) */
+var _set44=showSettings;window.showSettings=showSettings=function(){var r=_set44.apply(this,arguments);
+ try{var card=document.getElementById("setCard");if(!card||card.querySelector("#tlRow"))return r;
+  var cur=+G.tlim||0,opts=[[0,K("Off","끄기")],[20,"20"+K(" min","분")],[30,"30"+K(" min","분")],[45,"45"+K(" min","분")],[60,"60"+K(" min","분")]];
+  var row=document.createElement("div");row.className="setrow";row.id="tlRow";
+  row.innerHTML='<b>⏰ '+K("Daily play time","하루 이용 시간")+'</b><div class="box seg" role="group">'+opts.map(function(o){return '<button data-tl="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+o[1]+'</button>'}).join('')+'</div>'
+   +'<small>'+K("Today: "+Math.round(usedMin())+" min played. When time is up, the game finishes the current activity, then shows a rest screen. A grown-up can add 10 minutes.","오늘 "+Math.round(usedMin())+"분 놀았어요. 시간이 다 되면 하던 놀이는 끝까지 하고, 새 놀이를 시작할 때 쉬는 화면이 나와요. 어른이 10분씩 늘릴 수 있어요.")+'</small>';
+  var rows=[].slice.call(card.querySelectorAll(".setrow")),anchor=null;
+  ["[data-tdl]","[data-rmo]","[data-wl]"].some(function(s){anchor=rows.find(function(x){return x.querySelector(s)})||null;return !!anchor});
+  if(anchor&&anchor.nextSibling)anchor.parentNode.insertBefore(row,anchor.nextSibling);else{var tb=card.querySelector(".tbtns");card.insertBefore(row,tb)}
+  row.querySelectorAll("[data-tl]").forEach(function(b){b.onclick=function(){G.tlim=+b.dataset.tl;save();showSettings()}});
+  card.querySelectorAll('[data-wl="1"],[data-wl="2"]').forEach(function(b){b.remove()});
+ }catch(e){}return r};
+/* ---------- 2) 낱말 레벨 하향 적응 ---------- */
+function wordRound(S){try{return !!(S&&S.lad&&(S.lad.word||S.lad.wb||/낱말/.test(S.lad.n||"")))}catch(e){return false}}
+var _res44=pgResult;window.pgResult=pgResult=function(){var S=PGS;var r=_res44.apply(this,arguments);
+ try{if(wordRound(S)&&S.done>0){var acc=S.mod&&S.mod.acc?+S.mod.acc():(S.firstOK||0)/Math.max(1,S.goal||S.done);
+   if(!G.wlT||G.wlT.lv!==G.wl)G.wlT={lv:G.wl,a:[]};G.wlT.a.push(Math.round(acc*100)/100);G.wlT.a=G.wlT.a.slice(-3);
+   var floor=3; /* 낱말 레벨 바닥 = 3 (WL_MIN은 다른 블록 안의 지역 변수라 여기서 안 보임) */
+   if(G.wlT.a.length>=3&&G.wlT.a.every(function(x){return x<.5})&&(G.wl||1)>floor){
+    G.wl=(G.wl||1)-1;G.wlHold=dkey();G.wlT={lv:G.wl,a:[]};save();
+    setTimeout(function(){try{toast("🧸 "+K("Let's practise with easier words for a bit!",DOWN_LINE));say2(DOWN_LINE)}catch(e){}},1800)}
+   else save()}}catch(e){}return r};
+if(typeof wbCheckUp==="function"){var _up44=wbCheckUp;window.wbCheckUp=wbCheckUp=function(){if(G.wlHold===dkey())return false;return _up44.apply(this,arguments)}}
+/* ---------- 3) 출석 스티커판 (벌칙 없음) ---------- */
+function active(D){return !!D&&((+D.games||0)>0||(+D.rm||0)>0||(+D.words||0)>0||(+D.min||0)>=3)}
+function stickerFor(key){var ids=CHARS.map(function(c){return c.id});var n=0;for(var i=0;i<key.length;i++)n=(n*31+key.charCodeAt(i))>>>0;return ids[n%ids.length]}
+window.stkActive=function(key){return active(G.days&&G.days[key])};
+var _dl44=dayLog;window.dayLog=dayLog=function(fn){var k=dkey(),was=active(G.days&&G.days[k]);var r=_dl44.apply(this,arguments);
+ try{if(!was&&active(G.days&&G.days[k])&&G.stkLast!==k){G.stkLast=k;save();setTimeout(function(){try{toast("🌟 "+K("Today's sticker earned!",STK_LINE));say2(STK_LINE)}catch(e){}},900)}}catch(e){}return r};
+window.stickerBoard=function(){var ov=cardOv(),now=new Date(),y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),cells='',cnt=0;
+ for(var b=0;b<first.getDay();b++)cells+='<span class="mcell blank"></span>';
+ for(var d=1;d<=days;d++){var dt=new Date(y,m,d,12),k=dkey(dt),on=window.stkActive(k);if(on)cnt++;
+  cells+='<span class="mcell'+(on?" on":"")+(d===now.getDate()?" today":"")+'"><b>'+d+'</b>'+(on?'<img src="'+PORT[stickerFor(k)]+'" alt="">':'')+'</span>'}
+ ov.innerHTML='<div class="crscard cardcard"><div class="crshead"><h2>🗓️ '+K("Sticker board","출석 스티커판")+'</h2><span class="crsn">🌟 '+cnt+'</span><button class="btn" id="skX">'+K("Close","닫기")+'</button></div>'
+  +'<p class="cdtip">'+K("Play a little each day to collect a hero sticker!","하루에 조금씩 놀면 영웅 스티커가 하나씩 붙어요!")+'</p>'
+  +'<div class="mgrid2">'+(G.lang==="ko"?["일","월","화","수","목","금","토"]:["S","M","T","W","T","F","S"]).map(function(w){return '<span class="mhd">'+w+'</span>'}).join('')+cells+'</div></div>';
+ ov.hidden=false;document.getElementById("skX").onclick=function(){sfx("tap");ov.hidden=true}};
+/* 입구: 메인 '더보기' 안에 🗓️ 스티커판 (오늘의 모험 카드는 v30.2에서 없어졌으므로 거기엔 넣지 않음) */
+var _rx44=renderExtras;window.renderExtras=renderExtras=function(){var r=_rx44.apply(this,arguments);
+ try{var ex=document.getElementById("extras");if(ex&&!ex.querySelector('[data-x="stk"]')){var bt=document.createElement("button");bt.className="xbtn xmore";bt.dataset.x="stk";
+  bt.innerHTML='<span class="ic">🗓️</span>'+K("Sticker board","스티커판");
+  bt.onclick=function(){if(overlayOpen())return;sfx("tap");stickerBoard()};
+  var more=ex.querySelector('[data-x="more"]');ex.insertBefore(bt,more||null)}}catch(e){}return r};
+try{renderExtras()}catch(e){}
 })();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

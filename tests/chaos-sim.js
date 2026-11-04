@@ -1,107 +1,81 @@
-// Chaos simulator: plays every mode with random taps, quits mid-animation, screen resizes, language switches and reloads,
-// and checks the page after every action (script errors, "undefined"/"NaN" on screen, broken images, sideways scrolling,
-// two screens open at once, duplicate element ids, stuck screens, lost progress).
-// Setup once:  npm install playwright && npx playwright install chromium
-// Run:         node tests/chaos-sim.js [seed] [rounds] [tablet|phone|mix] [normal|slow|none]
-//              e.g. node tests/chaos-sim.js 7 14 mix slow      (about 10 minutes)
-// speech: normal = fast fake voice, slow = slow fake voice, none = a device without a speech engine.
-// Report and screenshots go to tests/out/. Exit code 1 = at least one problem found.
-const path=require('path');
-// Scenario + chaos simulator. Plays every mode with the game's own answer helpers, mixes in random taps,
-// quits mid-animation, resizes, toggles language, reloads, and checks page health after every action.
-// node sim.js <seed> <rounds> <tablet|phone|mix> <speech:normal|slow|none> [file]
+// 카오스(무작위 터치) 시뮬레이터 — 오류·멈춤·반응 없는 단추·작은 터치 영역 측정
+// node chaos-sim.js <phone|ipad|tab> <actions> <seed> [fresh]
 const {chromium}=require('playwright');const fs=require('fs');
-const seed=+(process.argv[2]||1),ROUNDS=+(process.argv[3]||20),mode=process.argv[4]||'tablet',speech=process.argv[5]||'normal',OUT=path.join(__dirname,'out');fs.mkdirSync(OUT,{recursive:true});
-let rs=seed*7919%233280+1;const rnd=()=>{rs=(rs*9301+49297)%233280;return rs/233280};const pickA=a=>a[Math.floor(rnd()*a.length)];
-const STUCK=speech==='normal'?25000:45000;
-const VW={tablet:{width:1024,height:768},phone:{width:390,height:844},tabletP:{width:768,height:1024},phoneL:{width:844,height:390},big:{width:1366,height:1024}};
-(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:mode==='phone'?VW.phone:VW.tablet});const p=await ctx.newPage();
- const issues=[],trace=[];let scen='boot';
- const add=async(kind,msg)=>{const key=kind+':'+scen+':'+String(msg).slice(0,140);if(issues.find(x=>x.key===key))return;const n=issues.length;issues.push({key,kind,scen,msg:String(msg).slice(0,500),last:trace.slice(-8)});try{await p.screenshot({path:path.join(OUT,`sim_${seed}_${n}.png`)})}catch(e){}};
- p.on('pageerror',e=>add('pageerror',e.message+' @ '+(e.stack||'').split('\n').slice(1,3).join(' ')));
- p.on('console',m=>{if(m.type()==='error'&&!/ERR_|fonts|favicon|Failed to load resource/.test(m.text()))add('console',m.text())});
- await p.addInitScript(([speech,seed])=>{let s=seed;Math.random=()=>{s=(s*16807)%2147483647;return (s-1)/2147483646};
-  window.addEventListener('unhandledrejection',e=>{(window.__rej=window.__rej||[]).push(String(e.reason&&e.reason.message||e.reason))});
-  if(speech==='none'){Object.defineProperty(window,'speechSynthesis',{value:undefined,configurable:true});window.SpeechSynthesisUtterance=undefined;return}
-  const per=speech==='slow'?55:6;window.SpeechSynthesisUtterance=class{constructor(t){this.text=t}};const q=[];let cur=null;
-  const tick=()=>{if(cur||!q.length)return;cur=q.shift();const me=cur;setTimeout(()=>{if(cur!==me)return;cur=null;me.onend&&me.onend();tick()},60+me.text.length*per)};
-  Object.defineProperty(window,'speechSynthesis',{value:{getVoices:()=>[{name:'Yuna',lang:'ko-KR'},{name:'Karen',lang:'en-AU'}],get speaking(){return !!cur},speak:u=>{q.push(u);tick()},cancel:()=>{q.length=0;cur=null},addEventListener(){}}})},[speech,seed]);
- const url='file://'+path.resolve(__dirname,'..','index.html');
- const inject=async()=>{for(const f of ['pg-auto.js','kz-auto.js'])await p.addScriptTag({content:fs.readFileSync(path.join(__dirname,'helpers',f),'utf8')})};
- await p.goto(url);await p.waitForTimeout(500);await inject();
- const E=(fn,arg)=>p.evaluate(fn,arg).catch(e=>{add('evalfail',e.message.split('\n')[0]);return null});
- const W=ms=>p.waitForTimeout(ms);
- const health=async()=>{const out=await E(()=>{const out=[];const vis=e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(e).visibility!=='hidden'};
-   const txt=document.body.innerText;const m=txt.match(/[^\n]{0,30}(\bundefined\b|\bNaN\b|\[object Object\]|\bnull\b|\bInfinity\b)[^\n]{0,30}/);if(m)out.push(['badtext',m[0]]);
-   document.querySelectorAll('img').forEach(i=>{if(vis(i)&&i.complete&&i.getAttribute('src')&&i.naturalWidth===0)out.push(['brokenimg',(i.getAttribute('src')||'').slice(0,60)])});
-   if(document.documentElement.scrollWidth>innerWidth+2)out.push(['hscroll',document.documentElement.scrollWidth+'>'+innerWidth]);
-   const ovs=[...document.querySelectorAll('.ov')].filter(o=>!o.hidden&&getComputedStyle(o).display!=='none').map(o=>o.id);if(ovs.length>1&&!(ovs.length===2&&(ovs.includes('lvOv')||ovs.includes('rmOv'))))out.push(['multiov',ovs.join(',')]);
-   if(window.__rej&&window.__rej.length){out.push(['rejection',window.__rej.join('|')]);window.__rej=[]}
-   ['coins','exp','lv'].forEach(k=>{if(typeof G[k]!=='number'||!isFinite(G[k]))out.push(['state','G.'+k+'='+G[k]])});
-   // a visible card wider than the screen
-   document.querySelectorAll('.ov:not([hidden]) .card').forEach(c=>{const r=c.getBoundingClientRect();if(r.width>innerWidth+2)out.push(['cardwide',c.id||c.className])});
-   const ids={};document.querySelectorAll('[id]').forEach(e=>{ids[e.id]=(ids[e.id]||0)+1});const dup=Object.keys(ids).filter(k=>ids[k]>1);if(dup.length)out.push(['dupid',dup.slice(0,6).join(',')]);
-   return out});for(const [k,v] of out||[])await add(k,v)};
- // one random tap on any tappable control in the top layer
- const chaosTap=async()=>{const r=await E(r0=>{const ovs=[...document.querySelectorAll('.ov,#splashOv')].filter(o=>!o.hidden&&getComputedStyle(o).display!=='none');const root=ovs.length?ovs[ovs.length-1]:document.body;
-   const cand=[...root.querySelectorAll('button,[data-a],[data-k],.bhot,.kzspot,.pcard,.asmblk,.pgfish,.dcdone,.blk,.fopt,canvas,.libcard,.bslot,.xbtn,#deskBook,.tok,.kzw')].filter(e=>{if(e.disabled)return false;const r=e.getBoundingClientRect();return r.width>3&&r.height>3&&r.top>=0&&r.left>=0&&r.bottom<=innerHeight&&r.right<=innerWidth});
-   if(!cand.length)return null;const e=cand[Math.floor(r0*cand.length)];const r=e.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2,d:(e.id||String(e.className).split(' ')[0])+' '+(e.textContent||'').trim().slice(0,14)}},rnd());
-  if(r){trace.push(scen+' chaos> '+r.d);await p.mouse.click(r.x,r.y)}};
- const chaos=async()=>{const x=rnd();
-  if(x<.05&&mode==='mix'){const k=pickA(Object.keys(VW));await p.setViewportSize(VW[k]);trace.push('resize '+k)}
-  else if(x<.08){const l=rnd()<.5?'ko':'en';await E(l=>{G.lang=l;try{renderAll()}catch(e){}},l);trace.push('lang '+l)}
-  else if(x<.10){await E(()=>hush());trace.push('hush')}
-  else if(x<.22)await chaosTap()};
- const until=async(fn,ms,tickFn)=>{const t0=Date.now();let last='',lastT=Date.now();while(Date.now()-t0<ms){const st=await E(fn);if(st&&st.done)return true;const sig=JSON.stringify(st);if(sig!==last){last=sig;lastT=Date.now()}else if(Date.now()-lastT>STUCK){await add('stuck',scen+' no progress '+STUCK/1000+'s: '+sig);return false}
-   if(tickFn)await tickFn(st);await W(250+rnd()*250);await health()}return false};
- const closeAll=async()=>{await E(()=>{try{hush()}catch(e){}document.querySelectorAll('.ov').forEach(o=>o.hidden=true);try{pgStop()}catch(e){};try{if(typeof KZ!=='undefined'&&KZ){KZ=null}}catch(e){};try{renderAll()}catch(e){}})};
- // ---------- boot through the real UI ----------
- await E(()=>document.querySelector('#spGo').click());await W(400);
- await E(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await W(900);await health();
- // ---------- scenarios ----------
- const S={
-  async pg(){const g=pickA(['fish','asm','ncard','pair','dict','train','fill','trace','opp']),lv=1+Math.floor(rnd()*5);scen='pg '+g+lv;trace.push(scen);await closeAll();
-   await E(([g,lv])=>{pgPlay(g,lv)},[g,lv]);await W(400);const quitAt=rnd()<.3?4+Math.floor(rnd()*30):-1;let n=0;
-   await until(()=>({done:!!document.querySelector('.pgres')||!PGS,d:PGS&&PGS.done}),70000,async()=>{n++;if(n===quitAt){trace.push('quit pg');await E(()=>{const b=$("pgBack");b&&b.click()});return}
-    const r=await E(w=>typeof PGAUTO==='function'?PGAUTO(w):'none',rnd()<.15);if(rnd()<.25)await chaos()});
-   if(rnd()<.5)await E(()=>{const b=[...document.querySelectorAll('.pgres button')];b.length&&b[Math.floor(Math.random()*b.length)].click()});await W(500)},
-  async kase(){const i=Math.floor(rnd()*12);scen='case '+(i+1);trace.push(scen);await closeAll();await E(i=>{openCases();caseStart(i)},i);await W(500);const quitAt=rnd()<.3?5+Math.floor(rnd()*40):-1;let n=0;
-   await until(()=>({done:!KZ||KZ.done,act:KZ&&KZ.act,si:KZ&&KZ.si,f:KZ&&KZ.found.length,ph:KZ&&KZ.ss&&KZ.ss.ph,d:KZ&&KZ.ss&&KZ.ss.d}),90000,async()=>{n++;if(n===quitAt){trace.push('quit case');await E(()=>{const b=$("kzBack");b&&b.click()});return}
-    await E(w=>KZAUTO(w),rnd()<.15);const x=rnd();if(x<.05)await E(()=>{const b=$("kzHelp");b&&b.click()});else if(x<.08)await E(()=>{const b=$("kzNB");b&&b.click()});else if(x<.1)await E(()=>{const b=$("kzSay");b&&b.click()});else if(x<.22)await chaos()});
-   await W(800);if(rnd()<.5)await E(()=>{const b=$("kzNextC")||$("kzList");b&&b.click()});await W(400);if(rnd()<.5)await E(()=>{const c=$("cClose");c&&c.click()})},
-  async book(){scen='book1';trace.push(scen);await closeAll();await E(()=>{G.view='library';renderAll()});await W(400);
-   const ok=await E(()=>{const d=$("deskBook");if(!d)return false;d.click();return true});if(!ok){await add('flow','deskBook missing');return}await W(800);
-   const quitAt=rnd()<.35?3+Math.floor(rnd()*40):-1;let n=0;
-   await until(()=>({done:!!document.querySelector('#bShelf,#bShelf2')||$("bookOv").hidden,si:typeof BK!=='undefined'&&BK?BK.si:-1,pg:(document.querySelector('.sbnav .pn')||{}).textContent,busy:typeof BK!=='undefined'&&BK&&BK.busy}),120000,async(st)=>{n++;
-    if(n===quitAt){trace.push('quit book');await E(()=>{const b=$("bQuit")||document.querySelector('#bookOv .btn');b&&b.click()});return}
-    if(await E(w=>typeof RMAUTO==='function'&&RMAUTO(w)!=='none',rnd()<.15))return;
-    await E(()=>{const q=s=>document.querySelector(s);const vis=e=>e&&e.getBoundingClientRect().width>0&&!e.disabled;
-     const pri=['#sbNext','#bNext','#bEnd'].map(q).find(vis);if(pri&&Math.random()<.7)return pri.click();
-     const opts=[...document.querySelectorAll('#bookOv .bhot:not(.got),#bookOv [data-who],#bookOv [data-rec],#bookOv [data-tk],#bookOv [data-fix],#bookOv [data-pg],#bookOv [data-ea],#bookOv [data-eb]')].filter(vis);
-     if(opts.length)opts[Math.floor(Math.random()*opts.length)].click()});if(rnd()<.15)await chaos()});
-   if(rnd()<.5)await E(()=>{const b=$("bShelf2")||$("bShelf");b&&b.click()});await W(400)},
-  async duel(){scen='duel';trace.push(scen);await closeAll();await E(()=>{G.st=Math.max(G.st||0,2);G.tut=1;renderAll();openStage(1)});await W(400);await E(()=>{const b=$("stGo");b&&b.click()});await W(900);
-   await E(()=>{const b=$("dGo");b&&b.click()});await W(600);const quitAt=rnd()<.3?3+Math.floor(rnd()*15):-1;let n=0;
-   await until(()=>({done:!DU||DU.done,hp:DU&&DU.hp,q:DU&&DU.qi,busy:DU&&DU.busy}),90000,async()=>{n++;if(n===quitAt){trace.push('quit duel');await E(()=>{const b=$("dQuit");b&&b.click()});return}
-    await E(w=>{if(!DU||DU.busy||!DU.q)return;const bs=[...document.querySelectorAll('.dop')];const b=bs.find(x=>w?x.dataset.o!==DU.q.ans:x.dataset.o===DU.q.ans);b&&b.click()},rnd()<.2);if(rnd()<.15)await chaos()});
-   await W(800);await E(()=>{const b=$("dDone");b&&b.click()});await W(500);await E(()=>{const b=$("lvOk");if(b&&!$("lvOv").hidden)b.click()})},
-  async stagePg(){const i=pickA([0,2]);scen='stage '+i;trace.push(scen);await closeAll();await E(i=>{G.st=Math.max(G.st||0,i);renderAll();openStage(i)},i);await W(400);await E(()=>{const b=$("stGo");b&&b.click()});await W(600);
-   await until(()=>({done:!!document.querySelector('.pgres')||$("pgOv").hidden,d:PGS&&PGS.done}),70000,async()=>{await E(w=>PGAUTO(w),rnd()<.12);if(rnd()<.15)await chaos()});
-   await W(700);await E(()=>{const c=$("pgCont");c&&c.click()});await W(500);await E(()=>{const b=$("stMap");b&&b.click()});await W(300);await E(()=>{const b=$("lvOk");if(b&&!$("lvOv").hidden)b.click()})},
-  async course(){scen='course';trace.push(scen);await closeAll();await E(()=>{G.st=Math.max(G.st||0,4);renderAll();openStage(4)});await W(400);await E(()=>{const b=$("stGo");b&&b.click()});await W(700);
-   const t0=Date.now();while(Date.now()-t0<15000+rnd()*15000){const s=await E(()=>{if(typeof RUN==='undefined'||!RUN)return null;const r=$("runCv").getBoundingClientRect();return {done:RUN.done,x:r.left+r.width*(.2+Math.random()*.6),y:r.top+r.height*(.2+Math.random()*.6)}});if(!s||s.done)break;await p.mouse.click(s.x,s.y);if(rnd()<.1)await chaos();await W(200);await health()}
-   await E(()=>{const b=$("rQuit");if(b&&!$("runOv").hidden)b.click()});await W(500);await closeAll()},
-  async words(){scen='wordbook';trace.push(scen);await E(()=>wbBook(Math.floor(Math.random()*6)));await W(500);for(let k=0;k<6;k++){await chaosTap();await W(300);await health()}
-   scen='leveltest';await E(()=>wbTest());await W(600);for(let k=0;k<25;k++){await E(()=>{const bs=[...document.querySelectorAll('#pgCard button')].filter(b=>!b.disabled&&b.getBoundingClientRect().width>0);bs.length&&bs[Math.floor(Math.random()*bs.length)].click()});await W(450);await health()}await closeAll()},
-  async menus(){scen='menus';trace.push(scen);await closeAll();const fns=['showSettings()','showShop()','showPartner()','showHero()','pgHub()','openCases()','rrList&&rrList()','tdOpen()','rmWords()'];
-   for(const f of [pickA(fns),pickA(fns)]){scen='menu '+f;await E(f=>{try{(0,eval)(f)}catch(e){throw e}},f);await W(400);for(let k=0;k<8;k++){await chaosTap();await W(250+rnd()*400);await health()}await closeAll()}},
-  async reload(){scen='reload';trace.push(scen);const before=await E(()=>JSON.stringify({c:G.coins,b:Object.keys(G.books||{}).length,k:Object.keys(G.cases||{}).length,l:G.lv}));
-   await p.reload();await W(600);await inject();await E(()=>{const b=document.querySelector('#spGo');b&&b.click()});await W(500);await E(()=>{const b=document.querySelector('#tBtns .btn.pri');b&&b.click()});await W(600);
-   const after=await E(()=>JSON.stringify({c:G.coins,b:Object.keys(G.books||{}).length,k:Object.keys(G.cases||{}).length,l:G.lv}));if(before!==after)await add('progress-lost','reload: '+before+' -> '+after);await health()},
-  async rapid(){scen='rapid';trace.push(scen);for(let k=0;k<20;k++){await chaosTap();await W(40)}await W(800);await health();await closeAll()}};
- const order=['pg','kase','book','duel','stagePg','course','words','menus','reload','rapid','pg','kase'];
- for(let r=0;r<ROUNDS;r++){const k=r<order.length?order[(r+seed)%order.length]:pickA(Object.keys(S));try{await S[k]()}catch(e){await add('simfail',k+': '+e.message.split('\n')[0])}await health()}
- const st=await E(()=>({coins:G.coins,lv:G.lv,books:Object.keys(G.books||{}),cases:Object.keys(G.cases||{}).length,pg:Object.keys(G.pg||{}).length,st:G.st}));
- fs.writeFileSync(path.join(OUT,`sim_${seed}_${mode}_${speech}.json`),JSON.stringify({issues,trace,st},null,1));
- console.log(`sim ${seed} ${mode} ${speech}: ${issues.length} issues ${JSON.stringify(st)}`);issues.forEach((i,n)=>console.log(` [${n}] ${i.kind} | ${i.scen} | ${i.msg.slice(0,220)} | ${i.last.slice(-3).join(' ; ')}`));
- await b.close();process.exit(issues.length?1:0)})();
+const VW={phone:{width:390,height:844},ipad:{width:1180,height:820},tab:{width:800,height:1280}};
+const which=process.argv[2]||'phone',N=+process.argv[3]||300,seed=+process.argv[4]||1,fresh=process.argv[5]==='fresh';
+let s=seed;const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff};
+const OUT='/tmp/claude-0/chk/CH/';fs.mkdirSync(OUT,{recursive:true});
+(async()=>{
+ const b=await chromium.launch();
+ const ctx=await b.newContext({viewport:VW[which],hasTouch:true,isMobile:which!=='ipad'});
+ const p=await ctx.newPage();
+ const errs=[],cerr=[],fails=[],dialogs=[];
+ p.on('pageerror',e=>errs.push({m:e.message.slice(0,160),at:step,trail:trail.slice(-8)}));
+ p.on('console',m=>{if(m.type()==='error'){const t=m.text();if(!/favicon|net::ERR|Failed to load resource/.test(t))cerr.push({m:t.slice(0,160),at:step})}});
+ p.on('requestfailed',r=>{const u=r.url();if(!u.startsWith('data:'))fails.push(u.split('/').slice(-2).join('/'))});
+ p.on('dialog',d=>{dialogs.push(d.type()+': '+d.message().slice(0,80));d.dismiss().catch(()=>{})});
+ p.on('filechooser',()=>{});
+ await p.addInitScript(()=>{
+  window.SpeechSynthesisUtterance=class{constructor(t){this.text=t}};
+  window.__aud=0;
+  Object.defineProperty(window,'speechSynthesis',{value:{getVoices:()=>[{name:'Yuna',lang:'ko-KR'}],speak:u=>{window.__aud++;setTimeout(()=>u.onend&&u.onend(),80)},cancel:()=>{},addEventListener(){}}});
+  const AC=window.AudioContext||window.webkitAudioContext;if(AC){['createOscillator','createBufferSource'].forEach(f=>{const o=AC.prototype[f];AC.prototype[f]=function(){window.__aud++;return o.apply(this,arguments)}})}
+  const C2=CanvasRenderingContext2D.prototype;['stroke','fill','drawImage','fillText','clearRect'].forEach(f=>{const o=C2[f];C2[f]=function(){window.__aud++;return o.apply(this,arguments)}});
+  HTMLMediaElement.prototype.play=function(){window.__aud++;const el=this;setTimeout(()=>{try{el.dispatchEvent(new Event('ended'))}catch(e){}},120);return Promise.resolve()};
+ });
+ let step=0;const trail=[];global.__trail=trail;global.__step=()=>step;
+ await p.goto('http://localhost:8814/game_new.html');await p.waitForTimeout(1200);
+ if(!fresh)await p.evaluate(()=>{try{const sp=document.getElementById('splashOv');if(sp)sp.hidden=true;
+  G.char=G.char||'tiger';G.name=G.name||'하늘';G.autoRead=false;
+  G.books=G.books||{};['b1','b2','b3'].forEach(k=>G.books[k]={done:1,stars:2});
+  G.cards={own:{tiger:1,rat:0,bk_yong:2,v_gray:1},q:[{id:'bk_owl',r:0}]};
+  G.pgm={'나비':{r:1,w:3,box:1},'포도':{r:0,w:2,box:0}};save();if(window.renderAll)renderAll()}catch(e){}});
+ if(process.env.START){await p.waitForTimeout(400);await p.evaluate(x=>{try{(0,eval)(x)}catch(e){window.__startErr=e.message}},process.env.START);await p.waitForTimeout(1200)}
+ const BAN=process.env.BAN?new RegExp(process.env.BAN):null;
+ const small={},dead={},clicked={},screens={};
+ let emptyFor=0,stuck=[];
+ const cands=()=>p.evaluate(()=>{
+  const sel='button,[onclick],[role=button],.hqhot,.pgfish,.mole3,.rdrop2,.pcard,.blk,.fopt,.dop,.nchc,.cdface,.rvw,select,label.btn,input[type=checkbox],a[href^="#"]';
+  const out=[];const seen=new Set();
+  document.querySelectorAll(sel).forEach(el=>{
+   if(seen.has(el)||el.disabled)return;seen.add(el);
+   const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
+   if(r.bottom<1||r.right<1||r.top>innerHeight-1||r.left>innerWidth-1)return;
+   const cs=getComputedStyle(el);if(cs.visibility==='hidden'||cs.pointerEvents==='none'||+cs.opacity<.05)return;
+   const cx=Math.min(innerWidth-2,Math.max(1,r.left+r.width/2)),cy=Math.min(innerHeight-2,Math.max(1,r.top+r.height/2));
+   const top=document.elementFromPoint(cx,cy);if(!top||!(el===top||el.contains(top)))return;
+   const t=(el.getAttribute('aria-label')||el.textContent||'').replace(/\s+/g,' ').trim().slice(0,14);
+   const lab=(el.id?'#'+el.id:el.tagName.toLowerCase()+'.'+String(el.className&&el.className.baseVal!==undefined?el.className.baseVal:el.className).split(' ').filter(Boolean).slice(0,2).join('.'))+' '+t;
+   out.push({x:cx,y:cy,w:Math.round(r.width),h:Math.round(r.height),lab,close:/닫기|Close|←|나중에|그만|도망|✕|×|Back|돌아가/.test(t)||/X$|Close|Back/.test(el.id||'')});
+  });
+  const ov=[...document.querySelectorAll('[id$="Ov"]')].filter(e=>!e.hidden&&getComputedStyle(e).display!=='none').map(e=>e.id);
+  const g=(window.PGS&&PGS.g)||'',du=window.DU&&!DU.done?'duel':'',kz=window.KZ?'case':'',run=window.RUN?'run':'';
+  return {c:out,scr:[ov.join('+')||'main',g,du,kz,run].filter(Boolean).join('/')};
+ });
+ const t0=Date.now();
+ for(step=0;step<N;step++){
+  let st;try{st=await cands()}catch(e){await p.waitForTimeout(500);continue}
+  screens[st.scr]=(screens[st.scr]||0)+1;
+  st.c.forEach(c=>{const m=Math.min(c.w,c.h);if(m<44){const k=st.scr.split('/')[0]+' | '+c.lab;small[k]=Math.min(small[k]||999,m)}});
+  if(!st.c.length){emptyFor++;if(emptyFor>=10){stuck.push({at:step,scr:st.scr,trail:trail.slice(-6)});await p.screenshot({path:OUT+which+'_stuck_'+step+'.png'});
+    await p.keyboard.press('Escape').catch(()=>{});emptyFor=0;await p.reload();await p.waitForTimeout(1500)}
+   await p.waitForTimeout(600);continue}
+  emptyFor=0;
+  const ws=st.c.map(c=>(BAN&&BAN.test(c.lab))?0.0001:(c.close?.2:1)/(1+(clicked[c.lab]||0)));const tot=ws.reduce((a,x)=>a+x,0);
+  let r=rnd()*tot,k=0;for(;k<ws.length-1;k++){r-=ws[k];if(r<=0)break}
+  const c=st.c[k];clicked[c.lab]=(clicked[c.lab]||0)+1;trail.push(st.scr+' > '+c.lab);
+  await p.evaluate(()=>{window.__mut=0;window.__aud0=window.__aud;if(window.__mo)window.__mo.disconnect();window.__mo=new MutationObserver(l=>{window.__mut+=l.length});window.__mo.observe(document.body,{subtree:true,childList:true,attributes:true,characterData:true})}).catch(()=>{});
+  const u0=p.url();
+  try{await p.mouse.click(c.x,c.y)}catch(e){}
+  await p.waitForTimeout(450+Math.floor(rnd()*500));
+  const fx=await p.evaluate(()=>({m:window.__mut,a:window.__aud-window.__aud0})).catch(()=>({m:1,a:0}));
+  if(fx.m===0&&fx.a===0){const kk=st.scr.split('/')[0]+' | '+c.lab;dead[kk]=(dead[kk]||0)+1}
+  if(p.url()!==u0){trail.push('NAV '+p.url());await p.goto('http://localhost:8814/game_new.html');await p.waitForTimeout(1200)}
+ }
+ const res={which,seed,fresh,steps:N,secs:Math.round((Date.now()-t0)/1000),errors:errs,consoleErr:cerr.slice(0,15),failed:[...new Set(fails)].slice(0,20),dialogs,stuck,
+  screens:Object.keys(screens).sort(),dead:Object.entries(dead).sort((a,b)=>b[1]-a[1]).slice(0,40),
+  small:Object.entries(small).sort((a,b)=>a[1]-b[1]).slice(0,80)};
+ fs.writeFileSync(OUT+which+'_'+seed+(process.env.TAG?'_'+process.env.TAG:'')+'.json',JSON.stringify(res,null,1));
+ console.log(which,seed,'steps',N,'secs',res.secs,'errors',errs.length,'stuck',stuck.length,'dead',res.dead.length,'small',Object.keys(small).length,'screens',res.screens.length);
+ await b.close();
+})().catch(e=>{console.log('ERR',e.message,'| at step',global.__step&&global.__step(),'| trail:',JSON.stringify((global.__trail||[]).slice(-12)));process.exit(1)});
