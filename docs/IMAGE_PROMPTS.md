@@ -2415,12 +2415,12 @@ Canvas 1536x1024 (landscape); keep the hero and the book opening inside the cent
 ### 7. `b8_enter.png` — 8권 입장 장면 — 구름 양
 
 - 쓰임새: 영웅이 책 속으로 뛰어드는 입장 연출 (지금은 초상화 문으로 대신). 구름 양(전담 영웅)가 자기 동화로 뛰어드는 장면 — 어느 영웅으로 플레이해도 나와요
-- 첨부: assets/img/hero/sheep.webp (구름 양 기준 그림) · b8_spread.png (8권 무대 — 먼저 만든 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
+- 첨부: assets/img/hero/sheep.webp (구름 양 기준 그림) · books/b1/scene_enter.webp (1권 입장 장면 — 구도·그림체 기준)
 
 ```
 A magical "jump into the book" scene for a cute 3D animated children's game, with the SAME composition, lighting and art style as the LAST attached reference image (a giant open storybook glowing golden, sparkling swirls of light around its pages).
 Hero: the character in the FIRST attached image, kept EXACTLY the same (same suit, colours and face), seen from BEHIND in a three-quarter back view, mid-leap, diving through the glowing book opening. The hero fills about half of the height, a little left of centre. No other characters.
-Through the book opening you can see the story world: a sunny hillside meadow with a flock of fluffy sheep, a shepherd's watch post and a village below — match the mood and colours of the second attached image.
+Through the book opening you can see the story world: a sunny hillside meadow with a flock of fluffy sheep, a shepherd's watch post and a village below — bright, soft spring colours (fresh green grass, clear blue sky, white fluffy shapes), in the same art style as the attached images.
 NO text, letters, numbers, logos or watermark. Friendly for a 5-year-old.
 Canvas 1536x1024 (landscape); keep the hero and the book opening inside the central band (the top and bottom 10% may be cropped).
 ```
@@ -2748,27 +2748,29 @@ No text, letters, numbers, title, logos or watermark.
 Canvas 1024x1536 (portrait).
 ```
 
-## 6순위 · 본부 조종실 2겹 + 앉은 포즈 12장 (선택 — 함께 와야 보여요) ※ 일하는 포즈 12장은 ☑ 완료(11/3) — 조종실에서 영웅을 누르면 나와요 (14장)
+## 6순위 · 본부 2겹 (선택) — 남은 것 hq_sky·hq_cabin 2장 ※ 일하는 포즈 12장은 ☑ 완료(11/3) (14장)
 
-지금 본부는 보호자 조종실 그림(11/3 원본, 교체 완료)으로 돌아가요. 이 14장은 '창밖 구름이 흐르고 영웅이 하나씩 따로 움직이는' 버전을 원할 때만. 앉은 포즈는 hq_cabin이 있어야 화면에 나와요.
+지금 본부는 보호자 단체 그림(11/3, 돔 본부에 12영웅이 일하는 모습)으로 돌아가요. hq_sky + hq_cabin 2장이 오면 빈 방 위에 일하는 포즈 12장을 자리마다 올려 하나씩 움직이게 하고, 돔 창밖 구름을 흐르게 할 수 있어요. 둘 다 있어야 쓰여요.
 
-### 1. `hq_sky.png` — 조종실 창밖 하늘 (가로로 이어지는 그림)
+### 1. `hq_sky.png` — 본부 돔 창밖 하늘 (옆으로 이어지는 그림)
 
-- 쓰임새: 창밖 구름이 계속 흘러가는 효과 — hq_cabin과 함께 와야 쓰여요
+- 쓰임새: 돔 유리창 너머 구름이 천천히 흘러가는 효과 — hq_cabin과 함께 와야 쓰여요
 - 첨부: assets/img/hq/room_pic.webp (지금 본부 조종실 그림 — 11/3 원본으로 교체됨)
 
 ```
-A wide panoramic sky high above a sea of fluffy white clouds, bright daytime, soft blue gradient, a few distant cloud towers, gentle sunlight, matching the attached reference art style (soft painterly 3D). The image must tile SEAMLESSLY left-to-right (the left edge continues the right edge). No aircraft, no characters, no text. Canvas 2048x1024.
+A wide daytime sky with soft, fluffy white clouds and a gentle blue gradient, like the sky seen through the glass dome in the attached picture, in the same soft painterly 3D style. Try to make the left edge continue the right edge so it can loop sideways (small seams are fine; they will be blended afterwards). No aircraft, no birds, no characters, no buildings, no text. Canvas 1536x1024 (landscape).
 ```
 
-### 2. `hq_cabin.png` — 조종실 안 (창유리 투명, 빈 자리)
+### 2. `hq_cabin.png` — 본부 빈 방 (영웅 없음, 돔 창 하늘은 초록 한 색)
 
-- 쓰임새: 빈 조종실 — 영웅들을 자리마다 하나씩 앉혀 따로따로 움직이게 해요
+- 쓰임새: 영웅 12명(일하는 포즈 그림, 이미 있음)을 자리마다 따로 올려 하나씩 움직이게 하고, 돔 창밖 구름이 흐르게 해요 — hq_sky와 함께 와야 쓰여요
 - 첨부: assets/img/hq/room_pic.webp (지금 본부 조종실 그림 — 11/3 원본으로 교체됨)
 
 ```
-The SAME airship cockpit interior as the attached reference image (curved glass dome, metal ribs, glowing consoles with screens, cables, cosy seats), cute 3D animated children's game style, seen from the same angle. IMPORTANT: remove ALL characters — every seat and console is EMPTY.
-The window glass areas must be fully TRANSPARENT (real PNG alpha channel, not a checkerboard) so a moving sky can be shown behind them. Keep screens glowing with simple shapes only — absolutely NO text, letters or numbers on screens or signs. Canvas 1536x1024.
+Use the attached picture as the exact reference: the SAME headquarters room, a big round room under a glass dome with golden metal ribs, a wooden floor, bookshelves, a big map table in the middle, a letter shelf and desk, a little kitchen oven, plants, a telescope and cosy armchairs. Same camera angle, same layout, same lighting, same cute 3D animated style.
+IMPORTANT: remove ALL characters. Nobody is in the room; every chair, desk, bench and workstation is EMPTY, and their props stay (books, map, letters, yarn basket, cookie tray).
+Fill the sky seen through the dome glass with ONE flat pure green colour (#00FF00), with no clouds or gradient there, so it can be cut out later and a moving sky shown behind it. Do not use that green anywhere else (the plants keep a natural green).
+No text, letters or numbers anywhere (no writing on books, signs, maps or screens). Canvas 1536x1024 (landscape).
 ```
 
 ### 3. `work_rat.png` — 조종실 앉은 자리 — 번개 쥐
