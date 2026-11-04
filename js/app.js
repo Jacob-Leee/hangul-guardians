@@ -4627,7 +4627,7 @@ VOX.sb_boy={p:1.24,r:1,g:"m",gap:550};VOX.sb_old={p:.7,r:.82,g:"m",gap:900};
 RMS.b3=[
  {a:"회색냥이 동화책의 문장을 바꿨어요.",b:"꾀부리기 대장 회색냥이 책을 펼쳤어요. 그리고 〈소가 된 게으름뱅이〉의 문장을 바꿔 버렸어요.",q:"누가 문장을 바꿨나요?",ans:["회색냥","🐈"],o:[["뚱냥","🐱"],["할아버지","👴"]]},
  {a:"모자를 쓴 소년은 소가 되었어요.",b:"기록에는 소년이 모자를 쓰자 펑! 소가 되었다고 적혀 있어요. 그래서 책 속 문장을 바르게 고쳤어요.",q:"모자를 쓴 소년은 무엇이 되었나요?",ans:["소","🐂"],o:[["나비","🦋"],["공주","👸"]]},
- {a:"무를 먹은 돌이는 다시 사람이 되었어요.",b:"소가 된 돌이는 밭일이 너무 힘들어 후회했어요. 그런데 하얀 무를 덥석 먹자 펑! 다시 사람이 되었어요.",q:"돌이를 사람으로 되돌린 것은 무엇인가요?",ans:["무","🥬"],o:[["당근","🥕"],["사과","🍎"]]}];
+ {a:"무를 먹은 돌이는 다시 사람이 되었어요.",b:"소가 된 돌이는 밭일이 너무 힘들어 후회했어요. 그런데 하얀 무를 덥석 먹자 펑! 다시 사람이 되었어요.",q:"돌이는 무엇을 먹고 다시 사람이 되었나요?",ans:["무","🥬"],o:[["당근","🥕"],["사과","🍎"]]}];
 RMS.b3.forEach((m,i)=>{m.id="b3_"+i});
 HQ_ITEMS.push({id:"sohat",e:"🎩",n:["Magic ox hat","신기한 소 모자"],src:"book_b3"});
 
@@ -4642,7 +4642,7 @@ HQ_ITEMS.push({id:"rope4",e:"🪢",n:["Sky rope","하늘 동아줄"],src:"book_b
 VOX.sb_yong={p:1.26,r:1.02,g:"m",gap:520};VOX.sb_cloud={p:.88,r:.8,g:"f",gap:850};
 RMS.b5=[
  {a:"보라냥이 동화책의 주문을 바꿨어요.",b:"장난꾸러기 보라냥이 책을 펼쳤어요. 그리고 〈비를 잃어버린 꼬마 용〉의 주문을 바꿔 버렸어요.",q:"누가 주문을 바꿨나요?",ans:["보라냥","🐱"],o:[["구름 할머니","👵"],["꼬마 용","🐉"]]},
- {a:"비 주문은 주룩주룩 내려라예요.",b:"주문 책에는 '주룩주룩 내려라'라고 적혀 있어요. 그래서 책 속 문장을 바르게 고쳤어요.",q:"바른 비 주문은 무엇인가요?",ans:["주룩주룩 내려라","🌧️"],o:[["쿨쿨 자라","💤"],["빙글빙글 돌아라","🌀"]]},
+ {a:"비 주문은 '주룩주룩 내려라'예요.",b:"주문 책에는 '주룩주룩 내려라'라고 적혀 있어요. 그래서 책 속 문장을 바르게 고쳤어요.",q:"바른 비 주문은 무엇인가요?",ans:["주룩주룩 내려라","🌧️"],o:[["쿨쿨 자라","💤"],["빙글빙글 돌아라","🌀"]]},
  {a:"바른 주문을 외치자 단비가 내렸어요.",b:"꼬마 용이 바른 주문을 외치자 구름이 모여 단비를 내렸어요. 꽃밭이 다시 활짝 피었어요.",q:"바른 주문을 외치자 무엇이 내렸나요?",ans:["단비","🌧️"],o:[["눈","☃️"],["낙엽","🍂"]]}];
 RMS.b5.forEach((m,i)=>{m.id="b5_"+i});
 HQ_ITEMS.push({id:"raindrop",e:"💧",n:["Rain bead","비 구슬"],src:"book_b5"});
@@ -7171,5 +7171,14 @@ if(typeof showPartner==="function"){var _sp46=showPartner;window.showPartner=sho
    +row(K("Words read in 1 min","1분에 읽은 어절"),a&&a.w,b&&b.w,Math.max(40,(a&&a.w)||0,(b&&b.w)||0));
   wk.appendChild(d)}catch(e){}}}
 })();
+
+/* ===== v46d (11/4 밤): 읽기 미션 '🔊 읽어 주기' — 그 글의 녹음이 없으면 단추를 숨김 (v43 '소리 정직하게'와 같은 원칙: 눌러도 아무 소리가
+   안 나는 단추는 아이 혼자일 때 헷갈림). 3~7권 미션 40줄은 dubbing_extra.csv rm_b3_1~rm_b7_9로 녹음 대기, 녹음이 오면 저절로 다시 보임.
+   1단계(듣고 따라 읽기)에서 녹음이 없으면 안내 문구도 '소리 내어 혼자 읽어 봐요'로. ===== */
+(function(){if(typeof rmShow!=="function")return;var _rs46d=rmShow;
+ window.rmShow=rmShow=function(m,o,done){var r=_rs46d.apply(this,arguments);
+  try{if(m&&!recAny("narrator",rmText(m))){var b=document.getElementById("rmSay");if(b)b.hidden=true;
+    var tip=document.getElementById("rmTip");if(tip&&rdLv()===1)tip.textContent=K("Read it out loud by yourself.","소리 내어 혼자 읽어 봐요.")}}catch(e){}
+  return r}})();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
