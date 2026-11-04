@@ -1,19 +1,19 @@
 /* 〈뱀의 숲속 우체국〉 book data. Loaded before js/app.js. Format: docs/HANDOVER.md → "동화책 데이터 형식".
    Voices (VOX.sb_*) and reading missions (RMS.b6) are at the end of js/app.js. */
 window.BOOKDATA=window.BOOKDATA||{};
-BOOKDATA.b6={dir:"books/b6/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"spread.webp",
+BOOKDATA.b6={dir:"books/b6/",enterArt:"scene_enter.webp",cover:"cover.webp",bg:"spread.webp",
  actors:{
-  post:{n:"우체부 뱀 슈룩이",voice:"sb_post",h:28,poses:{stand:["post_stand.webp",1],walk:["post_slide.webp",1],slide:["post_slide.webp",1],happy:["post_stand.webp",1]}},
+  post:{n:"우체부 뱀 슈룩이",voice:"sb_post",h:27,poses:{stand:["post_stand.webp",1],walk:["post_slide.webp",1],slide:["post_slide.webp",1],happy:["post_stand.webp",1]}},
   owl:{n:"부엉이 부부장",voice:"sb_owl",h:28,poses:{stand:["owl_stand.webp",1],walk:["owl_stand.webp",1],happy:["owl_happy.webp",1]}}},
- at:{office:[14,84],bag:[22,82],path:[34,88],mail:[44,84],wood:[56,88],mush:[66,88],treeFoot:[78,86],owlNest:[86,60],branch:[92,56]},
+ at:{office:[16,84],bag:[26,84],path:[33,88],mail:[46,86],wood:[56,88],mush:[66,88],treeFoot:[74,88],owlNest:[80,58],branch:[91,57]},
  broken:{post:["path","stand"],owl:["owlNest","stand"]},
  endState:{post:["treeFoot","happy"],owl:["owlNest","happy"]},
  claim:{who:"post",t:"이름은 안 읽어도 돼! 아무한테나 주면 더 빨라!"},
  sentence:{tokens:["우체부는","편지를","아무에게나","건네","줘요."],bad:2,fix:"받는 친구에게"},
  records:[
-  {k:"mail",ic:"📮",place:"숲속 우체통",at:[44,66],t:"편지 봉투에는 받는 친구의 이름이 또박또박 적혀 있어요. 이름을 읽어야 편지가 제 주인을 찾아가요.",clue:["이름을 읽어야"]},
-  {k:"invite",ic:"💌",place:"부엉이네 나무",at:[86,44],t:"부엉이의 생일 초대장이 아직도 도착하지 않았어요. 부엉이는 밤새 우체통만 바라봤어요.",clue:["생일 초대장"]},
-  {k:"bag",ic:"🧺",place:"배달 가방",at:[22,62],t:"슈룩이는 편지 이름을 하나씩 읽고, 가는 길 순서대로 차곡차곡 가방에 넣어요.",clue:["하나씩 읽고","차곡차곡"]}],
+  {k:"mail",ic:"📮",place:"숲속 우체통",at:[38,60],t:"편지 봉투에는 받는 친구의 이름이 또박또박 적혀 있어요. 이름을 읽어야 편지가 제 주인을 찾아가요.",clue:["이름을 읽어야"]},
+  {k:"invite",ic:"💌",place:"부엉이네 나무",at:[82,44],t:"부엉이의 생일 초대장이 아직도 도착하지 않았어요. 부엉이는 밤새 우체통만 바라봤어요.",clue:["생일 초대장"]},
+  {k:"bag",ic:"🧺",place:"배달 가방",at:[27,64],t:"슈룩이는 편지 이름을 하나씩 읽고, 가는 길 순서대로 차곡차곡 가방에 넣어요.",clue:["하나씩 읽고","차곡차곡"]}],
  prologue:[
   {pov:{bg:"@lib",mentor:true,deco:["📚","💌","🌲"]},text:"열두 이야기 도서관의 여섯 번째 책장에는 〈뱀의 숲속 우체국〉이 꽂혀 있어요. 편지 이름을 읽는 일이 얼마나 소중한지 알려 주는 책이에요."},
   {pov:{bg:"@lib",vil:true},who:"v_black",text:"그런데 그림자 대장 흑묘가 책을 펼쳤어요. \"이름 읽기는 귀찮다냥! 아무한테나 주는 이야기로 바꿔야지!\" 흑묘는 문장을 몰래 바꿔 버렸어요."},
@@ -35,7 +35,7 @@ BOOKDATA.b6={dir:"books/b6/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"
     {say:"\"부, 엉, 이. 이 초대장의 주인은 부엉이야!\"",who:"post"},
     {move:"post",to:"treeFoot",pose:"slide",ms:2600},
     {say:"슈룩이는 부엉이네 나무로 스르륵 달려갔어요."},
-    {fx:"burst",at:[86,56]},{prop:["💌",84,52]},{pose:["owl","happy"]},
+    {fx:"burst",at:[80,50]},{prop:["💌",70,52]},{pose:["owl","happy"]},
     {say:"\"내 생일 초대장이다! 고마워, 슈룩이!\"",who:"owl"},
     {cam:null},{fx:"confetti"},
     {say:"숲속 편지들이 모두 제 주인을 찾아갔어요."}],next:"다음: 책장 순서 맞추기"},
@@ -48,14 +48,14 @@ BOOKDATA.b6={dir:"books/b6/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"
   {pov:{img:"page2.webp",kb:"pan"},text:"그런데 어느 날, 봉투의 이름이 그림자에 가려 보이지 않았어요. 편지들이 엉뚱한 집으로 가 버렸어요."},
   {scene:[{state:{post:["mail","stand"],owl:["owlNest","stand"]}},{cam:["owl",1.4],cms:0}],who:"owl",text:"\"내 생일 초대장이 안 와… 아무도 내 생일을 모르면 어떡하지?\" 부엉이가 시무룩해졌어요."},
   {pov:{img:"page3.webp",kb:"in"},text:"슈룩이는 그림자를 걷어 내고 이름을 또박또박 읽었어요. \"부엉이네!\" 초대장이 드디어 주인을 찾았어요."},
-  {scene:[{state:"end"},{cam:[80,60,1.15],cms:0},{prop:["💌",84,52]}],text:"부엉이네 생일잔치에 숲속 친구들이 모두 모였어요. 이야기가 다시 제자리로 돌아왔어요."}],
+  {scene:[{state:"end"},{cam:[78,62,1.15],cms:0},{prop:["💌",70,52]}],text:"부엉이네 생일잔치에 숲속 친구들이 모두 모였어요. 이야기가 다시 제자리로 돌아왔어요."}],
  ending:{title:"보너스: 부엉이네 생일잔치",ask:"초대장을 받은 친구들이 모였어요. 잔치에서 무엇을 할까?",lead:"잔치에서…",lead2:"마지막에는…",ask2:"마지막에는 어떻게 되었을까?",
   start:{post:["treeFoot","stand"],owl:["owlNest","happy"]},tpl:"잔치에서 {A}. 마지막에 {B}.",
   A:[{t:"도토리 케이크에 촛불을 켰어요",e:"🎂",s:[{prop:["🎂",80,70]}]},
      {t:"달빛 아래에서 숨바꼭질을 했어요",e:"🌙",s:[{prop:["🌙",60,20]},{move:"post",to:"wood",pose:"slide",ms:1400}]},
      {t:"나뭇잎 피리를 불며 노래했어요",e:"🎶",s:[{prop:["🎶",74,50]}]}],
-  B:[{t:"부엉이가 답장 편지를 썼어요",e:"✉️",s:[{prop:["✉️",86,52]},{fx:"confetti"}]},
-     {t:"슈룩이가 '최고 우체부' 배지를 받았어요",e:"🎖️",s:[{prop:["🎖️",78,70]},{fx:"confetti"}]},
+  B:[{t:"부엉이가 답장 편지를 썼어요",e:"✉️",s:[{prop:["✉️",70,52]},{fx:"confetti"}]},
+     {t:"슈룩이가 '최고 우체부' 배지를 받았어요",e:"🎖️",s:[{prop:["🎖️",74,64]},{fx:"confetti"}]},
      {t:"다 같이 별을 보며 소원을 빌었어요",e:"⭐",s:[{prop:["⭐",66,24]},{fx:"confetti"}]}]},
  fin:["이야기를 되찾았어요!","{vil} 그림자 속으로 도망쳤어요.","\"잘했구나. 이 책을 도서관에 꽂아 두자.\""]};
 

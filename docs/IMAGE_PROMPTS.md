@@ -1312,7 +1312,7 @@ NO title, NO text, NO letters, numbers, logos or watermark. Friendly for a 5-yea
 Canvas 1024x1536 (portrait).
 ```
 
-## 3순위 · 동화책 6권 〈뱀의 숲속 우체국〉 (9장)
+## ☑ 완료 · 동화책 6권 〈뱀의 숲속 우체국〉 (9장)
 
 순서대로 만드세요: ① 인물 기본 포즈 → ② 다른 포즈(기본 포즈 첨부) → ③ 무대 → ④ 이야기 그림(인물+무대 첨부) → ⑤ 표지. 한 권은 ChatGPT 대화 하나에서 이어서 만들면 그림체가 잘 맞아요.
 

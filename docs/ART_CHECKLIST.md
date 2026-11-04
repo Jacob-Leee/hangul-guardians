@@ -42,14 +42,14 @@
 ## 2순위 — 🎙️ 녹음 2차: 책 8~12권 (약 8,400자)
 - ☐ b8 양치기 소년 ☐ b9 뒤죽박죽 도서관 ☐ b10 빨간 암탉 ☐ b11 개와 그림자 ☐ b12 돼지 삼 형제
 
-## 3순위 — 📚 책 그림 (b3·b4·b5 ☑ 완료 11/3 — 표지·입장 장면 포함 / 남은 것: b6~b12)
+## 3순위 — 📚 책 그림 (b3·b4·b5 ☑ 11/3, b6 ☑ 11/4 — 표지·입장 장면 포함 / 남은 것: b7~b12)
 **어디에 쓰임**: ① spread=현장 조사 무대(반짝이 숨는 곳) ② page1~3=순서 맞추기 그림+이야기 장면 ③ 포즈=장면 연출에서 움직이는 인물 ④ **cover=도서관 책장 표지 + 책 속으로 뛰어드는 3D 입장**
 표지는 `bN_cover.png`(세로 1024×1536 권장, 제목 글자 없이)로 — 없으면 page1을 임시로 씀.
 
 - ☑ **b3** 완료 (11/3) — 남은 건 선택 1장(b3_oxboy_walk 걷는 포즈)뿐
 - ☑ **b4** 완료 (11/3) — 표지·입장 장면 포함 12장
 - ☑ **b5** 완료 (11/3) — 표지·입장 장면 포함 10장
-- ☐ **b6** (9장): spread, page1~3, cover + post_stand/post_slide, owl_stand/owl_happy
+- ☑ **b6** 완료 (11/4) — 9장 연결(11장 중 슈룩이 미끄러지기·부엉이 기쁨은 더 깔끔한 쪽 골라 씀)
 - ☐ **b7** (8장): spread, page1~3, cover + dal_stand/dal_run, mill_stand
 - ☐ **b8** (10장): spread, page1~3, cover + shep_stand/shep_shout, lamb_stand, wolf_stand/wolf_run
 - ☐ **b9** (9장): spread, page1~3, cover + mon_stand/mon_hang, pand_stand/pand_happy
