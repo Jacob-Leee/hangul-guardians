@@ -4667,14 +4667,14 @@ VOX.sb_shep={p:1.22,r:1,g:"m",gap:550};VOX.sb_lamb={p:1.34,r:.96,g:"f",gap:600};
 RMS.b8=[
  {a:"호랑이냥이 동화책의 문장을 바꿨어요.",b:"힘자랑 대장 호랑이냥이 책을 펼쳤어요. 그리고 〈양치기 소년〉의 문장을 바꿔 버렸어요.",q:"누가 문장을 바꿨나요?",ans:["호랑이냥","🐯"],o:[["늑대","🐺"],["아기 양","🐑"]]},
  {a:"거짓말을 하면 친구들이 안 믿어요.",b:"기록에는 거짓말 두 번에 친구들이 점점 믿지 않게 되었다고 적혀 있어요. 그래서 책 속 문장을 바르게 고쳤어요.",q:"거짓말을 하면 친구들이 어떻게 되나요?",ans:["안 믿어요","🙅"],o:[["박수 쳐요","👏"],["춤춰요","💃"]]},
- {a:"참말을 해도 아무도 오지 않았어요.",b:"거짓말 때문에, 참말로 외쳐도 친구들은 오지 않았어요. 소년은 혼자 양 떼를 지키고 나서 '참말만 할게요' 다짐했지요.",q:"참말로 외치자 누가 왔나요?",ans:["아무도 안 왔어요","🚫"],o:[["친구들","🙌"],["늑대","🐺"]]}];
+ {a:"참말을 해도 아무도 오지 않았어요.",b:"거짓말 때문에, 참말로 외쳐도 친구들은 오지 않았어요. 소년은 혼자 양 떼를 지키고 나서 '참말만 할게요' 다짐했지요.",q:"참말로 외치자 누가 도와주러 왔나요?",ans:["아무도 안 왔어요","🚫"],o:[["친구들","🙌"],["늑대","🐺"]]}];
 RMS.b8.forEach((m,i)=>{m.id="b8_"+i});
 HQ_ITEMS.push({id:"truthbell",e:"🔔",n:["Truth bell","참말 종"],src:"book_b8"});
 
 VOX.sb_mon={p:1.24,r:1.06,g:"m",gap:480};VOX.sb_pand={p:1.32,r:.94,g:"f",gap:600};
 RMS.b9=[
  {a:"뚱냥이 동화책의 문장을 바꿨어요.",b:"먹보 뚱냥이 과자를 먹으며 책을 펼쳤어요. 그리고 〈원숭이의 뒤죽박죽 도서관〉의 문장을 바꿔 버렸어요.",q:"누가 문장을 바꿨나요?",ans:["뚱냥","🐱"],o:[["또로","🐵"],["포포","🐼"]]},
- {a:"책은 첫 글자와 같은 칸에 꽂아요.",b:"기록에는 책등의 첫 글자와 같은 칸이 책의 집이라고 적혀 있어요. 그래서 책 속 문장을 바르게 고쳤어요.",q:"책은 어떤 칸에 꽂아야 하나요?",ans:["첫 글자 칸","📚"],o:[["아무 칸","❓"],["바닥","🟫"]]},
+ {a:"책은 첫 글자 칸에 꽂아요.",b:"기록에는 책을 제목 첫 글자의 칸에 꽂는다고 적혀 있어요. 그래서 책 속 문장을 바르게 고쳤어요.",q:"책은 어떤 칸에 꽂아야 하나요?",ans:["첫 글자 칸","📚"],o:[["아무 칸","❓"],["바닥","🟫"]]},
  {a:"포포가 공룡책을 찾았어요.",b:"또로가 글자 순서대로 책을 꽂자, 공룡책이 ㄱ 칸에서 나타났어요. 포포가 활짝 웃었어요.",q:"포포는 무슨 책을 찾았나요?",ans:["공룡책","🦕"],o:[["요리책","🍳"],["노래책","🎵"]]}];
 RMS.b9.forEach((m,i)=>{m.id="b9_"+i});
 HQ_ITEMS.push({id:"booktag",e:"🔖",n:["Letter bookmark","글자 이름표"],src:"book_b9"});
@@ -4682,16 +4682,16 @@ HQ_ITEMS.push({id:"booktag",e:"🔖",n:["Letter bookmark","글자 이름표"],sr
 VOX.sb_hen={p:1.18,r:1,g:"f",gap:550};VOX.sb_duck={p:1.3,r:1.06,g:"m",gap:500};VOX.sb_bird={p:1.4,r:1.1,g:"f",gap:450};
 RMS.b10=[
  {a:"백묘가 동화책의 문장을 바꿨어요.",b:"새침한 백묘가 책을 펼쳤어요. 그리고 〈빨간 암탉〉의 문장을 바꿔 버렸어요.",q:"누가 문장을 바꿨나요?",ans:["백묘","🐈"],o:[["암탉","🐔"],["오리","🦆"]]},
- {a:"빵은 도와준 친구와 나눠 먹어요.",b:"기록에는 빵은 도와준 친구와 나눠 먹는다고 적혀 있어요. 그래서 책 속 문장을 바르게 고쳤어요.",q:"빵은 누구와 나눠 먹나요?",ans:["도와준 친구","🤝"],o:[["구경만 한 친구","👀"],["아무도 안","❓"]]},
- {a:"다음 빵은 셋이 함께 만들었어요.",b:"둥둥이와 짹짹이가 사과하고 함께 일했어요. 다음 빵은 셋이 함께 만들어 나눠 먹었어요.",q:"다음 빵은 몇이서 만들었나요?",ans:["셋이 함께","🤝"],o:[["혼자","1️⃣"],["백묘와","🐈"]]}];
+ {a:"빵은 도와준 친구와 나눠 먹어요.",b:"기록에는 빵은 도와준 친구와 나눠 먹는다고 적혀 있어요. 그래서 책 속 문장을 바르게 고쳤어요.",q:"빵은 누구와 나눠 먹나요?",ans:["도와준 친구","🤝"],o:[["구경만 한 친구","👀"],["낮잠 잔 친구","😴"]]},
+ {a:"다음 빵은 셋이 함께 만들었어요.",b:"둥둥이와 짹짹이가 사과하고 함께 일했어요. 다음 빵은 셋이 함께 만들어 나눠 먹었어요.",q:"다음 빵은 몇이서 만들었나요?",ans:["셋이 함께","3️⃣"],o:[["혼자","1️⃣"],["백묘와","🐈"]]}];
 RMS.b10.forEach((m,i)=>{m.id="b10_"+i});
 HQ_ITEMS.push({id:"warmbread",e:"🍞",n:["Fresh bread","갓 구운 빵"],src:"book_b10"});
 
 VOX.sb_pup={p:1.2,r:1.02,g:"m",gap:520};
 RMS.b11=[
  {a:"보라냥이 동화책의 문장을 바꿨어요.",b:"장난꾸러기 보라냥이 책을 펼쳤어요. 그리고 〈개와 그림자〉의 문장을 바꿔 버렸어요.",q:"누가 문장을 바꿨나요?",ans:["보라냥","🐱"],o:[["콩이","🐶"],["물고기","🐟"]]},
- {a:"물속에 보이는 것은 그림자예요.",b:"기록에는 물속 강아지가 콩이를 똑같이 따라 했다고 적혀 있어요. 그건 콩이의 그림자였어요.",q:"물속에 보이는 것은 무엇인가요?",ans:["그림자","💧"],o:[["진짜 뼈다귀","🦴"],["물고기","🐟"]]},
- {a:"짖는 바람에 뼈다귀가 퐁당 빠졌어요.",b:"콩이가 물속 뼈다귀를 뺏으려고 멍! 짖었어요. 그 순간 입에 문 뼈다귀가 퐁당 빠져 버렸지요.",q:"멍! 짖었을 때 뼈다귀는 어떻게 되었나요?",ans:["퐁당 빠졌어요","💧"],o:[["더 커졌어요","🦴"],["날아갔어요","🪁"]]}];
+ {a:"물속에 보이는 것은 콩이의 그림자예요.",b:"기록에는 물속 강아지가 콩이를 똑같이 따라 했다고 적혀 있어요. 그건 물에 비친 콩이의 그림자였어요.",q:"물속에 보이는 것은 무엇인가요?",ans:["그림자","🪞"],o:[["진짜 뼈다귀","🦴"],["물고기","🐟"]]},
+ {a:"콩이가 짖는 바람에 뼈다귀가 퐁당 빠졌어요.",b:"콩이가 물속 뼈다귀를 뺏으려고 멍! 짖었어요. 그 순간 입에 문 뼈다귀가 퐁당 빠져 버렸지요.",q:"멍! 짖었을 때 뼈다귀는 어떻게 되었나요?",ans:["퐁당 빠졌어요","💧"],o:[["더 커졌어요","🦴"],["날아갔어요","🪁"]]}];
 RMS.b11.forEach((m,i)=>{m.id="b11_"+i});
 HQ_ITEMS.push({id:"bone",e:"🦴",n:["Kong's bone","콩이의 뼈다귀"],src:"book_b11"});
 
@@ -7200,5 +7200,21 @@ if(typeof showPartner==="function"){var _sp46=showPartner;window.showPartner=sho
 (function(){try{var st=document.createElement("style");st.textContent=".ztray.nudge .ztile{animation:pulse .5s ease-in-out 2;box-shadow:0 0 0 4px #FFE08A}";document.head.appendChild(st)}catch(e){}
  document.addEventListener("click",function(e){try{var sl=e.target&&e.target.closest&&e.target.closest(".zslot");if(!sl||sl.classList.contains("done")||typeof LIB==="undefined"||!LIB||LIB.sel)return;
   var tr=document.querySelector(".ztray");if(!tr)return;tr.classList.remove("nudge");void tr.offsetWidth;tr.classList.add("nudge");setTimeout(function(){tr.classList.remove("nudge")},1100)}catch(x){}},true)})();
+
+/* ===== v46h (11/5 8~12권 점검): 추리의 '어느 기록에서 알았니?' 단계에서 🐢 도움을 누르면,
+   아무것도 안 골랐는데도 틀렸을 때 하는 말("그 기록에는 … 이야기가 없단다")이 나왔음(1~12권 모두) →
+   도움은 맞는 기록을 가리키는 힌트(Q.hint, 1~7권은 이미 녹음됨)로. 틀린 기록을 골랐을 때의 말은 그대로 ===== */
+(function(){if(typeof bHelp!=="function")return;var _bh46h=bHelp;
+ window.bHelp=bHelp=function(){try{var b=BK;if(b&&!b.busy&&b.si>=0&&b.D&&b.D.steps){var S=b.D.steps[b.si];
+   if(S&&S.type==="choose"&&b.ss&&b.ss.ph!=="who"){var Q=S.qs[b.ss.qi];if(Q&&Q.hint){bMentor(Q.hint,Q.cl);chPanel();return}}}}catch(e){}
+  return _bh46h.apply(this,arguments)}})();
+
+/* ===== v46i (11/5 8~12권 점검): 11권 '물속 그림자'가 콩이와 똑같은 그림이라 보기 두 개가 구별되지 않았음 →
+   물에 비친 모습처럼 위아래를 뒤집고 푸르스름하게 반투명(무대와 보기 단추 모두). 그림자 전용 그림을 따로 만들면 이 규칙은 지우기 ===== */
+(function(){try{var st=document.createElement("style");st.textContent=
+ "#ba_shadow .fl,#ba_shadow .fl.flip{transform:scaleY(-1);transform-origin:50% 50%}"+
+ "#ba_shadow img{opacity:.6;filter:saturate(.55) brightness(.9) hue-rotate(185deg)}#ba_shadow::before{display:none}"+
+ ".bop.who[data-who=\"shadow\"] img{transform:scaleY(-1);opacity:.65;filter:saturate(.55) brightness(.9) hue-rotate(185deg)}";
+ document.head.appendChild(st)}catch(e){}})();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
