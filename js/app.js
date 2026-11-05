@@ -7267,5 +7267,79 @@ if(typeof showPartner==="function"){var _sp46=showPartner;window.showPartner=sho
  "@media (orientation:landscape) and (max-height:520px){.hqroom{width:min(100%,calc((100dvh - 120px)*1.5))}.hqtray{max-height:calc(100dvh - 230px)}}",
  "@supports (height:100dvh){.pgc{max-height:96dvh}.crscard{max-height:92dvh}}"
  ].join("\n");document.head.appendChild(st)}catch(e){}})();
+
+/* v46k: 아이패드 가로 — 그림 옆 빈 여백을 '지금 보이는 그림의 색'으로 은은하게 채움 (이야기·사건·본부).
+   + 가로 화면에서 카드가 화면 아래로 8px쯤 넘쳐 아래 단추가 잘리던 것(content-box 높이) 고침, 사건 화면은 반반으로 나눠 답 단추가 한 줄에.
+   그림을 아주 작게 줄여 평균색만 남긴 뒤 부드럽게 번진 배경으로 깐다 — blur 필터 없이 가볍게, 스크롤에도 안전. */
+(function(){try{
+ var V="rgba(255,250,240,",SH="0 18px 40px -14px rgba(40,24,8,.55)";
+ var st=document.createElement("style");st.id="v46kAmb";
+ st.textContent=[
+ "@media (orientation:landscape) and (min-width:900px) and (min-height:600px) and (max-height:1100px){",
+ " #bookCard.amb{position:relative;isolation:isolate;background:linear-gradient("+V+".14),"+V+".14)),var(--amb) center/cover no-repeat,#FFF8EC}",
+ " #bookCard.amb::after{content:'';position:absolute;grid-column:2;grid-row:1/-1;top:-12px;bottom:-12px;left:-16px;right:-12px;z-index:-1;pointer-events:none;background:linear-gradient(90deg,"+V+"0),"+V+".9) 18px,"+V+".95) 70px)}",
+ " #bookCard.amb>.bstage{box-shadow:"+SH+"}",
+ " #caseCard.amb{background:linear-gradient("+V+".14),"+V+".14)),var(--amb) center/cover no-repeat,#FFF8EC}",
+ " #caseCard.amb .kzwrap{position:relative;isolation:isolate}",
+ " #caseCard.amb .kzwrap::before{content:'';position:absolute;grid-column:1/-1;grid-row:1/2;top:-8px;left:-12px;right:-12px;bottom:-22px;z-index:-1;pointer-events:none;background:linear-gradient(180deg,"+V+".92),"+V+".92) calc(100% - 26px),"+V+"0))}",
+ " #caseCard.amb .kzwrap::after{content:'';position:absolute;grid-column:2;grid-row:2/-1;top:-4px;bottom:0;left:-14px;right:-12px;z-index:-1;pointer-events:none;background:linear-gradient(90deg,"+V+"0),"+V+".9) 16px,"+V+".95) 70px);box-shadow:16px 8px 0 -2px "+V+".95)}",
+ " #caseOv{padding:max(8px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}",
+ " .kzwrap{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}",
+ " .kzop{padding:8px 10px}",
+ " #caseCard.kzc:not(.play){max-width:1200px}",
+ " #caseCard.kzc:not(.play) .kzgrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:14px 10px}",
+ " #caseCard.amb .kzstage{box-shadow:"+SH+"}",
+ "}",
+ "@media (orientation:landscape) and (min-width:900px) and (min-height:600px) and (max-height:700px){",
+ " .bookc{grid-template-columns:minmax(0,1fr) clamp(380px,38vw,500px);row-gap:6px}",
+ " .bookc>.bq{padding-bottom:2px}",
+ " .bookc .rec{padding:6px 10px}",
+ "}",
+ "@media (orientation:landscape){.bookc,.duel,.hqc,.setc,#caseCard.kzc.play{box-sizing:border-box}}",
+ "@media (orientation:portrait) and (max-width:640px){.bookc,.duel,.hqc,.setc,#caseCard.kzc.play{box-sizing:border-box}}",
+ "#caseCard.kzc:not(.play){padding:0;overflow:hidden}",
+ "#caseCard.kzc:not(.play)>.kzlist{border:0;border-radius:0}",
+ "@media (orientation:landscape) and (min-width:900px){",
+ " #hqCard.amb{background:linear-gradient(180deg,"+V+".92) 0,"+V+".92) 56px,"+V+".16) 96px,"+V+".16) calc(100% - 156px),"+V+".92) calc(100% - 118px)),var(--amb) center/cover no-repeat,#FFF8EC}",
+ " #hqCard.amb .hqpic{box-shadow:"+SH+"}",
+ "}"].join("\n");
+ document.head.appendChild(st);
+ function blur(p,W,H,r){var t=new Float32Array(W*H*3),x,y,k,a,b,c,n,j,i;
+  for(y=0;y<H;y++)for(x=0;x<W;x++){a=b=c=n=0;for(k=-r;k<=r;k++){j=(y*W+Math.min(W-1,Math.max(0,x+k)))*4;a+=p[j];b+=p[j+1];c+=p[j+2];n++}i=(y*W+x)*3;t[i]=a/n;t[i+1]=b/n;t[i+2]=c/n}
+  for(y=0;y<H;y++)for(x=0;x<W;x++){a=b=c=n=0;for(k=-r;k<=r;k++){j=(Math.min(H-1,Math.max(0,y+k))*W+x)*3;a+=t[j];b+=t[j+1];c+=t[j+2];n++}i=(y*W+x)*4;p[i]=a/n;p[i+1]=b/n;p[i+2]=c/n}}
+ function make(im){var w=im.naturalWidth,h=im.naturalHeight;if(!w||!h)return "";
+  var cur=im,cw=w,ch=h,c,x,nw,nh;
+  while(cw>120){nw=Math.max(60,Math.round(cw/2));nh=Math.max(1,Math.round(ch*nw/cw));c=document.createElement("canvas");c.width=nw;c.height=nh;x=c.getContext("2d");x.imageSmoothingEnabled=true;x.drawImage(cur,0,0,nw,nh);cur=c;cw=nw;ch=nh}
+  var W=48,H=Math.max(8,Math.round(W*ch/cw));c=document.createElement("canvas");c.width=W;c.height=H;x=c.getContext("2d");x.imageSmoothingEnabled=true;x.drawImage(cur,0,0,W,H);
+  var d=x.getImageData(0,0,W,H),p=d.data,i,k,L;blur(p,W,H,2);blur(p,W,H,2);
+  for(i=0;i<p.length;i+=4){L=.299*p[i]+.587*p[i+1]+.114*p[i+2];for(k=0;k<3;k++){var u=L+(p[i+k]-L)*1.45;u=u<0?0:u>255?255:u;p[i+k]=u+(255-u)*.16}p[i+3]=255}
+  x.putImageData(d,0,0);return c.toDataURL("image/png")}
+ var CACHE={},PEND={};
+ function want(src,cb){if(Object.prototype.hasOwnProperty.call(CACHE,src)){cb(CACHE[src]);return}
+  if(PEND[src]){PEND[src].push(cb);return}PEND[src]=[cb];
+  var im=new Image(),done=function(u){CACHE[src]=u;var l=PEND[src]||[];delete PEND[src];for(var i=0;i<l.length;i++)try{l[i](u)}catch(e){}};
+  im.onload=function(){var u="";try{u=make(im)}catch(e){u=""}done(u)};im.onerror=function(){done("")};im.src=src}
+ function setAmb(card,src){if(!card)return;
+  if(!src){if(card.classList.contains("amb"))card.classList.remove("amb");if(card.hasAttribute("data-amb"))card.removeAttribute("data-amb");return}
+  if(card.getAttribute("data-amb")!==src)card.setAttribute("data-amb",src);
+  want(src,function(u){if(card.getAttribute("data-amb")!==src)return;
+   if(!u){if(card.classList.contains("amb"))card.classList.remove("amb");return}
+   var v='url("'+u+'")';if(card.style.getPropertyValue("--amb")!==v)card.style.setProperty("--amb",v);
+   if(!card.classList.contains("amb"))card.classList.add("amb")})}
+ function shown(id){var e=document.getElementById(id);return !!(e&&!e.hidden)}
+ function bookSrc(){if(!shown("bookOv"))return "";var pv=document.getElementById("bPov"),i;
+  if(pv&&!pv.hidden){i=pv.querySelector("img.pimg")||pv.querySelector("img.pbg");if(i&&i.src)return i.src}
+  i=document.querySelector("#bWorld img.bbg");return i&&i.src?i.src:""}
+ function caseSrc(){if(!shown("caseOv"))return "";var i=document.querySelector("#caseCard.play img.kzbg");return i&&i.src?i.src:""}
+ function hqSrc(){if(!shown("hqOv"))return "";var i=document.querySelector("#hqCard .hqpic img.pbg");if(i&&i.src)return i.src;
+  var r=document.querySelector("#hqCard .hqroom.art"),m=r&&/url\(["']?([^"')]+)/.exec(r.style.backgroundImage||"");return m?new URL(m[1],location.href).href:""}
+ var q=0;function run(){setAmb(document.getElementById("bookCard"),bookSrc());setAmb(document.getElementById("caseCard"),caseSrc());setAmb(document.getElementById("hqCard"),hqSrc())}
+ function kick(){if(q)return;q=requestAnimationFrame(function(){q=0;try{run()}catch(e){}})}
+ var OPT={subtree:true,childList:true,attributes:true,attributeFilter:["src","hidden"]},mo=new MutationObserver(kick),seen={};
+ function watch(id){var e=document.getElementById(id);if(e&&seen[id]!==e){mo.observe(e,OPT);seen[id]=e}}
+ ["bookOv","caseOv","hqOv"].forEach(watch);
+ new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var a=ms[i].addedNodes;for(var j=0;j<a.length;j++)if(a[j].id==="hqOv"){watch("hqOv");kick();return}}}).observe(document.body,{childList:true});
+ window.ambSync=kick;kick();
+}catch(e){}})();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
