@@ -7216,5 +7216,56 @@ if(typeof showPartner==="function"){var _sp46=showPartner;window.showPartner=sho
  "#ba_shadow img{opacity:.6;filter:saturate(.55) brightness(.9) hue-rotate(185deg)}#ba_shadow::before{display:none}"+
  ".bop.who[data-who=\"shadow\"] img{transform:scaleY(-1);opacity:.65;filter:saturate(.55) brightness(.9) hue-rotate(185deg)}";
  document.head.appendChild(st)}catch(e){}})();
+
+/* ===== v46j (11/5 밤, 보호자 아이패드 실사용): 아이패드에서 ① 이야기 무대가 가로로 긴 띠가 돼서(가로 100% · 세로는 42vh로 잘림)
+   그림 위아래가 잘리고, ② 카드가 화면보다 길어 아래 단추(도움·나가기·보기)가 반쯤 가려졌음 →
+   · 가로 태블릿: 무대(16:9)는 왼쪽, 질문·보기·단추는 오른쪽(단추 줄은 늘 보이고 질문 칸만 스크롤) — 폰 가로 배치와 같은 구조
+   · 세로 태블릿: 무대 16:9 그대로(위아래 안 잘림), 사건 무대는 그림 비율(3:2)
+   · 이야기 그림(1·2·3쪽 등): 사진 전체가 보이게(빈 곳은 흐린 배경), 천천히 다가가는 확대는 4%까지만
+   · Safari 주소창 높이 때문에 100vh가 화면보다 큰 문제 → dvh로 ===== */
+(function(){try{var st=document.createElement("style");st.id="v46jIpad";st.textContent=[
+ "@media (orientation:landscape) and (min-width:900px) and (min-height:600px) and (max-height:1100px){",
+ " #bookOv{padding:max(8px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}",
+ " .bookc{display:grid;grid-template-columns:minmax(0,1fr) clamp(360px,34vw,480px);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:'st hd' 'st sp' 'st q' 'st ft';column-gap:16px;row-gap:8px;width:100%;max-width:1500px;height:100%;max-height:100%;overflow:hidden;padding:12px}",
+ " .bookc>.dhud{grid-area:hd;gap:8px;grid-template-columns:auto minmax(0,1fr) auto}",
+ " .bookc .dside .info{display:none}",
+ " .bookc .dtier{grid-column:auto;order:0;min-width:0;overflow:hidden;text-overflow:ellipsis}",
+ " .bookc>.bsteps{grid-area:sp}",
+ " .bookc>.bstage{grid-area:st;align-self:center;justify-self:center;aspect-ratio:16/9;width:min(100%,calc((100vh - 40px)*16/9));width:min(100%,calc((100dvh - 40px)*16/9));height:auto;min-height:0;max-height:none}",
+ " .bookc>.bq{grid-area:q;overflow:auto;min-height:0;justify-content:flex-start;-webkit-overflow-scrolling:touch;padding-bottom:8px}",
+ " .bookc>.dfoot{grid-area:ft;flex-wrap:wrap;gap:6px 8px}",
+ " .bookc>.dfoot p{flex:1 1 100%;font-size:14px;line-height:1.35}",
+ " .bookc>.dfoot p:empty{display:none}",
+ " .bookc>.dfoot .acts{margin-left:auto;gap:8px}",
+ " .bookc .rec{flex-basis:100%;min-height:0}",
+ " .bookc .pg{flex-basis:100%;max-width:none;flex-direction:row;align-items:center}",
+ " .bookc .pg img{width:150px;flex:none;max-height:none}",
+ " .bookc .pg svg{width:120px;flex:none}",
+ " #caseCard.kzc.play{height:100%;max-height:none;max-width:1500px;width:100%;padding:8px 12px}",
+ " .kzwrap{display:grid;grid-template-columns:minmax(0,56fr) minmax(0,44fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:'hd hd' 'st pn' 'st ft';gap:8px 14px}",
+ " .kzhead{grid-area:hd}",
+ " .kzstage{grid-area:st;height:auto!important;aspect-ratio:3/2;align-self:center;min-height:0;max-height:100%}",
+ " .kzpanel{grid-area:pn}",
+ " .kzfoot{grid-area:ft;flex-wrap:wrap}",
+ " .kzfoot p{flex:1 1 100%}",
+ " .kzfoot p:empty{display:none}",
+ " .kzfoot .acts{margin-left:auto}",
+ " .pggrid{grid-template-columns:repeat(4,minmax(0,1fr))}",
+ "}",
+ "@media (orientation:portrait) and (min-width:641px){",
+ " .bookc .bstage{aspect-ratio:16/9;max-height:none}",
+ " .kzstage{height:auto!important;aspect-ratio:3/2;width:min(100%,calc(44vh*1.5));width:min(100%,calc(44dvh*1.5));align-self:center}",
+ "}",
+ ".bpov .pimg:not(.enterart){object-fit:contain}",
+ ".bpov .pimg.kb-in:not(.enterart){animation:kbInS 8s ease-out forwards}",
+ ".bpov .pimg.kb-pan:not(.enterart){animation:kbPanS 9s ease-in-out forwards}",
+ ".bpov .pimg.kb-out:not(.enterart){animation:kbOutS 8s ease-out forwards}",
+ "@keyframes kbInS{from{transform:scale(1)}to{transform:scale(1.04)}}",
+ "@keyframes kbPanS{from{transform:scale(1.03) translateX(1.5%)}to{transform:scale(1.03) translateX(-1.5%)}}",
+ "@keyframes kbOutS{from{transform:scale(1.04)}to{transform:scale(1)}}",
+ "@media (orientation:landscape){.hqroom.art{width:min(100%,calc((100dvh - 120px)*1.791))}}",
+ "@media (orientation:landscape) and (max-height:520px){.hqroom{width:min(100%,calc((100dvh - 120px)*1.5))}.hqtray{max-height:calc(100dvh - 230px)}}",
+ "@supports (height:100dvh){.pgc{max-height:96dvh}.crscard{max-height:92dvh}}"
+ ].join("\n");document.head.appendChild(st)}catch(e){}})();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};
