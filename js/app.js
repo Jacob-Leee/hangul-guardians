@@ -7271,7 +7271,8 @@ if(typeof showPartner==="function"){var _sp46=showPartner;window.showPartner=sho
 /* v46k: 아이패드 가로 — 그림 옆 빈 여백을 '지금 보이는 그림'이 흐리게 번진 모습으로 채움 (이야기·사건·본부).
    + 가로 화면에서 카드가 화면 아래로 8px쯤 넘쳐 아래 단추가 잘리던 것(content-box 높이) 고침, 사건 화면은 반반으로 나눠 답 단추가 한 줄에.
    v46k2: 캔버스로 색을 뽑던 방식(사파리 지문 보호·평균색 탓에 회색으로 보일 수 있음)을 버리고,
-   같은 그림을 <img>로 한 장 더 깔아 CSS blur로 흐림 — 무대 칸 안에 맞춰 그림이 액자 밖으로 이어지듯. 글 칸은 크림색 그대로. */
+   같은 그림을 <img>로 한 장 더 깔아 CSS blur로 흐림 — 무대 칸 안에 맞춰 그림이 액자 밖으로 이어지듯. 글 칸은 크림색 그대로.
+   (따뜻한 막을 파란 그림에 섞으면 회색이 되므로 사건도 책과 같은 처리. 쪽 그림 양옆 흐린 띠도 덜 어둡게 .72→.92) */
 (function(){try{
  var SH="0 18px 40px -14px rgba(40,24,8,.55)",MK="linear-gradient(90deg,#000 calc(100% - 26px),transparent)",MKT="linear-gradient(180deg,transparent,#000 26px,#000 calc(100% - 16px),transparent)";
  var st=document.createElement("style");st.id="v46kAmb";
@@ -7279,6 +7280,7 @@ if(typeof showPartner==="function"){var _sp46=showPartner;window.showPartner=sho
  ".ambl{display:none}",
  ".ambl>img{position:absolute;left:-12%;top:-12%;width:124%;height:124%;max-width:none;object-fit:cover;filter:blur(22px) saturate(1.5) brightness(1.06)}",
  ".ambl::after{content:'';position:absolute;inset:0;background:rgba(255,248,236,.14)}",
+ ".bpov:has(.pimg:not(.enterart)) .pbg{filter:blur(16px) brightness(.92) saturate(1.25)}",
  "@media (orientation:landscape) and (min-width:900px) and (min-height:600px) and (max-height:1100px){",
  " #bookCard.amb{position:relative;isolation:isolate;background-color:#FFF8EC}",
  " #bookCard.amb>.ambl{display:block;position:absolute;grid-area:st;top:-12px;bottom:-12px;left:-12px;right:-8px;z-index:-1;overflow:hidden;pointer-events:none;-webkit-mask-image:"+MK+";mask-image:"+MK+"}",
@@ -7286,8 +7288,6 @@ if(typeof showPartner==="function"){var _sp46=showPartner;window.showPartner=sho
  " #caseCard.amb{background-color:#FFF8EC}",
  " #caseCard.amb .kzwrap{position:relative;isolation:isolate}",
  " #caseCard.amb .kzwrap>.ambl{display:block;position:absolute;grid-area:st;top:-8px;bottom:0;left:-12px;right:-7px;z-index:-1;overflow:hidden;pointer-events:none;-webkit-mask-image:"+MK+","+MKT+";-webkit-mask-composite:source-in;mask-image:"+MK+","+MKT+";mask-composite:intersect}",
- " #caseCard.amb .kzwrap>.ambl>img{filter:blur(22px) saturate(1.15) brightness(1.04)}",
- " #caseCard.amb .kzwrap>.ambl::after{background:rgba(246,221,174,.38)}",
  " #caseCard.amb .kzstage{box-shadow:"+SH+"}",
  " #caseOv{padding:max(8px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}",
  " .kzwrap{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}",
