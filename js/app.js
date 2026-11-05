@@ -1515,7 +1515,7 @@ function rrRender(){
  if(q("rrAgain"))q("rrAgain").onclick=()=>rrStart(P.id);
  if(q("rrDone"))q("rrDone").onclick=()=>{const n=S.reads.length;if(STAGE){const a=S.reads[0].spm,b=S.reads[n-1].spm,g=a?(b-a)/a*100:0;libStop();LIB=null;$("libOv").hidden=true;stageFinish(true,g>=10?3:g>0?2:1);return}libStop();LIB=null;rrList();reward(10+n*8,10+n*6,n*4)};
 }
-function rrSave(){const S=LIB,f=G.flu[S.P.id]||{best:0,sessions:0,log:[]};const best=Math.max(...S.reads.map(r=>r.spm));f.best=Math.max(f.best,best);f.sessions++;f.log.push({d:new Date().toISOString().slice(0,10),spm:best});f.log=f.log.slice(-20);G.flu[S.P.id]=f;save()}
+function rrSave(){const S=LIB,f=G.flu[S.P.id]||{best:0,sessions:0,log:[]};const best=Math.max(...S.reads.map(r=>r.spm));f.best=Math.max(f.best,best);f.sessions++;f.log.push({d:(typeof dkey==="function"?dkey():new Date().toISOString().slice(0,10)),spm:best});f.log=f.log.slice(-20);G.flu[S.P.id]=f;save()}
 const FILLS_E=[{s:"🐶 강아지가 ___ 짖어요.",a:"멍멍",o:["야옹"]},{s:"🐱 고양이가 ___ 울어요.",a:"야옹",o:["꼬끼오"]},{s:"🐔 닭이 ___ 울어요.",a:"꼬끼오",o:["멍멍"]},
  {s:"🐯 호랑이가 ___ 소리쳐요.",a:"어흥",o:["음매"]},{s:"🐮 소가 ___ 울어요.",a:"음매",o:["꿀꿀"]},{s:"🐷 돼지가 ___ 울어요.",a:"꿀꿀",o:["어흥"]},
  {s:"🍎 빨간 ___를 먹어요.",a:"사과",o:["우유"]},{s:"🥛 하얀 ___를 마셔요.",a:"우유",o:["사과"]},{s:"☂️ 비가 와서 ___을 써요.",a:"우산",o:["양말"]},
@@ -7180,5 +7180,25 @@ if(typeof showPartner==="function"){var _sp46=showPartner;window.showPartner=sho
   try{if(m&&!recAny("narrator",rmText(m))){var b=document.getElementById("rmSay");if(b)b.hidden=true;
     var tip=document.getElementById("rmTip");if(tip&&rdLv()===1)tip.textContent=K("Read it out loud by yourself.","소리 내어 혼자 읽어 봐요.")}}catch(e){}
   return r}})();
+
+/* ===== v46e (11/5 시뮬레이션 점검): 받아쓰기 '🐢 도움'은 반짝이는 것 없이 글자 그림자를 1.4초 보여 주는 방식 →
+   "반짝이는 걸 찾아봐!" 대신 "잘 봐 두세요!"(이미 녹음된 ux_021, 짝꿍 게임과 같은 말)로 안내 ===== */
+(function(){if(typeof pgMsg!=="function")return;var _m46e=pgMsg;
+ window.pgMsg=pgMsg=function(t,bad){try{var S=PGS;if(S&&S.g==="dict"&&(t==="반짝이는 걸 찾아봐!"||t==="Look for the glowing one!"))t=K("Look carefully!","잘 봐 두세요!")}catch(e){}
+  return _m46e.call(this,t,bad)}})();
+
+/* ===== v46f (11/5 시뮬레이션 점검): 아이 화면에서 시작된 음성이 끝나기 전에 설정(부모 화면)을 열면
+   화면 왼쪽 아래 '건너뛰기' 버튼이 설정 버튼들(효과음·소리 확인·하루 이용 시간 등) 위에 떠 있었음 →
+   설정을 '처음 열 때' 음성이 나오는 중이면 '건너뛰기'를 누른 것과 똑같이 처리(음성 멈춤 + 다음 단계 진행).
+   설정 안에서 다시 그리는 경우(빠르기 샘플 등)는 건드리지 않음 ===== */
+(function(){if(typeof showSettings!=="function")return;var _ss46f=showSettings;
+ window.showSettings=showSettings=function(){try{var o=document.getElementById("setOv"),v=document.getElementById("vSkip");if(o&&o.hidden&&v&&!v.hidden)v.click()}catch(e){}
+  return _ss46f.apply(this,arguments)}})();
+
+/* ===== v46g (11/5 시뮬레이션 점검): 십이지 순서 맞추기에서 영웅을 고르기 전에 칸부터 누르면 아무 반응이 없었음(무반응 터치) →
+   아래 영웅 줄이 반짝 커졌다 작아지며 "여기서 먼저 골라요"를 눈으로 알려 줌 (새 음성 없음) ===== */
+(function(){try{var st=document.createElement("style");st.textContent=".ztray.nudge .ztile{animation:pulse .5s ease-in-out 2;box-shadow:0 0 0 4px #FFE08A}";document.head.appendChild(st)}catch(e){}
+ document.addEventListener("click",function(e){try{var sl=e.target&&e.target.closest&&e.target.closest(".zslot");if(!sl||sl.classList.contains("done")||typeof LIB==="undefined"||!LIB||LIB.sel)return;
+  var tr=document.querySelector(".ztray");if(!tr)return;tr.classList.remove("nudge");void tr.offsetWidth;tr.classList.add("nudge");setTimeout(function(){tr.classList.remove("nudge")},1100)}catch(x){}},true)})();
 /* storybook voices (VOX is defined above; books/<id>/book.js holds the stories) */
 VOX.sb_country={p:1.08,r:.88,g:"m",gap:700};VOX.sb_city={p:1.18,r:1.06,g:"m",gap:450};

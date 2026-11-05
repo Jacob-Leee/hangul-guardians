@@ -9,7 +9,7 @@ BOOKDATA.b9={dir:"books/b9/",enterArt:"scene_enter.webp",cover:"page1.webp",bg:"
  broken:{mon:["cart","stand"],pand:["readSpot","sad"]},
  endState:{mon:["shelfG","happy"],pand:["readSpot","happy"]},
  claim:{who:"mon",t:"아무 칸에나 꽂으면 더 빨라! 정리는 귀찮아!"},
- sentence:{tokens:["책은","아무","칸에나","꽂으면","돼요."],bad:2,fix:"제 칸에"},
+ sentence:{tokens:["책은","아무 칸에나","꽂으면","돼요."],bad:1,fix:"제 칸에"},
  records:[
   {k:"shelf",ic:"📚",place:"책꽂이 이름표",at:[24,58],t:"책꽂이에는 ㄱ, ㄴ, ㄷ 이름표가 붙어 있어요. 책등의 첫 글자와 같은 칸이 그 책의 집이에요.",clue:["첫 글자와 같은 칸"]},
   {k:"panda",ic:"🐼",place:"읽기 자리",at:[70,64],t:"꼬마 판다 포포가 공룡책을 찾지 못해 울상이에요. '어제는 ㄱ 칸에 있었는데…'",clue:["공룡책","ㄱ 칸"]},
